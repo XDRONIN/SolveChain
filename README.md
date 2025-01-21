@@ -1,2 +1,3 @@
 # SolveChain
-SolveChain is a collaborative problem-solving platform where users post challenges across various categories (e.g., tech, DIY, health, education).
+
+SolveChain is a collaborative problem-solving platform where users post challenges across various categories (e.g., tech, DIY, health, education). Experts and community members provide solutions through interactive formats like video demonstrations, step-by-step guides, and live sessions. Verified experts are highlighted for trustworthiness, and advanced search and real-time collaboration tools enhance usability. Blockchain technology powers the platform, enabling transparency and rewarding solvers with tokens. Built with Vue.js, Node.js, MongoDB, Firebase, and Solidity, SolveChain fosters an innovative, decentralized approach to addressing real-world problems.
