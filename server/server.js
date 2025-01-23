@@ -1,4 +1,6 @@
 // server.js
+import admin from "firebase-admin";
+import { readFileSync } from "fs";
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -24,26 +26,35 @@ app.use(express.json());
 app.get("/api", (req, res) => {
   res.json({ message: "Hello from the backend!" });
 });
+app.get("/", (req, res) => {
+  res.send("Server is running");
+});
+app.get("/api/firebase-test", async (req, res) => {
+  try {
+    const customToken = await admin.auth().createCustomToken("test-uid");
+    res.json({ message: "Firebase is working!", customToken });
+  } catch (err) {
+    console.error("Error with Firebase:", err);
+    res.status(500).json({ error: "Firebase error" });
+  }
+});
+
+const serviceAccount = JSON.parse(
+  readFileSync(process.env.FIREBASE_SERVICE_ACCOUNT, "utf-8")
+);
+
+// Initialize Firebase Admin SDK
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+});
+
+console.log("Firebase initialized");
 
 // Connect to MongoDB - clean modern syntax with no deprecated options
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error(err));
-// Define a schema for the "hello" collection
-const helloSchema = new mongoose.Schema({}, { strict: false }); // Flexible schema
-const Hello = mongoose.model("Hello", helloSchema, "hello"); // Explicitly specify the collection name
-
-// Fetch and log data from the "hello" collection
-Hello.find()
-  .then((data) => {
-    console.log("Data from 'hello' collection:", data);
-    process.exit(); // Exit the process after logging the data
-  })
-  .catch((err) => {
-    console.error("Error fetching data:", err);
-    process.exit(1); // Exit with an error
-  });
 
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} hello world `)
