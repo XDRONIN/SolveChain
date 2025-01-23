@@ -27,7 +27,7 @@ app.get("/api", (req, res) => {
   res.json({ message: "Hello from the backend!" });
 });
 app.get("/", (req, res) => {
-  res.send("Server is running");
+  res.sendFile(path.join(__dirname, "../client/src/App.vue"));
 });
 app.get("/api/firebase-test", async (req, res) => {
   try {
