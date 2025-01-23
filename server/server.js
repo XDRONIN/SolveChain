@@ -30,6 +30,20 @@ mongoose
   .connect(process.env.MONGO_URI)
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error(err));
+// Define a schema for the "hello" collection
+const helloSchema = new mongoose.Schema({}, { strict: false }); // Flexible schema
+const Hello = mongoose.model("Hello", helloSchema, "hello"); // Explicitly specify the collection name
+
+// Fetch and log data from the "hello" collection
+Hello.find()
+  .then((data) => {
+    console.log("Data from 'hello' collection:", data);
+    process.exit(); // Exit the process after logging the data
+  })
+  .catch((err) => {
+    console.error("Error fetching data:", err);
+    process.exit(1); // Exit with an error
+  });
 
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} hello world `)
