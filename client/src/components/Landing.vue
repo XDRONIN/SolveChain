@@ -1,66 +1,98 @@
 <script setup></script>
 <template>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <nav
-    class="w-100% h-30 bg-black text-white flex items-center justify-between"
-  >
-    SolveChain
-    <div
-      class="text-white pl-10 pr-10 rounded-full flex items-center sm:w-120 sm:h-15 lg:w-200 backdrop-blur-[21px] backdrop-saturate-[162%] bg-[rgba(255,255,255,0.12)] border border-[rgba(255,255,255,0.125)]"
-    >
-      <span
-        class="w-30 flex justify-center h-12 items-center flex-1 m-1 active:backdrop-blur-[21px] active:backdrop-saturate-[162%] active:bg-[rgba(255,255,255,0.12)] rounded-full"
-        >Home</span
-      >
-      <span
-        class="w-30 flex justify-center h-12 items-center flex-1 m-1 active:backdrop-blur-[21px] active:backdrop-saturate-[162%] active:bg-[rgba(255,255,255,0.12)] rounded-full"
-        >Comunity</span
-      >
-      <span
-        class="w-30 flex justify-center h-12 items-center flex-1 m-1 active:backdrop-blur-[21px] active:backdrop-saturate-[162%] active:bg-[rgba(255,255,255,0.12)] rounded-full"
-        >How it works</span
-      >
-      <span
-        class="w-30 flex justify-center h-12 items-center flex-1 m-1 active:backdrop-blur-[21px] active:backdrop-saturate-[162%] active:bg-[rgba(255,255,255,0.12)] rounded-full"
-        >Documentation</span
-      >
-    </div>
-    <div><button>Sign In</button></div>
-  </nav>
-  <main class="h-218 text-white pt-20 bg-black">
-    <center>
-      <div>
-        BIG Problems?<br />
-        Meet BIGGER solutions
-      </div>
-    </center>
-    <div>
-      Join the chain of thinkers, doers, and innovators, solving problems
-      together<br />
-      Post your challenge, find your expert, and unlock solutions.
-      <br />Collaboration made effortless.
-    </div>
-    <div><button>Get Started</button><button>How It Works</button></div>
-    <div
-      class="relative order-1 transform-gpu md:order-2 md:w-[700px] items-center justify-center lg:flex lg:animate-[open-scale-up-fade_1.5s_ease-in-out] before:from-green-5/5 before:to-yellow-6/25 before:absolute before:left-0 before:top-0 before:block before:h-full before:w-full before:rounded-full before:bg-gradient-to-br before:blur-[100px] before:content-['']"
-    >
+  <div class="min-h-screen absolute inset-0 bg-gradient -z-10">
+    <nav class="w-100% h-30 text-white flex items-center justify-between">
+      SolveChain
       <div
-        class="relative animate-webgl-scale-in-fade"
-        style="width: 100%; height: 100%; overflow: hidden"
+        class="text-white pl-10 pr-10 rounded-full flex items-center sm:w-120 sm:h-15 lg:w-200 backdrop-blur-[12px] backdrop-saturate-[162%] bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.125)]"
       >
-        <video
-          loop
-          autoplay
-          muted
-          playsinline
-          preload="auto"
-          class="object-contain"
+        <span
+          class="w-30 flex justify-center h-12 items-center flex-1 m-1 active:backdrop-blur-[21px] active:backdrop-saturate-[162%] active:bg-[rgba(255,255,255,0.12)] rounded-full"
+          >Home</span
         >
-          <source src="../assets/cubeVid.mp4" type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
+        <span
+          class="w-30 flex justify-center h-12 items-center flex-1 m-1 active:backdrop-blur-[21px] active:backdrop-saturate-[162%] active:bg-[rgba(255,255,255,0.12)] rounded-full"
+          >Comunity</span
+        >
+        <span
+          class="w-30 flex justify-center h-12 items-center flex-1 m-1 active:backdrop-blur-[21px] active:backdrop-saturate-[162%] active:bg-[rgba(255,255,255,0.12)] rounded-full"
+          >How it works</span
+        >
+        <span
+          class="w-30 flex justify-center h-12 items-center flex-1 m-1 active:backdrop-blur-[21px] active:backdrop-saturate-[162%] active:bg-[rgba(255,255,255,0.12)] rounded-full"
+          >Documentation</span
+        >
       </div>
-    </div>
-  </main>
+      <div><button>Sign In</button></div>
+    </nav>
+    <main class="h-218 text-white pt-20">
+      <center>
+        <div>
+          <h4 class="text-2xl">
+            BIG Problems?<br />
+            Meet BIGGER solutions
+          </h4>
+        </div>
+      </center>
+      <div>
+        Join the chain of thinkers, doers, and innovators, solving problems
+        together<br />
+        Post your challenge, find your expert, and unlock solutions.
+        <br />Collaboration made effortless.
+      </div>
+      <div><button>Get Started</button><button>How It Works</button></div>
+      <div
+        class="ml-150 mt-20 relative order-1 transform-gpu md:order-2 md:w-[700px] items-center justify-center lg:flex lg:animate-[open-scale-up-fade_1.5s_ease-in-out] before:from-green-5/5 before:to-yellow-6/25 before:absolute before:left-0 before:top-0 before:block before:h-full before:w-full before:rounded-full before:bg-gradient-to-br before:blur-[100px] before:content-['']"
+      >
+        <div
+          class="relative animate-webgl-scale-in-fade"
+          style="width: 100%; height: 100%; overflow: hidden"
+        >
+          <center>
+            <video
+              loop
+              autoplay
+              muted
+              playsinline
+              preload="auto"
+              class="object-contain"
+            >
+              <source src="../assets/cubeVid.mp4" type="video/mp4" />
+
+              Your browser does not support the video tag.
+            </video>
+          </center>
+        </div>
+      </div>
+    </main>
+  </div>
 </template>
+<style>
+.bg-gradient {
+  background-color: hsla(0, 0%, 0%, 1);
+  background-image: radial-gradient(
+      at 64% 38%,
+      hsla(12, 0%, 0%, 1) 0px,
+      transparent 50%
+    ),
+    radial-gradient(at 64% 73%, hsla(278, 100%, 1%, 1) 0px, transparent 50%),
+    radial-gradient(at 37% 70%, hsla(51, 0%, 0%, 1) 0px, transparent 50%),
+    radial-gradient(at 58% 4%, hsla(94, 0%, 0%, 1) 0px, transparent 50%),
+    radial-gradient(at 43% 32%, hsla(100, 0%, 0%, 1) 0px, transparent 50%),
+    radial-gradient(at 44% 75%, hsla(224, 0%, 0%, 1) 0px, transparent 50%),
+    radial-gradient(at 80% 71%, hsla(318, 0%, 0%, 1) 0px, transparent 50%),
+    radial-gradient(at 55% 80%, hsla(337, 0%, 0%, 1) 0px, transparent 50%),
+    radial-gradient(at 55% 90%, hsla(337, 0%, 0%, 1) 0px, transparent 50%),
+    radial-gradient(at 60% 90%, hsla(337, 0%, 0%, 1) 0px, transparent 50%),
+    radial-gradient(at 79% 18%, hsla(279, 73%, 50%, 0.71) 0px, transparent 50%),
+    radial-gradient(at 23% 82%, hsla(204, 85%, 61%, 0.62) 0px, transparent 50%),
+    radial-gradient(
+      at 100% 100%,
+      hsla(282, 93%, 60%, 0.49) 0px,
+      transparent 50%
+    ),
+    radial-gradient(at 29% 38%, hsla(206, 100%, 70%, 0.34) 0px, transparent 50%),
+    radial-gradient(at 37% 1%, hsla(274, 75%, 54%, 0.79) 0px, transparent 50%);
+}
+</style>
