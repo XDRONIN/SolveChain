@@ -1,17 +1,7 @@
 <script setup>
 import { RouterView } from "vue-router";
-import HelloWorld from "./components/HelloWorld.vue";
 </script>
 
 <template>
-  <div>
-    <a href="https://vite.dev" target="_blank">
-      <img src="/vite.svg" class="logo" alt="Vite logo" />
-    </a>
-    <a href="https://vuejs.org/" target="_blank">
-      <img src="./assets/vue.svg" class="logo vue" alt="Vue logo" />
-      <h2 class="text-blue-500 text-3xl">Hey There</h2>
-    </a>
-  </div>
   <RouterView />
 </template>
