@@ -28,22 +28,26 @@
       </div>
       <div><button>Sign In</button></div>
     </nav>
-    <main class="h-218 text-white pt-20 popins-font">
+    <main class="h-218 text-white pt-5 popins-font">
       <center>
         <div>
           <h4 class="text-8xl custom-font">
-            BIG Problems?<br />
-            Meet BIGGER solutions
+            <span class="font-semibold text-fuchsia-800">BIG </span
+            >Problems?<br />
+            Meet
+            <span class="font-semibold text-fuchsia-800">BIGGER </span>
+            solutions
           </h4>
         </div>
+
+        <div class="text-lg">
+          Join the chain of thinkers, doers, and innovators, solving problems
+          together<br />
+          Post your challenge, find your expert, and unlock solutions.
+          <br />Collaboration made effortless.
+        </div>
+        <div><button>Get Started</button><button>How It Works</button></div>
       </center>
-      <div>
-        Join the chain of thinkers, doers, and innovators, solving problems
-        together<br />
-        Post your challenge, find your expert, and unlock solutions.
-        <br />Collaboration made effortless.
-      </div>
-      <div><button>Get Started</button><button>How It Works</button></div>
       <div
         class="fixed left-[620px] top-[450px] order-1 transform-gpu md:order-2 md:w-[700px] items-center justify-center lg:flex lg:animate-[open-scale-up-fade_1.5s_ease-in-out] before:from-green-5/5 before:to-yellow-6/25 before:absolute before:left-0 before:top-0 before:block before:h-full before:w-full before:rounded-full before:bg-gradient-to-br before:blur-[100px] before:content-['']"
       >
