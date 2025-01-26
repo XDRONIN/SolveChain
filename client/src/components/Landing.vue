@@ -40,16 +40,15 @@
           </h4>
         </div>
 
-        <div class="text-lg">
+        <div class="text-lg font-semibold">
           Join the chain of thinkers, doers, and innovators, solving problems
           together<br />
           Post your challenge, find your expert, and unlock solutions.
-          <br />Collaboration made effortless.
         </div>
-        <div><button>Get Started</button><button>How It Works</button></div>
+        <div><button>Get Started ></button><button>How It Works</button></div>
       </center>
       <div
-        class="fixed left-[620px] top-[450px] order-1 transform-gpu md:order-2 md:w-[700px] items-center justify-center lg:flex lg:animate-[open-scale-up-fade_1.5s_ease-in-out] before:from-green-5/5 before:to-yellow-6/25 before:absolute before:left-0 before:top-0 before:block before:h-full before:w-full before:rounded-full before:bg-gradient-to-br before:blur-[100px] before:content-['']"
+        class="absolute left-[620px] top-[450px] order-1 transform-gpu md:order-2 md:w-[700px] items-center justify-center lg:flex lg:animate-[open-scale-up-fade_1.5s_ease-in-out] before:from-green-5/5 before:to-yellow-6/25 before:absolute before:left-0 before:top-0 before:block before:h-full before:w-full before:rounded-full before:bg-gradient-to-br before:blur-[100px] before:content-['']"
       >
         <div
           class="relative animate-webgl-scale-in-fade"
