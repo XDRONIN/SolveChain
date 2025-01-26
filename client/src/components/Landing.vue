@@ -2,7 +2,9 @@
 <template>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <div class="min-h-screen absolute inset-0 bg-gradient -z-10">
-    <nav class="w-100% h-30 text-white flex items-center justify-between">
+    <nav
+      class="w-100% h-30 text-white flex items-center popins-font justify-between"
+    >
       SolveChain
       <div
         class="text-white pl-10 pr-10 rounded-full flex items-center sm:w-120 sm:h-15 lg:w-200 backdrop-blur-[12px] backdrop-saturate-[162%] bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.125)]"
@@ -26,10 +28,10 @@
       </div>
       <div><button>Sign In</button></div>
     </nav>
-    <main class="h-218 text-white pt-20">
+    <main class="h-218 text-white pt-20 popins-font">
       <center>
         <div>
-          <h4 class="text-2xl">
+          <h4 class="text-8xl custom-font">
             BIG Problems?<br />
             Meet BIGGER solutions
           </h4>
@@ -43,7 +45,7 @@
       </div>
       <div><button>Get Started</button><button>How It Works</button></div>
       <div
-        class="ml-150 mt-20 relative order-1 transform-gpu md:order-2 md:w-[700px] items-center justify-center lg:flex lg:animate-[open-scale-up-fade_1.5s_ease-in-out] before:from-green-5/5 before:to-yellow-6/25 before:absolute before:left-0 before:top-0 before:block before:h-full before:w-full before:rounded-full before:bg-gradient-to-br before:blur-[100px] before:content-['']"
+        class="fixed left-[620px] top-[450px] order-1 transform-gpu md:order-2 md:w-[700px] items-center justify-center lg:flex lg:animate-[open-scale-up-fade_1.5s_ease-in-out] before:from-green-5/5 before:to-yellow-6/25 before:absolute before:left-0 before:top-0 before:block before:h-full before:w-full before:rounded-full before:bg-gradient-to-br before:blur-[100px] before:content-['']"
       >
         <div
           class="relative animate-webgl-scale-in-fade"
@@ -59,7 +61,6 @@
               class="object-contain"
             >
               <source src="../assets/cubeVid.mp4" type="video/mp4" />
-
               Your browser does not support the video tag.
             </video>
           </center>
@@ -68,7 +69,16 @@
     </main>
   </div>
 </template>
-<style>
+<style scoped>
+@font-face {
+  font-family: "MyCustomFont";
+  src: url("../public/fonts/BebasNeue-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+.custom-font {
+  font-family: "MyCustomFont", sans-serif;
+}
 .bg-gradient {
   background-color: hsla(0, 0%, 0%, 1);
   background-image: radial-gradient(
@@ -76,15 +86,16 @@
       hsla(12, 0%, 0%, 1) 0px,
       transparent 50%
     ),
-    radial-gradient(at 64% 73%, hsla(278, 100%, 1%, 1) 0px, transparent 50%),
-    radial-gradient(at 37% 70%, hsla(51, 0%, 0%, 1) 0px, transparent 50%),
-    radial-gradient(at 58% 4%, hsla(94, 0%, 0%, 1) 0px, transparent 50%),
-    radial-gradient(at 43% 32%, hsla(100, 0%, 0%, 1) 0px, transparent 50%),
-    radial-gradient(at 44% 75%, hsla(224, 0%, 0%, 1) 0px, transparent 50%),
-    radial-gradient(at 80% 71%, hsla(318, 0%, 0%, 1) 0px, transparent 50%),
-    radial-gradient(at 55% 80%, hsla(337, 0%, 0%, 1) 0px, transparent 50%),
-    radial-gradient(at 55% 90%, hsla(337, 0%, 0%, 1) 0px, transparent 50%),
-    radial-gradient(at 60% 90%, hsla(337, 0%, 0%, 1) 0px, transparent 50%),
+    radial-gradient(at 63% 80%, black 0px, transparent 50%),
+    radial-gradient(at 64% 73%, black 0px, transparent 50%),
+    radial-gradient(at 37% 70%, black 0px, transparent 50%),
+    radial-gradient(at 58% 4%, black 0px, transparent 50%),
+    radial-gradient(at 43% 32%, black 0px, transparent 50%),
+    radial-gradient(at 44% 75%, black 0px, transparent 50%),
+    radial-gradient(at 80% 71%, black 0px, transparent 50%),
+    radial-gradient(at 55% 80%, black 0px, transparent 50%),
+    radial-gradient(at 55% 90%, black 0px, transparent 50%),
+    radial-gradient(at 60% 90%, black 0px, transparent 50%),
     radial-gradient(at 79% 18%, hsla(279, 73%, 50%, 0.71) 0px, transparent 50%),
     radial-gradient(at 23% 82%, hsla(204, 85%, 61%, 0.62) 0px, transparent 50%),
     radial-gradient(
