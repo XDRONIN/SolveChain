@@ -1,15 +1,21 @@
-<script setup></script>
+<script setup>
+import { ref } from "vue";
+const isActive = ref(true);
+</script>
 <template>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <div class="min-h-screen absolute inset-0 bg-gradient -z-10">
     <nav
-      class="w-100% h-30 text-white flex items-center popins-font justify-between"
+      class="w-100% h-30 text-white flex items-center popins-font justify-between pl-10 pr-10"
     >
-      SolveChain
+      <span class="text-xl font-bold">
+        <img src="../assets/logo2.png" class="w-40"
+      /></span>
       <div
-        class="text-white pl-10 pr-10 rounded-full flex items-center sm:w-120 sm:h-15 lg:w-200 backdrop-blur-[12px] backdrop-saturate-[162%] bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.125)]"
+        class="absolute left-134 font-semibold text-white pl-10 pr-10 rounded-full flex items-center sm:w-120 sm:h-15 lg:w-200 backdrop-blur-[12px] backdrop-saturate-[162%] bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.125)]"
       >
         <span
+          :class="{ active: isActive }"
           class="w-30 flex justify-center h-12 items-center flex-1 m-1 active:backdrop-blur-[21px] active:backdrop-saturate-[162%] active:bg-[rgba(255,255,255,0.12)] rounded-full"
           >Home</span
         >
@@ -26,7 +32,13 @@
           >Documentation</span
         >
       </div>
-      <div><button>Sign In</button></div>
+      <div>
+        <button
+          class="relative text-center flex cursor-pointer text-fuchsia-600 font-semibold bg-transparent px-7 py-3 rounded-full border-2 border-b-fuchsia-600 hover:scale-105 duration-200 hover:text-white hover: to-fuchsia-800 hover:from-fuchsia-800 hover:to-fuchsia-200 before:rounded-full before:bg-gradient-to-r before:from-fuchsia-400 before:to-fuchsia-800 before:blur-md before:opacity-50 before:z-[-1]"
+        >
+          Sign In
+        </button>
+      </div>
     </nav>
     <main class="h-218 text-white pt-5 popins-font">
       <center>
