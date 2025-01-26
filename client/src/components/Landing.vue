@@ -45,10 +45,17 @@
           together<br />
           Post your challenge, find your expert, and unlock solutions.
         </div>
-        <div><button>Get Started ></button><button>How It Works</button></div>
+
+        <div class="flex flex-row justify-center pt-2">
+          <button
+            class="relative flex gap-3 cursor-pointer text-white font-semibold bg-gradient-to-r from-fuchsia-300 to-fuchsia-800 px-7 py-3 rounded-full border border-black hover:scale-105 duration-200 hover:text-white hover:border-gray-800 hover:from-fuchsia-800 hover:to-fuchsia-400 before:absolute before:top-[-2px] before:left-[-2px] before:right-[-2px] before:bottom-[-2px] before:rounded-full before:bg-gradient-to-r before:from-fuchsia-400 before:to-fuchsia-800 before:blur-md before:opacity-50 before:z-[-1]"
+          >
+            Get Started ></button
+          ><button>How It Works</button>
+        </div>
       </center>
       <div
-        class="absolute left-[620px] top-[450px] order-1 transform-gpu md:order-2 md:w-[700px] items-center justify-center lg:flex lg:animate-[open-scale-up-fade_1.5s_ease-in-out] before:from-green-5/5 before:to-yellow-6/25 before:absolute before:left-0 before:top-0 before:block before:h-full before:w-full before:rounded-full before:bg-gradient-to-br before:blur-[100px] before:content-['']"
+        class="absolute left-[620px] top-[470px] order-1 transform-gpu md:order-2 md:w-[700px] items-center justify-center lg:flex lg:animate-[open-scale-up-fade_1.5s_ease-in-out] before:from-green-5/5 before:to-yellow-6/25 before:absolute before:left-0 before:top-0 before:block before:h-full before:w-full before:rounded-full before:bg-gradient-to-br before:blur-[100px] before:content-['']"
       >
         <div
           class="relative animate-webgl-scale-in-fade"
