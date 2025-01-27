@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from "vue";
-const isActive = ref(true);
+const tabs = ["Home", "Community", "How it works", "Docs"];
+const activeTab = ref(0);
 </script>
 <template>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,24 +13,17 @@ const isActive = ref(true);
         <img src="../assets/logo2.png" class="w-40"
       /></span>
       <div
-        class="absolute left-134 font-semibold text-white pl-10 pr-10 rounded-full flex items-center sm:w-120 sm:h-15 lg:w-200 backdrop-blur-[12px] backdrop-saturate-[162%] bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.125)]"
+        class="fixed justify-evenly left-134 font-semibold text-white pl-10 pr-10 rounded-full flex items-center sm:w-120 sm:h-15 lg:w-200 backdrop-blur-[12px] backdrop-saturate-[162%] bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.125)]"
       >
         <span
-          :class="{ active: isActive }"
-          class="w-30 flex justify-center h-12 items-center flex-1 m-1 active:backdrop-blur-[21px] active:backdrop-saturate-[162%] active:bg-[rgba(255,255,255,0.12)] rounded-full"
-          >Home</span
-        >
-        <span
-          class="w-30 flex justify-center h-12 items-center flex-1 m-1 active:backdrop-blur-[21px] active:backdrop-saturate-[162%] active:bg-[rgba(255,255,255,0.12)] rounded-full"
-          >Comunity</span
-        >
-        <span
-          class="w-30 flex justify-center h-12 items-center flex-1 m-1 active:backdrop-blur-[21px] active:backdrop-saturate-[162%] active:bg-[rgba(255,255,255,0.12)] rounded-full"
-          >How it works</span
-        >
-        <span
-          class="w-30 flex justify-center h-12 items-center flex-1 m-1 active:backdrop-blur-[21px] active:backdrop-saturate-[162%] active:bg-[rgba(255,255,255,0.12)] rounded-full"
-          >Documentation</span
+          v-for="(tab, index) in tabs"
+          :key="index"
+          @click="activeTab = index"
+          :class="[
+            'w-30 flex justify-center h-12 items-center flex-1  rounded-full cursor-pointer transition-all delay-75',
+            activeTab == index ? ' text-fuchsia-500 shadow ' : '',
+          ]"
+          >{{ tab }}</span
         >
       </div>
       <div>
@@ -66,7 +60,7 @@ const isActive = ref(true);
           </button>
           <div class="w-6"></div>
           <button
-            class="relative flex gap-3 cursor-pointer text-fuchsia-800 font-semibold bg-black px-7 py-3 rounded-full border-2 border-fuchsia-800 hover:scale-105 duration-200 hover:text-white hover: to-fuchsia-800 hover:from-fuchsia-800 hover:to-fuchsia-200 before:absolute before:top-[1px] before:left-[1px] before:right-[1px] before:bottom-[1px] before:rounded-full before:bg-gradient-to-r before:from-fuchsia-400 before:to-fuchsia-800 before:blur-md before:opacity-50 before:z-[-1]"
+            class="relative flex gap-3 cursor-pointer text-fuchsia-800 font-semibold bg-transparent px-7 py-3 rounded-full border-2 border-fuchsia-800 hover:scale-105 duration-200 hover:text-white hover: to-fuchsia-800 hover:from-fuchsia-800 hover:to-fuchsia-200"
           >
             How It Works
           </button>
