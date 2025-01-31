@@ -129,43 +129,60 @@ const scrollToSection = (tab) => {
       <div class="min-h-screen relative top-111 inset-0 bg-gradient2 -z-10">
         <div id="Docs" class="content-block">
           <center>
-            <h6 class="relative top-50 custom-font text-6xl">
+            <h6 class="relative top-40 custom-font text-6xl">
               Tech <span class="text-fuchsia-800"> Stack</span>
             </h6>
           </center>
           <div
-            class="flex min-h-screen justify-center items-center flex-col mt-5"
+            class="flex min-h-screen justify-center items-center flex-col mt-9"
           >
-            <div class="grid lg:grid-cols-4 gap-55">
-              <div class="flex h-24 items-center justify-center">
+            <div class="grid lg:grid-cols-4 gap-15">
+              <div
+                class="w-50 items-center justify-center group flex flex-col text-center p-8 border h-45 border-white dark:border-white/10 rounded-xl bg-white/30 dark:bg-black/10 shadow-2xl shadow-indigo-950/5"
+              >
                 <img src="../assets/vue.svg" alt="" />
               </div>
-              <div class="flex h-24 items-center justify-center">
+              <div
+                class="w-50 items-center justify-center group flex flex-col text-center p-8 border h-45 border-white dark:border-white/10 rounded-xl bg-white/30 dark:bg-black/10 shadow-2xl shadow-indigo-950/5"
+              >
                 <img src="../assets/mongo.svg" alt="" />
               </div>
-              <div class="flex h-24 items-center justify-center">
+              <div
+                class="w-50 items-center justify-center group flex flex-col text-center p-8 border h-45 border-white dark:border-white/10 rounded-xl bg-white/30 dark:bg-black/10 shadow-2xl shadow-indigo-950/5"
+              >
                 <img src="../assets/express.svg" alt="" />
               </div>
-              <div class="flex h-24 items-center justify-center">
+              <div
+                class="w-50 items-center justify-center group flex flex-col text-center p-8 border h-45 border-white dark:border-white/10 rounded-xl bg-white/30 dark:bg-black/10 shadow-2xl shadow-indigo-950/5"
+              >
                 <img src="../assets/node.svg" alt="" />
               </div>
             </div>
-            <div class="grid lg:grid-cols-4 gap-55 mt-20">
-              <div class="flex h-24 items-center justify-center">
+            <div class="grid lg:grid-cols-4 gap-15 mt-20">
+              <div
+                class="w-50 items-center justify-center group flex flex-col text-center p-8 border h-45 border-white dark:border-white/10 rounded-xl bg-white/30 dark:bg-black/10 shadow-2xl shadow-indigo-950/5"
+              >
                 <img src="../assets/mongoose.svg" alt="" />
               </div>
-              <div class="flex h-24 items-center justify-center">
+              <div
+                class="w-50 items-center justify-center group flex flex-col text-center p-8 border h-45 border-white dark:border-white/10 rounded-xl bg-white/30 dark:bg-black/10 shadow-2xl shadow-indigo-950/5"
+              >
                 <img src="../assets/tail.svg" alt="" />
               </div>
-              <div class="flex h-24 items-center justify-center">
+              <div
+                class="w-50 items-center justify-center group flex flex-col text-center p-8 border h-45 border-white dark:border-white/10 rounded-xl bg-white/30 dark:bg-black/10 shadow-2xl shadow-indigo-950/5"
+              >
                 <img src="../assets/vite.svg" alt="" />
               </div>
-              <div class="flex h-24 items-center justify-center">
+              <div
+                class="w-50 items-center justify-center group flex flex-col text-center p-8 border h-45 border-white dark:border-white/10 rounded-xl bg-white/30 dark:bg-black/10 shadow-2xl shadow-indigo-950/5"
+              >
                 <img src="../assets/sol.svg" alt="" />
               </div>
             </div>
+
             <button
-              class="top-20 relative flex gap-3 cursor-pointer text-fuchsia-800 font-semibold bg-transparent px-7 py-3 rounded-full border-2 border-fuchsia-800 hover:scale-105 duration-200 hover:text-white hover: to-fuchsia-800 hover:from-fuchsia-800 hover:to-fuchsia-200"
+              class="top-20 relative left-4 flex gap-3 cursor-pointer text-fuchsia-800 font-semibold bg-transparent px-7 py-3 rounded-full border-2 border-fuchsia-800 hover:scale-105 duration-200 hover:text-white hover: to-fuchsia-800 hover:from-fuchsia-800 hover:to-fuchsia-200"
               @click="openDocs"
             >
               Read Docs
