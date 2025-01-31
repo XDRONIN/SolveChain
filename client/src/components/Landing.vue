@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-const tabs = ["Home", "Community", "How it works", "Docs"];
+const tabs = ["Home", "Docs", "Community", "How it works"];
 const activeTab = ref(0);
 </script>
 <template>
@@ -13,7 +13,7 @@ const activeTab = ref(0);
         <img src="../assets/logo2.png" class="w-40"
       /></span>
       <div
-        class="fixed justify-evenly left-134 font-semibold text-white pl-10 pr-10 rounded-full flex items-center sm:w-120 sm:h-15 lg:w-200 backdrop-blur-[12px] backdrop-saturate-[162%] bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.125)]"
+        class="fixed z-10 justify-evenly left-134 font-semibold text-white pl-10 pr-10 rounded-full flex items-center sm:w-120 sm:h-15 lg:w-200 backdrop-blur-[12px] backdrop-saturate-[162%] bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.125)]"
       >
         <span
           v-for="(tab, index) in tabs"
@@ -88,6 +88,9 @@ const activeTab = ref(0);
           </center>
         </div>
       </div>
+      <div
+        class="min-h-screen relative top-111 inset-0 bg-gradient2 -z-10"
+      ></div>
     </main>
   </div>
 </template>
@@ -104,28 +107,35 @@ const activeTab = ref(0);
 .bg-gradient {
   background-color: hsla(0, 0%, 0%, 1);
   background-image: radial-gradient(
-      at 64% 38%,
-      hsla(12, 0%, 0%, 1) 0px,
+      at 65% 46%,
+      hsla(80, 0%, 0%, 1) 0px,
       transparent 50%
     ),
-    radial-gradient(at 63% 80%, black 0px, transparent 50%),
-    radial-gradient(at 64% 73%, black 0px, transparent 50%),
-    radial-gradient(at 37% 70%, black 0px, transparent 50%),
-    radial-gradient(at 58% 4%, black 0px, transparent 50%),
-    radial-gradient(at 43% 32%, black 0px, transparent 50%),
-    radial-gradient(at 44% 75%, black 0px, transparent 50%),
-    radial-gradient(at 80% 71%, black 0px, transparent 50%),
-    radial-gradient(at 55% 80%, black 0px, transparent 50%),
-    radial-gradient(at 55% 90%, black 0px, transparent 50%),
-    radial-gradient(at 60% 90%, black 0px, transparent 50%),
-    radial-gradient(at 79% 18%, hsla(279, 73%, 50%, 0.71) 0px, transparent 50%),
-    radial-gradient(at 23% 82%, hsla(204, 85%, 61%, 0.62) 0px, transparent 50%),
-    radial-gradient(
-      at 100% 100%,
-      hsla(282, 93%, 60%, 0.49) 0px,
+    radial-gradient(at 44% 47%, hsla(34, 0%, 0%, 1) 0px, transparent 50%),
+    radial-gradient(at 66% 85%, hsla(37, 0%, 0%, 1) 0px, transparent 50%),
+    radial-gradient(at 44% 86%, hsla(166, 0%, 0%, 1) 0px, transparent 50%),
+    radial-gradient(at 0% 0%, hsla(102, 0%, 0%, 0.55) 0px, transparent 50%),
+    radial-gradient(at 54% 2%, hsla(25, 0%, 0%, 1) 0px, transparent 50%),
+    radial-gradient(at 44% 67%, hsla(74, 0%, 0%, 1) 0px, transparent 50%),
+    radial-gradient(at 66% 69%, hsla(135, 0%, 0%, 1) 0px, transparent 50%),
+    radial-gradient(at 93% 19%, hsla(274, 75%, 54%, 0.79) 0px, transparent 50%),
+    radial-gradient(at 9% 56%, hsla(206, 100%, 70%, 0.34) 0px, transparent 50%),
+    radial-gradient(at 90% 58%, hsla(204, 85%, 61%, 0.62) 0px, transparent 50%),
+    radial-gradient(at 33% 7%, hsla(279, 73%, 50%, 0.71) 0px, transparent 50%);
+}
+.bg-gradient2 {
+  background-color: hsla(0, 0%, 0%, 1);
+  background-image: radial-gradient(
+      at 78% 100%,
+      hsla(18, 0%, 0%, 1) 0px,
       transparent 50%
     ),
-    radial-gradient(at 29% 38%, hsla(206, 100%, 70%, 0.34) 0px, transparent 50%),
-    radial-gradient(at 37% 1%, hsla(274, 75%, 54%, 0.79) 0px, transparent 50%);
+    radial-gradient(at 30% 98%, hsla(352, 0%, 0%, 1) 0px, transparent 50%),
+    radial-gradient(at 58% 100%, hsla(12, 0%, 0%, 1) 0px, transparent 50%),
+    radial-gradient(at 54% 1%, hsla(83, 0%, 0%, 1) 0px, transparent 50%),
+    radial-gradient(at 56% 77%, hsla(206, 100%, 70%, 0.34) 0px, transparent 50%),
+    radial-gradient(at 17% 44%, hsla(206, 100%, 70%, 0.34) 0px, transparent 50%),
+    radial-gradient(at 56% 73%, hsla(274, 75%, 54%, 1) 0px, transparent 50%),
+    radial-gradient(at 94% 42%, hsla(204, 85%, 61%, 0.62) 0px, transparent 50%);
 }
 </style>
