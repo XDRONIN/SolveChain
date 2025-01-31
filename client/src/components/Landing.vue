@@ -1,17 +1,48 @@
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 const tabs = ["Home", "Docs", "Community", "How it works"];
-const activeTab = ref(0);
+const activeTab = ref("Home");
 const openDocs = () => {
   window.open(
     "https://github.com/XDRONIN/SolveChain/blob/main/README.md",
     "_blank"
   );
 };
+// Function to update active tab based on scroll position
+const updateActiveTab = () => {
+  const sections = document.querySelectorAll(".content-block");
+  let currentTab = "Home";
+
+  sections.forEach((block) => {
+    const rect = block.getBoundingClientRect();
+    if (
+      rect.top <= window.innerHeight / 2 &&
+      rect.bottom >= window.innerHeight / 2
+    ) {
+      currentTab = block.id;
+    }
+  });
+
+  activeTab.value = currentTab;
+};
+// Attach scroll event listener
+onMounted(() => {
+  window.addEventListener("scroll", updateActiveTab);
+});
+
+onUnmounted(() => {
+  window.removeEventListener("scroll", updateActiveTab);
+});
+const scrollToSection = (tab) => {
+  document.getElementById(tab).scrollIntoView({ behavior: "smooth" });
+};
 </script>
 <template>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <div class="min-h-screen absolute inset-0 bg-gradient -z-10">
+  <div
+    class="min-h-screen absolute inset-0 bg-gradient -z-10 content-block"
+    id="Home"
+  >
     <nav
       class="w-100% h-30 text-white flex items-center popins-font justify-between pl-10 pr-10"
     >
@@ -24,10 +55,10 @@ const openDocs = () => {
         <span
           v-for="(tab, index) in tabs"
           :key="index"
-          @click="activeTab = index"
+          @click="scrollToSection(tab)"
           :class="[
             'w-30 flex justify-center h-12 items-center flex-1  rounded-full cursor-pointer transition-all delay-75',
-            activeTab == index ? ' text-fuchsia-500 shadow ' : '',
+            activeTab === tab ? ' text-fuchsia-500 shadow ' : '',
           ]"
           >{{ tab }}</span
         >
@@ -96,48 +127,50 @@ const openDocs = () => {
       </div>
 
       <div class="min-h-screen relative top-111 inset-0 bg-gradient2 -z-10">
-        <center>
-          <h6 class="relative top-70 custom-font text-6xl">
-            Tech <span class="text-fuchsia-800"> Stack</span>
-          </h6>
-        </center>
-        <div
-          class="flex min-h-screen justify-center items-center flex-col mt-20"
-        >
-          <div class="grid lg:grid-cols-4 gap-35">
-            <div class="flex h-24 items-center justify-center">
-              <img src="../assets/vue.svg" alt="" />
-            </div>
-            <div class="flex h-24 items-center justify-center">
-              <img src="../assets/mongo.svg" alt="" />
-            </div>
-            <div class="flex h-24 items-center justify-center">
-              <img src="../assets/express.svg" alt="" />
-            </div>
-            <div class="flex h-24 items-center justify-center">
-              <img src="../assets/node.svg" alt="" />
-            </div>
-          </div>
-          <div class="grid lg:grid-cols-4 gap-35 mt-20">
-            <div class="flex h-24 items-center justify-center">
-              <img src="../assets/mongoose.svg" alt="" />
-            </div>
-            <div class="flex h-24 items-center justify-center">
-              <img src="../assets/tail.svg" alt="" />
-            </div>
-            <div class="flex h-24 items-center justify-center">
-              <img src="../assets/vite.svg" alt="" />
-            </div>
-            <div class="flex h-24 items-center justify-center">
-              <img src="../assets/sol.svg" alt="" />
-            </div>
-          </div>
-          <button
-            class="top-20 relative flex gap-3 cursor-pointer text-fuchsia-800 font-semibold bg-transparent px-7 py-3 rounded-full border-2 border-fuchsia-800 hover:scale-105 duration-200 hover:text-white hover: to-fuchsia-800 hover:from-fuchsia-800 hover:to-fuchsia-200"
-            @click="openDocs"
+        <div id="Docs" class="content-block">
+          <center>
+            <h6 class="relative top-50 custom-font text-6xl">
+              Tech <span class="text-fuchsia-800"> Stack</span>
+            </h6>
+          </center>
+          <div
+            class="flex min-h-screen justify-center items-center flex-col mt-5"
           >
-            Read Docs
-          </button>
+            <div class="grid lg:grid-cols-4 gap-35">
+              <div class="flex h-24 items-center justify-center">
+                <img src="../assets/vue.svg" alt="" />
+              </div>
+              <div class="flex h-24 items-center justify-center">
+                <img src="../assets/mongo.svg" alt="" />
+              </div>
+              <div class="flex h-24 items-center justify-center">
+                <img src="../assets/express.svg" alt="" />
+              </div>
+              <div class="flex h-24 items-center justify-center">
+                <img src="../assets/node.svg" alt="" />
+              </div>
+            </div>
+            <div class="grid lg:grid-cols-4 gap-35 mt-20">
+              <div class="flex h-24 items-center justify-center">
+                <img src="../assets/mongoose.svg" alt="" />
+              </div>
+              <div class="flex h-24 items-center justify-center">
+                <img src="../assets/tail.svg" alt="" />
+              </div>
+              <div class="flex h-24 items-center justify-center">
+                <img src="../assets/vite.svg" alt="" />
+              </div>
+              <div class="flex h-24 items-center justify-center">
+                <img src="../assets/sol.svg" alt="" />
+              </div>
+            </div>
+            <button
+              class="top-20 relative flex gap-3 cursor-pointer text-fuchsia-800 font-semibold bg-transparent px-7 py-3 rounded-full border-2 border-fuchsia-800 hover:scale-105 duration-200 hover:text-white hover: to-fuchsia-800 hover:from-fuchsia-800 hover:to-fuchsia-200"
+              @click="openDocs"
+            >
+              Read Docs
+            </button>
+          </div>
         </div>
       </div>
     </main>
