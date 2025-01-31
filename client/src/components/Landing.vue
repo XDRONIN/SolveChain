@@ -136,7 +136,7 @@ const scrollToSection = (tab) => {
           <div
             class="flex min-h-screen justify-center items-center flex-col mt-5"
           >
-            <div class="grid lg:grid-cols-4 gap-45">
+            <div class="grid lg:grid-cols-4 gap-55">
               <div class="flex h-24 items-center justify-center">
                 <img src="../assets/vue.svg" alt="" />
               </div>
@@ -150,7 +150,7 @@ const scrollToSection = (tab) => {
                 <img src="../assets/node.svg" alt="" />
               </div>
             </div>
-            <div class="grid lg:grid-cols-4 gap-45 mt-20">
+            <div class="grid lg:grid-cols-4 gap-55 mt-20">
               <div class="flex h-24 items-center justify-center">
                 <img src="../assets/mongoose.svg" alt="" />
               </div>
@@ -176,6 +176,10 @@ const scrollToSection = (tab) => {
       <div
         class="min-h-screen relative top-111 inset-0 bg-gradient3 -z-10 content-block"
         id="Community"
+      ></div>
+      <div
+        class="min-h-screen relative top-111 inset-0 bg-gradient4 -z-10 content-block"
+        id="How it works"
       ></div>
     </main>
   </div>
@@ -238,6 +242,22 @@ const scrollToSection = (tab) => {
     radial-gradient(at 12% 53%, hsla(206, 100%, 70%, 0.34) 0px, transparent 50%),
     radial-gradient(at 16% 51%, hsla(204, 85%, 61%, 0.62) 0px, transparent 50%),
     radial-gradient(at 22% 60%, hsla(274, 75%, 54%, 1) 0px, transparent 50%),
+    radial-gradient(at 92% 44%, hsla(204, 85%, 61%, 0.62) 0px, transparent 50%);
+}
+.bg-gradient4 {
+  background-color: hsla(0, 0%, 0%, 1);
+  background-image: radial-gradient(
+      at 100% 37%,
+      hsla(107, 0%, 0%, 1) 0px,
+      transparent 50%
+    ),
+    radial-gradient(at 0% 0%, hsla(0, 0%, 0%, 0.76) 0px, transparent 50%),
+    radial-gradient(at 65% 100%, hsla(269, 0%, 0%, 1) 0px, transparent 50%),
+    radial-gradient(at 14% 41%, hsla(274, 75%, 54%, 0.79) 0px, transparent 50%),
+    radial-gradient(at 89% 45%, hsla(189, 100%, 56%, 1) 0px, transparent 50%),
+    radial-gradient(at 49% 59%, hsla(206, 100%, 70%, 0.34) 0px, transparent 50%),
+    radial-gradient(at 3% 99%, hsla(204, 85%, 61%, 0.62) 0px, transparent 50%),
+    radial-gradient(at 100% 63%, hsla(274, 75%, 54%, 1) 0px, transparent 50%),
     radial-gradient(at 92% 44%, hsla(204, 85%, 61%, 0.62) 0px, transparent 50%);
 }
 </style>
