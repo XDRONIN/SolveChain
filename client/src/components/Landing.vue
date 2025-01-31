@@ -2,6 +2,12 @@
 import { ref } from "vue";
 const tabs = ["Home", "Docs", "Community", "How it works"];
 const activeTab = ref(0);
+const openDocs = () => {
+  window.open(
+    "https://github.com/XDRONIN/SolveChain/blob/main/README.md",
+    "_blank"
+  );
+};
 </script>
 <template>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -88,9 +94,52 @@ const activeTab = ref(0);
           </center>
         </div>
       </div>
-      <div
-        class="min-h-screen relative top-111 inset-0 bg-gradient2 -z-10"
-      ></div>
+
+      <div class="min-h-screen relative top-111 inset-0 bg-gradient2 -z-10">
+        <center>
+          <h6 class="relative top-70 custom-font text-6xl">
+            Tech <span class="text-fuchsia-800"> Stack</span>
+          </h6>
+        </center>
+        <div
+          class="flex min-h-screen justify-center items-center flex-col mt-20"
+        >
+          <div class="grid lg:grid-cols-4 gap-35">
+            <div class="flex h-24 items-center justify-center">
+              <img src="../assets/vue.svg" alt="" />
+            </div>
+            <div class="flex h-24 items-center justify-center">
+              <img src="../assets/mongo.svg" alt="" />
+            </div>
+            <div class="flex h-24 items-center justify-center">
+              <img src="../assets/express.svg" alt="" />
+            </div>
+            <div class="flex h-24 items-center justify-center">
+              <img src="../assets/node.svg" alt="" />
+            </div>
+          </div>
+          <div class="grid lg:grid-cols-4 gap-35 mt-20">
+            <div class="flex h-24 items-center justify-center">
+              <img src="../assets/mongoose.svg" alt="" />
+            </div>
+            <div class="flex h-24 items-center justify-center">
+              <img src="../assets/tail.svg" alt="" />
+            </div>
+            <div class="flex h-24 items-center justify-center">
+              <img src="../assets/vite.svg" alt="" />
+            </div>
+            <div class="flex h-24 items-center justify-center">
+              <img src="../assets/sol.svg" alt="" />
+            </div>
+          </div>
+          <button
+            class="top-20 relative flex gap-3 cursor-pointer text-fuchsia-800 font-semibold bg-transparent px-7 py-3 rounded-full border-2 border-fuchsia-800 hover:scale-105 duration-200 hover:text-white hover: to-fuchsia-800 hover:from-fuchsia-800 hover:to-fuchsia-200"
+            @click="openDocs"
+          >
+            Read Docs
+          </button>
+        </div>
+      </div>
     </main>
   </div>
 </template>
