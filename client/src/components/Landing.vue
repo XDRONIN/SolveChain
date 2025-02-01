@@ -71,7 +71,7 @@ const scrollToSection = (tab) => {
         </button>
       </div>
     </nav>
-    <main class="h-218 text-white pt-5 popins-font">
+    <main class="h-218 text-white pt-5 popins-font scrollbar-hide">
       <center>
         <div>
           <h4 class="text-8xl custom-font">
@@ -193,7 +193,39 @@ const scrollToSection = (tab) => {
       <div
         class="min-h-screen relative top-111 inset-0 bg-gradient3 -z-10 content-block"
         id="Community"
-      ></div>
+      >
+        <div class="w-full h-screen flex justify-center items-center">
+          <div class="grid grid-cols-4 grid-rows-5 h-full w-full gap-5 p-5">
+            <div
+              class="backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-2 flex justify-center rounded-2xl"
+            ></div>
+            <div
+              class="backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-2 row-span-2 flex justify-center rounded-2xl"
+            ></div>
+            <div
+              class="backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-1 flex justify-center rounded-2xl"
+            ></div>
+            <div
+              class="backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-1 flex justify-center rounded-2xl"
+            ></div>
+            <div
+              class="backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-2 flex justify-center rounded-2xl"
+            ></div>
+            <div
+              class="backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-3 flex justify-center rounded-2xl"
+            ></div>
+            <div
+              class="backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-3 flex justify-center rounded-2xl"
+            ></div>
+            <div
+              class="backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-2 flex justify-center rounded-2xl"
+            ></div>
+            <div
+              class="backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-1 flex justify-center rounded-2xl"
+            ></div>
+          </div>
+        </div>
+      </div>
       <div
         class="min-h-screen relative top-111 inset-0 bg-gradient4 -z-10 content-block"
         id="How it works"
@@ -202,6 +234,12 @@ const scrollToSection = (tab) => {
   </div>
 </template>
 <style scoped>
+body {
+  overflow-y: hidden;
+}
+::-webkit-scrollbar {
+  display: none; /* Hides the scrollbar */
+}
 @font-face {
   font-family: "MyCustomFont";
   src: url("../public/fonts/BebasNeue-Regular.ttf") format("truetype");
