@@ -274,7 +274,18 @@ const scrollToSection = (tab) => {
             <div
               class="backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-2 flex justify-center rounded-2xl"
             >
-              <p>Reward System: Earn SkillTokens for your contributions</p>
+              <p class="text-2xl font-bold">
+                Earn
+                <span
+                  class="bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent"
+                  >SolveCoin</span
+                >
+                for your each contributions
+              </p>
+              <img
+                src="../assets/holo-7.png"
+                class="absolute h-60 w-60 top-20"
+              />
             </div>
             <div
               class="items-center backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-1 flex justify-center rounded-2xl"
