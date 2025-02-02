@@ -234,17 +234,29 @@ const scrollToSection = (tab) => {
               </p>
             </div>
             <div
-              class="backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-3 flex justify-center rounded-2xl"
+              class="text-center backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-3 flex justify-center rounded-2xl"
             >
-              Access a growing repository of innovative solutions, case studies,
-              and expert insights contributed by the community.
+              <p class="text-3xl font-bold">
+                Access a growing repository of innovative solutions, case
+                studies, and expert insights contributed by the community.
+              </p>
+              <img
+                src="../assets/Cube.png"
+                alt=""
+                class="absolute h-80 w-80 top-46"
+              />
             </div>
             <div
               class="backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-3 flex justify-center rounded-2xl"
             >
-              “SolveChain connected me to experts who helped me tackle a
-              critical business challenge. A must-have platform for innovators!”
-              — John D., Entrepreneur
+              <p class="text-4xl font-extrabold">
+                “SolveChain connected me to experts who helped me tackle a
+                critical business challenge. A must-have platform for
+                innovators!” <br />—
+                <span class="text-fuchsia-900">John Doe</span>
+
+                <img src="../assets/avatars.png" alt="" class="mt-5" />
+              </p>
             </div>
             <div
               class="backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-2 flex justify-center rounded-2xl"
