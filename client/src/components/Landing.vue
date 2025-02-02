@@ -197,16 +197,26 @@ const scrollToSection = (tab) => {
         <div class="w-full h-screen flex justify-center items-center">
           <div class="grid grid-cols-4 grid-rows-5 h-full w-full gap-5 p-5">
             <div
-              class="backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-2 flex justify-center rounded-2xl"
+              class="p-5 backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] col-span-1 row-span-2 flex justify-center rounded-2xl"
             >
-              <p>100+ Problems are getting solved every day</p>
+              <p class="mt-5 font-bold text-4xl">
+                <span
+                  class="text-8xl font-bold bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent"
+                  >100+</span
+                ><br />
+                Problems are getting solved every day
+              </p>
             </div>
             <div
               class="backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-2 row-span-2 flex justify-start rounded-2xl"
             >
               <h2 class="mt-20 text-7xl custom-font">
                 Join The
-                <u class="text-fuchsia-900"> Problem-<br />Solving</u>
+                <span
+                  class="bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent underline"
+                >
+                  Problem-<br />Solving</span
+                >
                 Revolution
               </h2>
 
@@ -253,7 +263,10 @@ const scrollToSection = (tab) => {
                 “SolveChain connected me to experts who helped me tackle a
                 critical business challenge. A must-have platform for
                 innovators!” <br />—
-                <span class="text-fuchsia-900">John Doe</span>
+                <span
+                  class="bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent"
+                  >John Doe</span
+                >
 
                 <img src="../assets/avatars.png" alt="" class="mt-5" />
               </p>
