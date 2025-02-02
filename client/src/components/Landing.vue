@@ -208,7 +208,7 @@ const scrollToSection = (tab) => {
               </p>
             </div>
             <div
-              class="backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-2 row-span-2 flex justify-start rounded-2xl"
+              class="overflow-clip backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-2 row-span-2 flex justify-start rounded-2xl"
             >
               <h2 class="mt-20 text-7xl custom-font">
                 Join The
@@ -220,40 +220,62 @@ const scrollToSection = (tab) => {
                 Revolution
               </h2>
 
-              <img src="../assets/image.png" class="h-70 ml-20" />
+              <img
+                src="../assets/image.png"
+                class="absolute left-120 h-120 w-120"
+              />
             </div>
             <div
-              class="backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-1 flex justify-center rounded-2xl"
+              class="text-center backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-1 flex justify-center rounded-2xl"
             >
-              <p>
-                Members from diverse fields like technology, business, science,
-                and education
+              <p class="text-2xl font-bold">
+                Members from
+                <span
+                  class="bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent"
+                  >diverse fields</span
+                >
+                like technology, business, science, and education
               </p>
             </div>
             <div
-              class="backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-1 flex justify-center rounded-2xl"
+              class="text-center backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-1 flex justify-center rounded-2xl"
             >
-              Work with trusted experts who deliver high-quality solutions.
+              <p class="text-2xl font-bold">
+                Work with trusted experts who deliver<span
+                  class="bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent"
+                >
+                  high-quality solutions.</span
+                >
+              </p>
             </div>
             <div
-              class="backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-2 flex justify-center rounded-2xl"
+              class="overflow-clip backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-2 flex justify-center rounded-2xl"
             >
-              <p>
-                Solve problems and connect with collaborators from over 50+
+              <p class="text-2xl font-bold">
+                Solve problems and connect with collaborators from over<span
+                  class="bg-gradient-to-r from-purple-400 to-pink-600 bg-clip-text text-transparent"
+                >
+                  50+</span
+                >
                 countries
               </p>
+              <img
+                src="../assets/cyan_pink-View 3.png"
+                alt=""
+                class="absolute top-30 h-100 w-100"
+              />
             </div>
             <div
-              class="text-center backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-3 flex justify-center rounded-2xl"
+              class="overflow-clip text-center backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-3 flex justify-center rounded-2xl"
             >
               <p class="text-3xl font-bold">
                 Access a growing repository of innovative solutions, case
                 studies, and expert insights contributed by the community.
               </p>
               <img
-                src="../assets/Cube.png"
+                src="../assets/Group 134.png"
                 alt=""
-                class="absolute h-80 w-80 top-46"
+                class="absolute h-90 w-90 top-56"
               />
             </div>
             <div
@@ -284,7 +306,7 @@ const scrollToSection = (tab) => {
               </p>
               <img
                 src="../assets/holo-7.png"
-                class="absolute h-60 w-60 top-20"
+                class="absolute h-90 w-90 top-20"
               />
             </div>
             <div
