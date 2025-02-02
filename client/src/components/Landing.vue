@@ -277,9 +277,13 @@ const scrollToSection = (tab) => {
               <p>Reward System: Earn SkillTokens for your contributions</p>
             </div>
             <div
-              class="backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-1 flex justify-center rounded-2xl"
+              class="items-center backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-1 flex justify-center rounded-2xl"
             >
-              <button>Join the Community</button>
+              <button
+                class="items-center relative h-20 flex gap-3 cursor-pointer text-white bg-gradient-to-r from-purple-400 to-pink-600 px-7 py-3 rounded-full border border-black hover:scale-105 duration-200 hover:text-white hover:border-gray-800 hover:from-pink-600 hover:to-purple-400 before:absolute before:top-[-2px] before:left-[-2px] before:right-[-2px] before:bottom-[1px] before:rounded-full before:bg-gradient-to-r before:from-purple-400 before:to-pink-600 before:blur-md before:opacity-50 before:z-[-1] font-bold"
+              >
+                Join the Community
+              </button>
             </div>
           </div>
         </div>
