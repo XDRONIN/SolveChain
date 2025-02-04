@@ -322,12 +322,13 @@ const scrollToSection = (tab) => {
         </div>
       </div>
       <div
-        class="min-h-screen relative top-111 inset-0 bg-gradient4 -z-10 content-block"
+        class="min-h-screen relative top-111 inset-0 bg-gradient4 -z-10 content-block overflow-clip"
         id="How it works"
       >
+        <img src="../assets/Cube6 - Transparent.png " class="absolute" />
         <div class="h-screen">
           <div
-            class="pl-2 relative h-60 w-190 top-50 left-40 border-white dark:border-white/10 rounded-xl bg-white/30 dark:bg-black/10 shadow-2xl shadow-indigo-950/5 flex items-center"
+            class="pl-2 relative h-60 w-190 top-50 left-40 bg-[rgba(17,25,40,0.49)] border border-[rgba(255,255,255,0.125)] rounded-2xl backdrop-blur-[25px] backdrop-saturate-[180%] p-4 shadow-lg flex items-center"
           >
             <div
               class="items-center rounded-full backdrop-blur-[12px] backdrop-saturate-[162%] bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.125)] min-h-40 min-w-40 flex justify-center custom-font font-bold text-7xl"
@@ -345,7 +346,7 @@ const scrollToSection = (tab) => {
             </p>
           </div>
           <div
-            class="pl-2 flex items-center relative h-50 w-190 top-50 left-270 border-white dark:border-white/10 rounded-xl bg-white/30 dark:bg-black/10 shadow-2xl shadow-indigo-950/5"
+            class="pl-2 flex items-center relative h-60 w-190 top-50 left-270 bg-[rgba(17,25,40,0.49)] border border-[rgba(255,255,255,0.125)] rounded-2xl backdrop-blur-[25px] backdrop-saturate-[180%] p-4 shadow-lg"
           >
             <div
               class="items-center rounded-full backdrop-blur-[12px] backdrop-saturate-[162%] bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.125)] min-h-40 min-w-40 flex justify-center custom-font font-bold text-7xl"
@@ -366,7 +367,7 @@ const scrollToSection = (tab) => {
             </p>
           </div>
           <div
-            class="pl-2 flex items-center relative h-50 w-190 top-60 left-40 border-white dark:border-white/10 rounded-xl bg-white/30 dark:bg-black/10 shadow-2xl shadow-indigo-950/5"
+            class="pl-2 flex items-center relative h-60 w-190 top-40 left-40 bg-[rgba(17,25,40,0.49)] border border-[rgba(255,255,255,0.125)] rounded-2xl backdrop-blur-[25px] backdrop-saturate-[180%] p-4 shadow-lg"
           >
             <div
               class="items-center rounded-full backdrop-blur-[12px] backdrop-saturate-[162%] bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.125)] min-h-40 min-w-40 flex justify-center custom-font font-bold text-7xl"
