@@ -324,7 +324,70 @@ const scrollToSection = (tab) => {
       <div
         class="min-h-screen relative top-111 inset-0 bg-gradient4 -z-10 content-block"
         id="How it works"
-      ></div>
+      >
+        <div class="h-screen">
+          <div
+            class="pl-2 relative h-60 w-190 top-50 left-40 border-white dark:border-white/10 rounded-xl bg-white/30 dark:bg-black/10 shadow-2xl shadow-indigo-950/5 flex items-center"
+          >
+            <div
+              class="items-center rounded-full backdrop-blur-[12px] backdrop-saturate-[162%] bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.125)] min-h-40 min-w-40 flex justify-center custom-font font-bold text-7xl"
+            >
+              <p
+                class="bg-gradient-to-r from-fuchsia-700 to-fuchsia-400 bg-clip-text text-transparent"
+              >
+                1
+              </p>
+            </div>
+            <p class="popins-font text-2xl ml-2">
+              <span class="text-fuchsia-900 font-bold">Post a Problem:</span>
+              Have a problem that needs solving? Submit a challenge, describing
+              the issue in detail using images,videos etc.
+            </p>
+          </div>
+          <div
+            class="pl-2 flex items-center relative h-50 w-190 top-50 left-270 border-white dark:border-white/10 rounded-xl bg-white/30 dark:bg-black/10 shadow-2xl shadow-indigo-950/5"
+          >
+            <div
+              class="items-center rounded-full backdrop-blur-[12px] backdrop-saturate-[162%] bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.125)] min-h-40 min-w-40 flex justify-center custom-font font-bold text-7xl"
+            >
+              <p
+                class="bg-gradient-to-r from-fuchsia-700 to-fuchsia-400 bg-clip-text text-transparent"
+              >
+                2
+              </p>
+            </div>
+            <p class="popins-font text-2xl ml-2">
+              <span class="text-fuchsia-900 font-bold"
+                >Experts & Community Respond</span
+              >
+              Experts and community members analyze your challenge and submit
+              solutions in various formats: Step-by-Step Guides, Videos & Live
+              Sessions, Code Snippets & Technical Solutions
+            </p>
+          </div>
+          <div
+            class="pl-2 flex items-center relative h-50 w-190 top-60 left-40 border-white dark:border-white/10 rounded-xl bg-white/30 dark:bg-black/10 shadow-2xl shadow-indigo-950/5"
+          >
+            <div
+              class="items-center rounded-full backdrop-blur-[12px] backdrop-saturate-[162%] bg-[rgba(255,255,255,0.1)] border border-[rgba(255,255,255,0.125)] min-h-40 min-w-40 flex justify-center custom-font font-bold text-7xl"
+            >
+              <p
+                class="bg-gradient-to-r from-fuchsia-700 to-fuchsia-400 bg-clip-text text-transparent"
+              >
+                3
+              </p>
+            </div>
+            <p class="popins-font text-2xl ml-2">
+              <span class="text-fuchsia-900 font-bold"
+                >Earn & Reward with Blockchain</span
+              >
+              Once a challenge is solved, the solver earns blockchain based
+              SkillCoinss, which can be used trade in the ecosystem. As platform
+              grows so does the value of the coin
+            </p>
+          </div>
+        </div>
+      </div>
     </main>
   </div>
 </template>
