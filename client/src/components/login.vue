@@ -41,7 +41,7 @@
 }
 
 .input-group input:focus {
-  border-color: rgba(167, 139, 250);
+  border-color: #9a46a0;
 }
 
 .forgot {
@@ -68,7 +68,7 @@
 .sign {
   display: block;
   width: 100%;
-  background-color: rgba(167, 139, 250, 1);
+  background-color: #9a46a0;
   padding: 1.05rem;
   text-align: center;
   color: rgba(17, 24, 39, 1);
