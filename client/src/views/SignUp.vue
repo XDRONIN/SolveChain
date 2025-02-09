@@ -12,7 +12,10 @@
         @load="onImageLoad"
       />
       <div class="relative left-300 flex items-center">
-        <login />
+        <login v-if="$route.query.type == 'login'" />
+      </div>
+      <div class="relative left-272">
+        <Signup v-if="$route.query.type == 'signup'" />
       </div>
     </div>
   </div>
@@ -35,6 +38,8 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import Signup from "../components/Signup.vue";
+
 import login from "../components/login.vue";
 
 const image = ref(null);

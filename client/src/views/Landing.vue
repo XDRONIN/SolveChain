@@ -14,7 +14,7 @@ const toSignup = () => {
   router.push({ path: "/signUp", query: { type: "signup" } });
 };
 const toLogin = () => {
-  router.push({ path: "/signUp", query: { type: "signup" } });
+  router.push({ path: "/signUp", query: { type: "login" } });
 };
 // Function to update active tab based on scroll position
 const updateActiveTab = () => {
@@ -99,7 +99,7 @@ const scrollToSection = (tab) => {
 
         <div class="flex flex-row justify-center pt-2">
           <button
-            @click="toSignup()"
+            @click="toLogin()"
             class="relative flex gap-3 cursor-pointer text-white font-semibold bg-gradient-to-r from-fuchsia-300 to-fuchsia-800 px-7 py-3 rounded-full border border-black hover:scale-105 duration-200 hover:text-white hover:border-gray-800 hover:from-fuchsia-800 hover:to-fuchsia-400 before:absolute before:top-[-2px] before:left-[-2px] before:right-[-2px] before:bottom-[1px] before:rounded-full before:bg-gradient-to-r before:from-fuchsia-400 before:to-fuchsia-800 before:blur-md before:opacity-50 before:z-[-1]"
           >
             Get Started >

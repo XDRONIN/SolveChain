@@ -138,7 +138,7 @@
           <a rel="noopener noreferrer" href="#">Forgot Password ?</a>
         </div>
       </div>
-      <button class="sign">Sign in</button>
+      <button class="hover:bg-purple-700 sign">Sign in</button>
     </form>
     <div class="social-message">
       <div class="line"></div>
