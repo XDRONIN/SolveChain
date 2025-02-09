@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
+
 import router from "../router";
 const tabs = ["Home", "Docs", "Community", "How it works"];
 const activeTab = ref("Home");

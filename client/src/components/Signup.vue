@@ -1,6 +1,6 @@
 <template>
-  <div class="max-w-3xl bg-gray-900 text-white rounded-2xl mt-12">
-    <h2 class="text-3xl font-bold text-center mb-6">Sign Up</h2>
+  <div class="max-w-3xl bg-gray-900 text-white rounded-2xl mt-8 ml-11">
+    <h2 class="text-3xl font-bold text-center mb-8 mt-20">Sign Up</h2>
     <form @submit.prevent="handleSubmit" class="grid grid-cols-2 gap-6">
       <div v-for="(field, index) in fields" :key="index" class="flex flex-col">
         <label
@@ -65,7 +65,7 @@
         </button>
         <p class="text-center text-lg">
           Already have an account?
-          <a @click="toLogin" class="text-[#9a46a0] hover:underline">Login</a>
+          <a @click="toLogin()" class="text-[#9a46a0] hover:underline">Login</a>
         </p>
       </div>
     </form>
@@ -75,6 +75,13 @@
 <script setup>
 import { ref } from "vue";
 import router from "../router";
+import { auth, db } from "../fireInit";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
+
 const toLogin = () => {
   router.push({ path: "/signUp", query: { type: "login" } });
 };
@@ -87,7 +94,6 @@ const form = ref({
   password: "",
   areaOfInterest: "",
   fieldOfExpertise: "",
-  verificationDocuments: null,
 });
 
 const fields = ref([
@@ -101,21 +107,41 @@ const fields = ref([
     label: "Area of Interest",
     type: "select",
     options: [
-      "Web Development",
-      "Cybersecurity",
-      "Cloud Computing",
-      "Blockchain",
+      "Tech",
+      "Mechanical",
+      "Electrical",
+      "Medical",
+      "Law",
+      "Everyday Skills",
+      "Others",
     ],
   },
-  {
-    id: "fieldOfExpertise",
-    label: "Field of Expertise (Optional)",
-    type: "text",
-  },
+  { id: "fieldOfExpertise", label: "Field Of Expertise", type: "text" },
 ]);
 
-const handleSubmit = () => {
-  console.log("Form submitted", form.value);
+const handleSubmit = async () => {
+  try {
+    // Create user in Firebase Authentication
+    const userCredential = await createUserWithEmailAndPassword(
+      auth,
+      form.value.email,
+      form.value.password
+    );
+    const user = userCredential.user;
+    await setDoc(doc(db, "users", user.uid), {
+      firstName: form.value.firstName,
+      lastName: form.value.lastName,
+      email: form.value.email,
+      username: form.value.username,
+      areaOfInterest: form.value.areaOfInterest,
+      fieldOfExpertise: form.value.fieldOfExpertise,
+      createdAt: new Date(),
+    });
+
+    alert("User registered successfully!");
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const handleFileUpload = (event) => {

@@ -160,9 +160,7 @@
     </div>
     <p class="signup">
       Don't have an account?
-      <a rel="noopener noreferrer" href="#" class="" @click="toSignup"
-        >Sign up</a
-      >
+      <a @click="toSignup">Sign up</a>
     </p>
   </div>
 </template>
