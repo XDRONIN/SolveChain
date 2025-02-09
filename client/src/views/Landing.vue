@@ -2,7 +2,6 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import router from "../router";
-import SignUp from "./SignUp.vue";
 const tabs = ["Home", "Docs", "Community", "How it works"];
 const activeTab = ref("Home");
 const openDocs = () => {
@@ -10,6 +9,10 @@ const openDocs = () => {
     "https://github.com/XDRONIN/SolveChain/blob/main/README.md",
     "_blank"
   );
+};
+const toHiw = () => {
+  activeTab.value = "How it works";
+  scrollToSection("How it works");
 };
 const toSignup = () => {
   router.push({ path: "/signUp", query: { type: "signup" } });
@@ -109,6 +112,7 @@ const scrollToSection = (tab) => {
 
           <div class="w-6"></div>
           <button
+            @click="toHiw"
             class="relative flex gap-3 cursor-pointer text-fuchsia-800 font-semibold bg-transparent px-7 py-3 rounded-full border-2 border-fuchsia-800 hover:scale-105 duration-200 hover:text-white hover: to-fuchsia-800 hover:from-fuchsia-800 hover:to-fuchsia-200"
           >
             How It Works
