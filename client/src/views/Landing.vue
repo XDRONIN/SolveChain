@@ -2,6 +2,7 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import { useRouter } from "vue-router";
 import router from "../router";
+import SignUp from "./SignUp.vue";
 const tabs = ["Home", "Docs", "Community", "How it works"];
 const activeTab = ref("Home");
 const openDocs = () => {
@@ -73,6 +74,7 @@ const scrollToSection = (tab) => {
       </div>
       <div>
         <button
+          @click="toLogin()"
           class="relative text-center flex cursor-pointer text-fuchsia-700 font-semibold bg-transparent px-7 py-3 rounded-full border-2 border-fuchsia-700 hover:scale-105 duration-200 hover:text-white hover: to-fuchsia-800 hover:from-fuchsia-800 hover:to-fuchsia-200 before:rounded-full before:bg-gradient-to-r before:from-fuchsia-400 before:to-fuchsia-800 before:blur-md before:opacity-50 before:z-[-1]"
         >
           Sign In
@@ -99,7 +101,7 @@ const scrollToSection = (tab) => {
 
         <div class="flex flex-row justify-center pt-2">
           <button
-            @click="toLogin()"
+            @click="toSignup()"
             class="relative flex gap-3 cursor-pointer text-white font-semibold bg-gradient-to-r from-fuchsia-300 to-fuchsia-800 px-7 py-3 rounded-full border border-black hover:scale-105 duration-200 hover:text-white hover:border-gray-800 hover:from-fuchsia-800 hover:to-fuchsia-400 before:absolute before:top-[-2px] before:left-[-2px] before:right-[-2px] before:bottom-[1px] before:rounded-full before:bg-gradient-to-r before:from-fuchsia-400 before:to-fuchsia-800 before:blur-md before:opacity-50 before:z-[-1]"
           >
             Get Started >
@@ -323,6 +325,7 @@ const scrollToSection = (tab) => {
               class="items-center backdrop-blur-0 backdrop-saturate-[94%] bg-[rgba(29,11,53,0.43)] border border-[rgba(255,255,255,0.125)] p-4 col-span-1 row-span-1 flex justify-center rounded-2xl"
             >
               <button
+                @click="toSignup"
                 class="items-center relative h-20 flex gap-3 cursor-pointer text-white bg-gradient-to-r from-purple-400 to-pink-600 px-7 py-3 rounded-full border border-black hover:scale-105 duration-200 hover:text-white hover:border-gray-800 hover:from-pink-600 hover:to-purple-400 before:absolute before:top-[-2px] before:left-[-2px] before:right-[-2px] before:bottom-[1px] before:rounded-full before:bg-gradient-to-r before:from-purple-400 before:to-pink-600 before:blur-md before:opacity-50 before:z-[-1] font-bold"
               >
                 Join the Community

@@ -160,8 +160,15 @@
     </div>
     <p class="signup">
       Don't have an account?
-      <a rel="noopener noreferrer" href="#" class="">Sign up</a>
+      <a rel="noopener noreferrer" href="#" class="" @click="toSignup"
+        >Sign up</a
+      >
     </p>
   </div>
 </template>
-<script setup></script>
+<script setup>
+import router from "../router";
+const toSignup = () => {
+  router.push({ path: "/signUp", query: { type: "signup" } });
+};
+</script>

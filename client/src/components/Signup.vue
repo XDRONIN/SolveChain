@@ -72,7 +72,7 @@
         </button>
         <p class="text-center text-lg">
           Already have an account?
-          <a href="/login" class="text-[#9a46a0] hover:underline">Login</a>
+          <a @click="toLogin" class="text-[#9a46a0] hover:underline">Login</a>
         </p>
       </div>
     </form>
@@ -81,6 +81,10 @@
 
 <script setup>
 import { ref } from "vue";
+import router from "../router";
+const toLogin = () => {
+  router.push({ path: "/signUp", query: { type: "login" } });
+};
 
 const form = ref({
   firstName: "",
