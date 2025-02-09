@@ -26,13 +26,6 @@
             {{ option }}
           </option>
         </select>
-        <input
-          v-if="field.type === 'file'"
-          type="file"
-          :id="field.id"
-          @change="handleFileUpload"
-          class="inpt"
-        />
       </div>
       <div class="col-span-2 flex flex-col gap-4 mt-4">
         <button
@@ -118,11 +111,6 @@ const fields = ref([
     id: "fieldOfExpertise",
     label: "Field of Expertise (Optional)",
     type: "text",
-  },
-  {
-    id: "verificationDocuments",
-    label: "Verification Documents (Optional)",
-    type: "file",
   },
 ]);
 
