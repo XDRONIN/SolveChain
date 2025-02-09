@@ -1,7 +1,5 @@
 <template>
-  <div
-    class="max-w-3xl mx-auto bg-gray-900 text-white p-12 rounded-2xl min-h-[120%]"
-  >
+  <div class="max-w-3xl bg-gray-900 text-white rounded-2xl mt-12">
     <h2 class="text-3xl font-bold text-center mb-6">Sign Up</h2>
     <form @submit.prevent="handleSubmit" class="grid grid-cols-2 gap-6">
       <div v-for="(field, index) in fields" :key="index" class="flex flex-col">
