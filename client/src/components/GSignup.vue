@@ -41,20 +41,23 @@
 
 <script setup>
 import { ref } from "vue";
-import router from "../router";
-import { auth } from "../fireInit";
+import { useRoute, useRouter } from "vue-router";
+import { auth, db } from "../fireInit";
+import { doc, setDoc } from "firebase/firestore";
+const route = useRoute();
+const router = useRouter();
+const { uid, firstName, lastName, email } = route.query;
 
 const form = ref({
-  firstName: "",
-  lastName: "",
+  firstName: firstName,
+  lastName: lastName,
+  email: email,
   username: "",
   areaOfInterest: "",
   fieldOfExpertise: "",
 });
 
 const fields = ref([
-  { id: "firstName", label: "First Name", type: "text" },
-  { id: "lastName", label: "Last Name", type: "text" },
   { id: "username", label: "Username", type: "text" },
   {
     id: "areaOfInterest",
@@ -72,6 +75,23 @@ const fields = ref([
   },
   { id: "fieldOfExpertise", label: "Field Of Expertise", type: "text" },
 ]);
+const handleSubmit = async () => {
+  try {
+    await setDoc(doc(db, "users", uid), {
+      firstName: form.value.firstName,
+      lastName: form.value.lastName,
+      email: form.value.email,
+      username: form.value.username,
+      areaOfInterest: form.value.areaOfInterest,
+      fieldOfExpertise: form.value.fieldOfExpertise,
+      createdAt: new Date(),
+    });
+
+    alert("User registered successfully!");
+  } catch (error) {
+    console.log(error);
+  }
+};
 </script>
 <style scoped>
 .inpt {

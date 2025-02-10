@@ -81,6 +81,8 @@ import {
   signInWithEmailAndPassword,
 } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+const provider = new GoogleAuthProvider();
 
 const toLogin = () => {
   router.push({ path: "/signUp", query: { type: "login" } });
@@ -156,7 +158,26 @@ const handleSubmit = async () => {
 };
 
 const signUpWithGoogle = () => {
-  router.push({ path: "/signUp", query: { type: "GSignup" } });
+  signInWithPopup(auth, provider)
+    .then((result) => {
+      const user = result.user;
+      const uid = user.uid;
+      const email = user.email;
+      const displayName = user.displayName || "";
+      const [firstName, lastName] =
+        displayName.split(" ").length > 1
+          ? displayName.split(" ")
+          : [displayName, ""];
+
+      // Redirect with user details in query parameters
+      router.push({
+        path: "/signUp",
+        query: { type: "GSignup", uid, firstName, lastName, email },
+      });
+    })
+    .catch((error) => {
+      console.error("Google Sign-In Error:", error);
+    });
 };
 </script>
 <style scoped>
