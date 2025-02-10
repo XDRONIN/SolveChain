@@ -126,19 +126,24 @@
 <template>
   <div class="form-container">
     <p class="title">Login</p>
-    <form class="form">
+    <form class="form" @submit.prevent="handleClick">
       <div class="input-group">
-        <label for="username">Username</label>
-        <input type="text" name="username" id="username" placeholder="" />
+        <label for="email">Email</label>
+        <input type="text" name="email" id="email" v-model="email" />
       </div>
       <div class="input-group">
         <label for="password">Password</label>
-        <input type="password" name="password" id="password" placeholder="" />
+        <input
+          type="password"
+          name="password"
+          id="password"
+          v-model="password"
+        />
         <div class="forgot">
-          <a rel="noopener noreferrer" href="#">Forgot Password ?</a>
+          <a href="#">Forgot Password?</a>
         </div>
       </div>
-      <button class="hover:bg-purple-700 sign">Sign in</button>
+      <button type="submit" class="hover:bg-purple-700 sign">Sign in</button>
     </form>
     <div class="social-message">
       <div class="line"></div>
@@ -165,7 +170,27 @@
   </div>
 </template>
 <script setup>
+import { ref } from "vue";
+import { auth } from "../fireInit";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import router from "../router";
+
+const email = ref("");
+const password = ref("");
+
+const handleClick = async () => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(
+      auth,
+      email.value,
+      password.value
+    );
+    console.log("User signed in:", userCredential.user);
+    router.push("/dashboard"); // Redirect user after login
+  } catch (error) {
+    alert("Wrong Credentialls");
+  }
+};
 const toSignup = () => {
   router.push({ path: "/signUp", query: { type: "signup" } });
 };
