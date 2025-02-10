@@ -156,7 +156,7 @@ const handleSubmit = async () => {
 };
 
 const signUpWithGoogle = () => {
-  console.log("Signing up with Google");
+  router.push({ path: "/signUp", query: { type: "GSignup" } });
 };
 </script>
 <style scoped>

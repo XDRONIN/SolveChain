@@ -17,6 +17,9 @@
       <div class="relative left-272">
         <Signup v-if="$route.query.type == 'signup'" />
       </div>
+      <div class="relative left-272">
+        <GSignup v-if="$route.query.type == 'GSignup'" />
+      </div>
     </div>
   </div>
 </template>
@@ -41,6 +44,7 @@ import { ref, onMounted } from "vue";
 import Signup from "../components/Signup.vue";
 
 import login from "../components/login.vue";
+import GSignup from "../components/GSignup.vue";
 
 const image = ref(null);
 
