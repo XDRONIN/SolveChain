@@ -139,13 +139,20 @@ const handleSubmit = async () => {
     });
 
     alert("User registered successfully!");
+    signInWithEmailAndPassword(auth, form.value.email, form.value.password)
+      .then((userCredential) => {
+        // Signed in
+        console.log("signed in");
+        const user = userCredential.user;
+        // ...
+      })
+      .catch((error) => {
+        const errorCode = error.code;
+        const errorMessage = error.message;
+      });
   } catch (error) {
     console.log(error);
   }
-};
-
-const handleFileUpload = (event) => {
-  form.value.verificationDocuments = event.target.files[0];
 };
 
 const signUpWithGoogle = () => {
