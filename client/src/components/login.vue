@@ -151,7 +151,11 @@
       <div class="line"></div>
     </div>
     <div class="social-icons">
-      <button aria-label="Log in with Google" class="icon">
+      <button
+        @click="loginWithGoogle"
+        aria-label="Log in with Google"
+        class="icon hover:cursor-pointer"
+      >
         <svg
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 32 32"
@@ -172,11 +176,39 @@
 <script setup>
 import { ref } from "vue";
 import { auth } from "../fireInit";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { db } from "../fireInit";
+import { doc, getDoc } from "firebase/firestore";
+import {
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  GoogleAuthProvider,
+  signOut,
+} from "firebase/auth";
 import router from "../router";
-
+const provider = new GoogleAuthProvider();
 const email = ref("");
 const password = ref("");
+const loginWithGoogle = async () => {
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    // Check if the user exists in Firestore
+    const userRef = doc(db, "users", user.uid);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      console.log("Login successful:", user);
+      router.push("/dashboard"); // Proceed with login (redirect or update UI)
+    } else {
+      console.log("User not registered. Access denied.");
+      alert("Access denied. You are not registered.");
+      await signOut(auth); // Log the user out if they are not registered
+    }
+  } catch (error) {
+    console.error("Error logging in:", error);
+  }
+};
 
 const handleClick = async () => {
   try {
