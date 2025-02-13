@@ -140,12 +140,13 @@ const handleSubmit = async () => {
       createdAt: new Date(),
     });
 
-    alert("User registered successfully!");
+    // alert("User registered successfully!");
     signInWithEmailAndPassword(auth, form.value.email, form.value.password)
       .then((userCredential) => {
         // Signed in
         console.log("signed in");
         const user = userCredential.user;
+        router.push("/dashboard");
         // ...
       })
       .catch((error) => {

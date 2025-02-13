@@ -87,7 +87,8 @@ const handleSubmit = async () => {
       createdAt: new Date(),
     });
 
-    alert("User registered successfully!");
+    //alert("User registered successfully!");
+    router.push("/dashboard");
   } catch (error) {
     console.log(error);
   }
