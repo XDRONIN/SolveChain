@@ -29,11 +29,11 @@
         </div>
 
         <!-- Post Button -->
-        <button
-          class="mt-4 w-full rounded-full bg-blue-500 p-4 font-bold hover:bg-blue-600"
+        <div
+          class="mt-4 w-full flex gap-3 cursor-pointer text-white font-semibold bg-gradient-to-r from-fuchsia-500 to-fuchsia-800 px-7 py-3 rounded-full border border-black hover:scale-105 duration-200 hover:text-white hover:border-gray-800 hover:from-fuchsia-800 hover:to-fuchsia-500"
         >
-          Post
-        </button>
+          <CircleFadingPlus class="h-7 w-7" />Ask a Question
+        </div>
       </nav>
 
       <!-- Main Content -->
@@ -43,6 +43,33 @@
           class="top-0 border-b border-gray-800 bg-black/80 p-4 flex justify-between items-center"
         >
           <button class="md:hidden text-white" @click="toggleSidebar">☰</button>
+
+          <select
+            name="filter"
+            id="filter"
+            class="md:w-fit sm:w-2 rounded-full border-none outline-none bg-gray-900 pl-2 py-2 text-gray-200 m-2 ml-4"
+          >
+            <option
+              v-for="option in filterOptions"
+              :key="option"
+              :value="option"
+            >
+              {{ option }}
+            </option>
+          </select>
+          <select
+            name="fieldFilter"
+            id="dieldFilter"
+            class="md:w-fit sm:w-2 rounded-full border-none outline-none bg-gray-900 pl-2 py-2 text-gray-200 m-2"
+          >
+            <option
+              v-for="option in fieldOptions"
+              :key="option"
+              :value="option"
+            >
+              {{ option }}
+            </option>
+          </select>
           <div class="relative w-full max-w-lg mx-auto flex-1">
             <input
               type="search"
@@ -50,14 +77,14 @@
               class="w-full rounded-full bg-gray-900 p-3 pl-4 outline-none"
             />
           </div>
-          <div class="flex">
+          <div class="flex mr-2">
             <button
-              class="text-center flex cursor-pointer text-fuchsia-700 md:font-semibold bg-transparent md:px-2 md:py-1 rounded-full border-2 border-fuchsia-700 hover:scale-105 duration-200 hover:text-white hover: to-fuchsia-800 hover:from-fuchsia-800 hover:to-fuchsia-200 before:rounded-full before:bg-gradient-to-r before:from-fuchsia-400 before:to-fuchsia-800 before:blur-md before:opacity-50 before:z-[-1] mr-5"
+              class="text-center flex cursor-pointer text-fuchsia-700 md:font-semibold bg-transparent md:px-2 md:py-2 rounded-full border-2 border-fuchsia-700 hover:scale-105 duration-200 hover:text-white hover: to-fuchsia-800 hover:from-fuchsia-800 hover:to-fuchsia-200 before:rounded-full before:bg-gradient-to-r before:from-fuchsia-400 before:to-fuchsia-800 before:blur-md before:opacity-50 before:z-[-1] mr-5"
             >
               Connect Wallet
             </button>
-            <User class="h-7 w-7" />
           </div>
+          <User class="h-7 w-7 mr-4" />
         </header>
 
         <!-- Feed -->
@@ -99,23 +126,29 @@
         class="hidden md:block relative right-0 top-0 h-screen w-80 border-l border-gray-800 p-4 bg-black"
       >
         <!-- Premium Card -->
-        <div class="mt-4 rounded-xl bg-gray-900 p-4">
-          <h2 class="text-xl font-bold">Subscribe to Premium</h2>
-          <p class="mt-2 text-sm text-gray-300">
-            Subscribe to unlock new features and if eligible, receive a share of
-            revenue.
-          </p>
-          <button
-            class="mt-4 rounded-full bg-blue-500 px-4 py-2 font-bold hover:bg-blue-600"
-          >
-            Subscribe
-          </button>
+        <div class="mt-4 rounded-xl bg-gray-900 p-4 pr-6 flex flex-col">
+          <h2 class="text-xl font-bold mb-3 ml-2">Top Solvers</h2>
+          <div v-for="solvers in TopSolvers" :key="solvers.username">
+            <div
+              class="flex h-20 w-full bg-gray-800 rounded-2xl m-1 gap-2 items-center p-6"
+            >
+              <User class="h-7 w-7" />
+              <p>
+                {{ solvers.username }}<br />
+                <span class="text-gray-500">
+                  {{ solvers.fieldOfExpectise }}</span
+                >
+              </p>
+            </div>
+          </div>
         </div>
 
         <!-- What's happening -->
         <div class="mt-4 rounded-xl bg-gray-900 p-4">
-          <h2 class="text-xl font-bold">What's happening</h2>
-          <div class="mt-4 space-y-4">
+          <h2 class="text-xl font-bold">Hot now</h2>
+          <Flame class="w-7 h-7 relative -top-10 left-16" />
+
+          <div class="mt-3 space-y-4">
             <div v-for="trend in trends" :key="trend.id">
               <div class="text-sm text-gray-500">{{ trend.category }}</div>
               <div class="font-bold">{{ trend.title }}</div>
@@ -133,21 +166,24 @@ import { ref } from "vue";
 
 import {
   Home,
-  Search,
+  Flame,
+  TrendingUp,
   Bell,
-  Mail,
-  Bookmark,
+  CircleCheckBig,
+  CircleFadingPlus,
+  CircleHelp,
   Users,
   User,
 } from "lucide-vue-next";
 
 const navItems = [
   { name: "Home", icon: Home },
-  { name: "Explore", icon: Search },
+  { name: "Trending", icon: TrendingUp },
   { name: "Notifications", icon: Bell },
-  { name: "Messages", icon: Mail },
-  { name: "Bookmarks", icon: Bookmark },
-  { name: "Communities", icon: Users },
+  { name: "Discussions", icon: Users },
+  { name: "My Questions", icon: CircleHelp },
+
+  { name: "My Solutions", icon: CircleCheckBig },
 ];
 
 const posts = ref([
@@ -164,6 +200,30 @@ const posts = ref([
     views: "8.5M",
   },
   // Add more posts as needed
+]);
+const filterOptions = ref(["New", "Popular", "Unsolved", "Solved"]);
+const fieldOptions = ref([
+  "Tech",
+  "Mechanical",
+  "Electrical",
+  "Medical",
+  "Law",
+  "Everyday Skills",
+  "All",
+]);
+const TopSolvers = ref([
+  {
+    username: "xyz",
+    fieldOfExpectise: "Web Developer",
+  },
+  {
+    username: "another",
+    fieldOfExpectise: "Mechanic",
+  },
+  {
+    username: "AnotherOne",
+    fieldOfExpectise: "Teacher",
+  },
 ]);
 const isSidebarOpen = ref(false);
 const toggleSidebar = () => {
