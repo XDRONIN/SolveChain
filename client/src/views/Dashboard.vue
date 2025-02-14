@@ -127,7 +127,8 @@
       >
         <!-- Premium Card -->
         <div class="mt-4 rounded-xl bg-gray-900 p-4 pr-6 flex flex-col">
-          <h2 class="text-xl font-bold mb-3 ml-2">Top Solvers</h2>
+          <h2 class="text-xl font-bold mb-0 ml-2">Top Solvers</h2>
+          <Trophy class="w-7 h-7 relative -top-7 left-31" />
           <div v-for="solvers in TopSolvers" :key="solvers.username">
             <div
               class="flex h-20 w-full bg-gray-800 rounded-2xl m-1 gap-2 items-center p-6"
@@ -146,15 +147,28 @@
         <!-- What's happening -->
         <div class="mt-4 rounded-xl bg-gray-900 p-4">
           <h2 class="text-xl font-bold">Hot now</h2>
-          <Flame class="w-7 h-7 relative -top-10 left-16" />
+          <Flame class="w-7 h-7 relative -top-8 left-21" />
 
-          <div class="mt-3 space-y-4">
+          <div class="space-y-4">
             <div v-for="trend in trends" :key="trend.id">
-              <div class="text-sm text-gray-500">{{ trend.category }}</div>
-              <div class="font-bold">{{ trend.title }}</div>
-              <div class="text-sm text-gray-500">{{ trend.posts }} posts</div>
+              <div class="text-sm text-gray-500">{{ trend.field }}</div>
+              <div class="font-bold">{{ trend.tag }}</div>
+              <div class="text-sm text-gray-500">
+                {{ trend.questions }} Questions
+              </div>
             </div>
           </div>
+        </div>
+        <div class="mt-4 rounded-xl bg-gray-900 p-4 pr-6 flex flex-col mb-0">
+          <p class="text-xl font-bold">
+            SolveCoins Paid<br />
+
+            <span
+              class="bg-gradient-to-r from-fuchsia-400 to-fuchsia-600 bg-clip-text text-transparent mt-0"
+              >{{ noQuestions }}</span
+            >
+          </p>
+          <Coins class="w-7 h-7 relative -top-15 left-39 m-0 p-0" />
         </div>
       </aside>
     </div>
@@ -168,9 +182,11 @@ import {
   Home,
   Flame,
   TrendingUp,
+  Coins,
   Bell,
   CircleCheckBig,
   CircleFadingPlus,
+  Trophy,
   CircleHelp,
   Users,
   User,
@@ -201,6 +217,7 @@ const posts = ref([
   },
   // Add more posts as needed
 ]);
+const noQuestions = ref("2,00,000");
 const filterOptions = ref(["New", "Popular", "Unsolved", "Solved"]);
 const fieldOptions = ref([
   "Tech",
@@ -232,21 +249,21 @@ const toggleSidebar = () => {
 const trends = ref([
   {
     id: 1,
-    category: "Trending in India",
-    title: "#DisasterLaila",
-    posts: "136K",
+    field: "tech",
+    tag: "#Deepseek",
+    questions: "136K",
   },
   {
     id: 2,
-    category: "Entertainment · Trending",
-    title: "#JioHotstar",
-    posts: "2,361",
+    field: "tech",
+    tag: "#iphone13",
+    questions: "2,361",
   },
   {
     id: 3,
-    category: "Trending in India",
-    title: "#ValentinesDay",
-    posts: "544K",
+    field: "Relationship",
+    tag: "#ValentinesDay",
+    questions: "544K",
   },
 ]);
 </script>
