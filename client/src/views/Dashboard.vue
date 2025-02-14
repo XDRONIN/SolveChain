@@ -12,22 +12,12 @@
       >
         <!-- Logo -->
         <div class="mb-4 flex justify-between items-center">
-          <svg
-            viewBox="0 0 24 24"
-            class="h-8 w-8 text-white"
-            fill="currentColor"
-          >
-            <g>
-              <path
-                d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"
-              ></path>
-            </g>
-          </svg>
+          <img src="../assets/logo2.png" alt="" class="w-40" />
           <button class="md:hidden text-white" @click="toggleSidebar">✖</button>
         </div>
 
         <!-- Navigation Items -->
-        <div class="space-y-4">
+        <div class="space-y-4 mt-10">
           <button
             v-for="item in navItems"
             :key="item.name"
@@ -53,12 +43,20 @@
           class="top-0 border-b border-gray-800 bg-black/80 p-4 flex justify-between items-center"
         >
           <button class="md:hidden text-white" @click="toggleSidebar">☰</button>
-          <div class="relative w-full max-w-lg mx-auto">
+          <div class="relative w-full max-w-lg mx-auto flex-1">
             <input
               type="search"
               placeholder="Search"
               class="w-full rounded-full bg-gray-900 p-3 pl-4 outline-none"
             />
+          </div>
+          <div class="flex">
+            <button
+              class="text-center flex cursor-pointer text-fuchsia-700 md:font-semibold bg-transparent md:px-2 md:py-1 rounded-full border-2 border-fuchsia-700 hover:scale-105 duration-200 hover:text-white hover: to-fuchsia-800 hover:from-fuchsia-800 hover:to-fuchsia-200 before:rounded-full before:bg-gradient-to-r before:from-fuchsia-400 before:to-fuchsia-800 before:blur-md before:opacity-50 before:z-[-1] mr-5"
+            >
+              Connect Wallet
+            </button>
+            <User class="h-7 w-7" />
           </div>
         </header>
 
@@ -132,6 +130,7 @@
 
 <script setup>
 import { ref } from "vue";
+
 import {
   Home,
   Search,
@@ -149,7 +148,6 @@ const navItems = [
   { name: "Messages", icon: Mail },
   { name: "Bookmarks", icon: Bookmark },
   { name: "Communities", icon: Users },
-  { name: "Profile", icon: User },
 ];
 
 const posts = ref([
