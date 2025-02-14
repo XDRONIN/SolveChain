@@ -1,11 +1,17 @@
 <template>
   <div class="min-h-screen bg-black text-white">
     <!-- Main Layout -->
-    <div class="flex">
+    <div class="flex flex-col md:flex-row">
       <!-- Left Sidebar -->
-      <nav class="fixed h-screen w-64 border-r border-gray-800 p-4">
+      <nav
+        class="fixed inset-y-0 left-0 w-64 border-r border-gray-800 p-4 bg-black md:static md:block md:h-screen transition-transform transform md:translate-x-0 z-10"
+        :class="{
+          '-translate-x-full': !isSidebarOpen,
+          'translate-x-0': isSidebarOpen,
+        }"
+      >
         <!-- Logo -->
-        <div class="mb-4">
+        <div class="mb-4 flex justify-between items-center">
           <svg
             viewBox="0 0 24 24"
             class="h-8 w-8 text-white"
@@ -17,6 +23,7 @@
               ></path>
             </g>
           </svg>
+          <button class="md:hidden text-white" @click="toggleSidebar">✖</button>
         </div>
 
         <!-- Navigation Items -->
@@ -40,52 +47,23 @@
       </nav>
 
       <!-- Main Content -->
-      <main class="ml-64 flex-1">
+      <main class="flex-1 flex flex-col bg-black md:max-w-336">
         <!-- Header -->
         <header
-          class="sticky top-0 border-b border-gray-800 bg-black/80 backdrop-blur"
+          class="top-0 border-b border-gray-800 bg-black/80 p-4 flex justify-between items-center"
         >
-          <div class="flex">
-            <button class="flex-1 p-4 hover:bg-gray-900">For you</button>
-            <button class="flex-1 p-4 hover:bg-gray-900">Following</button>
+          <button class="md:hidden text-white" @click="toggleSidebar">☰</button>
+          <div class="relative w-full max-w-lg mx-auto">
+            <input
+              type="search"
+              placeholder="Search"
+              class="w-full rounded-full bg-gray-900 p-3 pl-4 outline-none"
+            />
           </div>
         </header>
 
-        <!-- Post Composer -->
-        <div class="border-b border-gray-800 p-4">
-          <div class="flex gap-4">
-            <div class="h-10 w-10 rounded-full bg-gray-600"></div>
-            <div class="flex-1">
-              <input
-                type="text"
-                placeholder="What is happening?!"
-                class="w-full bg-transparent p-2 text-xl outline-none"
-              />
-              <div class="mt-4 flex items-center justify-between">
-                <div class="flex gap-2">
-                  <button
-                    v-for="action in postActions"
-                    :key="action.name"
-                    class="rounded-full p-2 hover:bg-blue-500/20"
-                  >
-                    <component
-                      :is="action.icon"
-                      class="h-5 w-5 text-blue-500"
-                    />
-                  </button>
-                </div>
-                <button
-                  class="rounded-full bg-blue-500 px-4 py-2 font-bold hover:bg-blue-600"
-                >
-                  Post
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
         <!-- Feed -->
-        <div class="divide-y divide-gray-800">
+        <div class="divide-y divide-gray-800 p-4">
           <article v-for="post in posts" :key="post.id" class="p-4">
             <div class="flex gap-4">
               <div
@@ -119,19 +97,9 @@
       </main>
 
       <!-- Right Sidebar -->
-      <aside class="fixed right-0 h-screen w-80 border-l border-gray-800 p-4">
-        <!-- Search -->
-        <div class="relative">
-          <input
-            type="search"
-            placeholder="Search"
-            class="w-full rounded-full bg-gray-900 p-3 pl-12 outline-none"
-          />
-          <i
-            class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"
-          ></i>
-        </div>
-
+      <aside
+        class="hidden md:block relative right-0 top-0 h-screen w-80 border-l border-gray-800 p-4 bg-black"
+      >
         <!-- Premium Card -->
         <div class="mt-4 rounded-xl bg-gray-900 p-4">
           <h2 class="text-xl font-bold">Subscribe to Premium</h2>
@@ -172,12 +140,6 @@ import {
   Bookmark,
   Users,
   User,
-  Image,
-  Film,
-  ListPlus,
-  MapPin,
-  Smile,
-  Calendar,
 } from "lucide-vue-next";
 
 const navItems = [
@@ -188,15 +150,6 @@ const navItems = [
   { name: "Bookmarks", icon: Bookmark },
   { name: "Communities", icon: Users },
   { name: "Profile", icon: User },
-];
-
-const postActions = [
-  { name: "Media", icon: Image },
-  { name: "GIF", icon: Film },
-  { name: "Poll", icon: ListPlus },
-  { name: "Location", icon: MapPin },
-  { name: "Emoji", icon: Smile },
-  { name: "Schedule", icon: Calendar },
 ];
 
 const posts = ref([
@@ -214,7 +167,10 @@ const posts = ref([
   },
   // Add more posts as needed
 ]);
-
+const isSidebarOpen = ref(false);
+const toggleSidebar = () => {
+  isSidebarOpen.value = !isSidebarOpen.value;
+};
 const trends = ref([
   {
     id: 1,
