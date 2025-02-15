@@ -44,6 +44,23 @@
         >
           <button class="md:hidden text-white" @click="toggleSidebar">☰</button>
 
+          <div class="relative w-full max-w-lg mx-auto flex-1 left-0 ml-1">
+            <input
+              type="search"
+              placeholder="Search"
+              class="w-full rounded-full bg-gray-900 p-3 outline-none"
+            />
+          </div>
+          <div class="flex mr-2">
+            <button
+              class="text-center mr-4 ml-3 flex cursor-pointer text-fuchsia-700 md:font-semibold text-sm bg-transparent md:px-1 md:py-2 rounded-full border-2 border-fuchsia-700 hover:scale-105 duration-200 hover:text-white hover: to-fuchsia-800 hover:from-fuchsia-800 hover:to-fuchsia-200 before:rounded-full before:bg-gradient-to-r before:from-fuchsia-400 before:to-fuchsia-800 before:blur-md before:opacity-50 before:z-[-1]"
+            >
+              Connect Wallet
+            </button>
+          </div>
+          <User class="h-7 w-7 mr-4" />
+        </header>
+        <div class="flex">
           <select
             name="filter"
             id="filter"
@@ -70,23 +87,7 @@
               {{ option }}
             </option>
           </select>
-          <div class="relative w-full max-w-lg mx-auto flex-1">
-            <input
-              type="search"
-              placeholder="Search"
-              class="w-full rounded-full bg-gray-900 p-3 pl-4 outline-none"
-            />
-          </div>
-          <div class="flex mr-2">
-            <button
-              class="text-center flex cursor-pointer text-fuchsia-700 md:font-semibold text-sm bg-transparent md:px-1 md:py-2 rounded-full border-2 border-fuchsia-700 hover:scale-105 duration-200 hover:text-white hover: to-fuchsia-800 hover:from-fuchsia-800 hover:to-fuchsia-200 before:rounded-full before:bg-gradient-to-r before:from-fuchsia-400 before:to-fuchsia-800 before:blur-md before:opacity-50 before:z-[-1]"
-            >
-              Connect Wallet
-            </button>
-          </div>
-          <User class="h-7 w-7 mr-4" />
-        </header>
-
+        </div>
         <!-- Feed -->
         <div class="divide-y divide-gray-800 p-4 flex flex-col gap-2">
           <article v-for="post in posts" :key="post.id" class="p-4">
@@ -129,7 +130,7 @@
         class="hidden md:block relative right-0 top-0 h-screen w-80 border-l border-gray-800 p-4 bg-black"
       >
         <!-- Premium Card -->
-        <div class="mt-4 rounded-xl bg-gray-900 p-3 pr-6 flex flex-col">
+        <div class="mt-4 rounded-xl bg-gray-900 p-3 pr-6 flex flex-col pt-4">
           <h2 class="text-xl font-bold mb-0 ml-2">Top Solvers</h2>
           <Trophy class="w-7 h-7 relative -top-7 left-31" />
           <div v-for="solvers in TopSolvers" :key="solvers.username">
