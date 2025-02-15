@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-black text-white">
+  <div class="min-h-screen bg-black text-white md:pl-45 md:pr-45">
     <!-- Main Layout -->
     <div class="flex flex-col md:flex-row">
       <!-- Left Sidebar -->
@@ -88,7 +88,7 @@
         </header>
 
         <!-- Feed -->
-        <div class="divide-y divide-gray-800 p-4">
+        <div class="divide-y divide-gray-800 p-4 flex flex-col gap-2">
           <article v-for="post in posts" :key="post.id" class="p-4">
             <div class="flex gap-4">
               <div
@@ -102,17 +102,20 @@
                 </div>
                 <p class="mt-1">{{ post.content }}</p>
                 <div class="mt-4 flex justify-between text-gray-500">
-                  <button class="hover:text-blue-500">
-                    <i class="far fa-comment"></i> {{ post.replies }}
+                  <button class="hover:text-green-500 flex items-center">
+                    <ArrowBigUp class="h-7 w-7" /> {{ post.upvotes }}
                   </button>
-                  <button class="hover:text-green-500">
-                    <i class="far fa-retweet"></i> {{ post.retweets }}
+                  <button class="hover:text-red-500 flex items-center">
+                    <ArrowBigDown class="h-7 w-7" /> {{ post.downvotes }}
                   </button>
-                  <button class="hover:text-red-500">
-                    <i class="far fa-heart"></i> {{ post.likes }}
+                  <button class="hover:text-yellow-500 flex items-center">
+                    <BellPlus class="h-5 w-5" /> {{ post.notify }}
                   </button>
-                  <button class="hover:text-blue-500">
-                    <i class="far fa-chart-bar"></i> {{ post.views }}
+                  <button class="hover:text-fuchsia-500 flex items-center">
+                    <Users class="h-5 w-5" /> {{ post.discussion }}
+                  </button>
+                  <button class="hover:text-blue-500 flex items-center">
+                    <Send class="h-5 w-5" /> {{ post.share }}
                   </button>
                 </div>
               </div>
@@ -126,7 +129,7 @@
         class="hidden md:block relative right-0 top-0 h-screen w-80 border-l border-gray-800 p-4 bg-black"
       >
         <!-- Premium Card -->
-        <div class="mt-4 rounded-xl bg-gray-900 p-4 pr-6 flex flex-col">
+        <div class="mt-4 rounded-xl bg-gray-900 p-3 pr-6 flex flex-col">
           <h2 class="text-xl font-bold mb-0 ml-2">Top Solvers</h2>
           <Trophy class="w-7 h-7 relative -top-7 left-31" />
           <div v-for="solvers in TopSolvers" :key="solvers.username">
@@ -182,6 +185,10 @@ import {
   Home,
   Flame,
   TrendingUp,
+  ArrowBigUp,
+  ArrowBigDown,
+  BellPlus,
+  Send,
   Coins,
   Bell,
   CircleCheckBig,
@@ -210,10 +217,37 @@ const posts = ref([
     time: "7h",
     content:
       "BREAKING: Donald Trump Signs Off On DOGE To Fully Audit The IRS As The Growing Team Of Super Geniuses Enter The IRS Building Today",
-    replies: "2.6K",
-    retweets: "1.6K",
-    likes: "102K",
-    views: "8.5M",
+    upvotes: "2.6K",
+    downvotes: "2.6K",
+    notify: "1.6K",
+    discussion: "102K",
+    share: "8.5M",
+  },
+  {
+    id: 2,
+    author: "Alex Jones",
+    handle: "RealAlexJones",
+    time: "7h",
+    content:
+      "BREAKING: Donald Trump Signs Off On DOGE To Fully Audit The IRS As The Growing Team Of Super Geniuses Enter The IRS Building Today sdjnaudiuaduai ajbnsiahdiubasbsdu ajbjsdibaduibasidbas jasdudkasdb<br>hjsvdavdyuvasdyuv",
+    upvotes: "2.6K",
+    downvotes: "2.6K",
+    notify: "1.6K",
+    discussion: "102K",
+    share: "8.5M",
+  },
+  {
+    id: 3,
+    author: "Alex Jones",
+    handle: "RealAlexJones",
+    time: "7h",
+    content:
+      "BREAKING: Donald Trump Signs Off On DOGE To Fully Audit The IRS As The Growing Team Of Super Geniuses Enter The IRS Building Today",
+    upvotes: "2.6K",
+    downvotes: "2.6K",
+    notify: "1.6K",
+    discussion: "102K",
+    share: "8.5M",
   },
   // Add more posts as needed
 ]);
