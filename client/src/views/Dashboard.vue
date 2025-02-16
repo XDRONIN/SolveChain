@@ -48,7 +48,7 @@
             <input
               type="search"
               placeholder="Search"
-              class="w-full rounded-full bg-gray-900 p-3 outline-none"
+              class="w-full rounded-full backdrop-blur-[18px] backdrop-saturate-[174%] bg-[rgba(27,27,27,0.5)] border border-[rgba(255,255,255,0.125)] p-3 outline-none"
             />
           </div>
           <div class="flex mr-2">
@@ -68,12 +68,14 @@
         class="hidden md:block relative right-0 top-0 h-screen w-80 border-l border-gray-800 p-4 bg-black"
       >
         <!-- Premium Card -->
-        <div class="mt-4 rounded-xl bg-gray-900 p-3 pr-6 flex flex-col pt-4">
+        <div
+          class="mt-4 rounded-xl backdrop-blur-[18px] backdrop-saturate-[174%] bg-[rgba(27,27,27,0.5)] border border-[rgba(255,255,255,0.125)] p-3 pr-6 flex flex-col pt-4"
+        >
           <h2 class="text-xl font-bold mb-0 ml-2">Top Solvers</h2>
           <Trophy class="w-7 h-7 relative -top-7 left-31" />
           <div v-for="solvers in TopSolvers" :key="solvers.username">
             <div
-              class="flex h-20 w-full bg-gray-800 rounded-2xl m-1 gap-2 items-center p-6"
+              class="flex h-20 w-full bg-transparant rounded-2xl border-1 border-[rgba(255,255,255,0.125)] m-1 gap-2 items-center p-6"
             >
               <User class="h-7 w-7" />
               <p>
@@ -87,7 +89,9 @@
         </div>
 
         <!-- What's happening -->
-        <div class="mt-4 rounded-xl bg-gray-900 p-4">
+        <div
+          class="mt-4 rounded-xl backdrop-blur-[18px] backdrop-saturate-[174%] bg-[rgba(27,27,27,0.5)] border border-[rgba(255,255,255,0.125)] p-4"
+        >
           <h2 class="text-xl font-bold">Hot now</h2>
           <Flame class="w-7 h-7 relative -top-8 left-21" />
 
@@ -101,7 +105,9 @@
             </div>
           </div>
         </div>
-        <div class="mt-4 rounded-xl bg-gray-900 p-4 pr-6 flex flex-col mb-0">
+        <div
+          class="mt-4 rounded-xl backdrop-blur-[18px] backdrop-saturate-[174%] bg-[rgba(27,27,27,0.5)] border border-[rgba(255,255,255,0.125)] p-4 pr-6 flex flex-col mb-0"
+        >
           <p class="text-xl font-bold">
             SolveCoins Paid<br />
 
