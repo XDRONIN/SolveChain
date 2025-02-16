@@ -21,7 +21,11 @@
           <button
             v-for="item in navItems"
             :key="item.name"
-            class="flex w-full items-center gap-4 rounded-full p-3 text-xl hover:bg-gray-900"
+            :class="[
+              'flex w-full items-center gap-4 rounded-full p-3 text-xl hover:bg-[rgba(27,27,27,0.5)]',
+              activeNav === item.name ? 'text-fuchsia-500' : '',
+            ]"
+            @click="makeActive(item.name)"
           >
             <component :is="item.icon" class="h-7 w-7" />
             <span>{{ item.name }}</span>
@@ -140,7 +144,7 @@ import {
   User,
 } from "lucide-vue-next";
 
-const navItems = [
+const navItems = ref([
   { name: "Home", icon: Home },
   { name: "Trending", icon: TrendingUp },
   { name: "Notifications", icon: Bell },
@@ -148,7 +152,7 @@ const navItems = [
   { name: "My Questions", icon: CircleHelp },
 
   { name: "My Solutions", icon: CircleCheckBig },
-];
+]);
 
 const noQuestions = ref("2,00,000");
 
@@ -190,6 +194,11 @@ const trends = ref([
     questions: "544K",
   },
 ]);
+const activeNav = ref("Home");
+const makeActive = (item) => {
+  activeNav.value = item;
+  // console.log(activeNav);
+};
 </script>
 
 <style>

@@ -32,19 +32,29 @@
           </div>
           <p class="mt-1">{{ post.content }}</p>
           <div class="mt-4 flex justify-between text-gray-500">
-            <button class="hover:text-green-500 flex items-center">
+            <button
+              class="hover:text-green-500 flex items-center hover:cursor-pointer"
+            >
               <ArrowBigUp class="h-7 w-7" /> {{ post.upvotes }}
             </button>
-            <button class="hover:text-red-500 flex items-center">
+            <button
+              class="hover:text-red-500 flex items-center hover:cursor-pointer"
+            >
               <ArrowBigDown class="h-7 w-7" /> {{ post.downvotes }}
             </button>
-            <button class="hover:text-yellow-500 flex items-center">
+            <button
+              class="hover:text-yellow-500 flex items-center hover:cursor-pointer"
+            >
               <BellPlus class="h-5 w-5" /> {{ post.notify }}
             </button>
-            <button class="hover:text-fuchsia-500 flex items-center">
+            <button
+              class="hover:text-fuchsia-500 flex items-center hover:cursor-pointer"
+            >
               <Users class="h-5 w-5" /> {{ post.discussion }}
             </button>
-            <button class="hover:text-blue-500 flex items-center">
+            <button
+              class="hover:text-blue-500 flex items-center hover:cursor-pointer"
+            >
               <Send class="h-5 w-5" /> {{ post.share }}
             </button>
           </div>
