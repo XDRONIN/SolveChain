@@ -60,17 +60,20 @@ mongoose
 
 // Store UID in session
 app.post("/api/login", (req, res) => {
-  const { uid } = req.body; // Directly take UID from request
-  if (!uid) return res.status(400).json({ error: "UID is required" });
+  const { ...userData } = req.body; // Directly take UID from request
+  // if (!uid) return res.status(400).json({ error: "UID is required" });
 
-  req.session.user = { uid }; // Store only UID in session
+  req.session.user = {
+    ...userData,
+  }; // Store only UID in session
+  console.log(req.session.user);
   res.json({ message: "User session stored", user: req.session.user });
 });
 
 // Get User Session
 app.get("/api/user", (req, res) => {
   if (req.session.user) {
-    res.json(req.session.user);
+    res.json(req.session.user.userData.uid);
   } else {
     res.status(401).json({ error: "No active session" });
   }
