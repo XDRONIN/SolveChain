@@ -153,10 +153,11 @@ const handleSubmit = async () => {
           userData.uid = currUid;
           console.log(userData);
           initializeUser(currUid);
+          loginUser(userData);
+          router.push("/dashboard");
         });
 
-        //loginUser(userData);
-        //router.push("/dashboard");
+        //
         // ...
       })
       .catch((error) => {
@@ -239,9 +240,6 @@ async function initializeUser(userId) {
     console.error("Request failed:", error);
   }
 }
-
-// Example usage:
-initializeUser("user123");
 </script>
 <style scoped>
 .inpt {
