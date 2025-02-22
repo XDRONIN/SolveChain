@@ -199,6 +199,13 @@ const loginWithGoogle = async () => {
 
     if (userSnap.exists()) {
       console.log("Login successful:", user);
+      const currUid = user.uid;
+      const userData = await getUserData(currUid);
+
+      userData.uid = currUid;
+      console.log(userData);
+
+      loginUser(userData);
       router.push("/dashboard"); // Proceed with login (redirect or update UI)
     } else {
       console.log("User not registered. Access denied.");
@@ -217,7 +224,14 @@ const handleClick = async () => {
       email.value,
       password.value
     );
-    console.log("User signed in:", userCredential.user);
+    console.log("User signed in:", userCredential.user.uid);
+    const currUid = userCredential.user.uid;
+    const userData = await getUserData(currUid);
+
+    userData.uid = currUid;
+    console.log(userData);
+
+    loginUser(userData);
     router.push("/dashboard"); // Redirect user after login
   } catch (error) {
     alert("Wrong Credentialls");
@@ -226,4 +240,32 @@ const handleClick = async () => {
 const toSignup = () => {
   router.push({ path: "/signUp", query: { type: "signup" } });
 };
+async function getUserData(uid) {
+  try {
+    const userRef = doc(db, "users", uid);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      return userSnap.data(); // Returns the user's document data
+    } else {
+      console.log("No such user document found!");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching user document:", error);
+    return null;
+  }
+}
+async function loginUser(userData) {
+  const response = await fetch("/api/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userData }), // Send full user data
+  });
+
+  const result = await response.json();
+  console.log(result);
+}
 </script>

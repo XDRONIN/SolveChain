@@ -43,7 +43,7 @@
 import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { auth, db } from "../fireInit";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 const route = useRoute();
 const router = useRouter();
 const { uid, firstName, lastName, email } = route.query;
@@ -88,11 +88,67 @@ const handleSubmit = async () => {
     });
 
     //alert("User registered successfully!");
-    router.push("/dashboard");
+    getUserData(uid).then((userData) => {
+      //console.log(userData); // Logs only the object
+      userData.uid = uid;
+      console.log(userData);
+      initializeUser(uid);
+      loginUser(userData);
+      router.push("/dashboard");
+    });
   } catch (error) {
     console.log(error);
   }
 };
+async function getUserData(uid) {
+  try {
+    const userRef = doc(db, "users", uid);
+    const userSnap = await getDoc(userRef);
+
+    if (userSnap.exists()) {
+      return userSnap.data(); // Returns the user's document data
+    } else {
+      console.log("No such user document found!");
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching user document:", error);
+    return null;
+  }
+}
+async function loginUser(userData) {
+  const response = await fetch("/api/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userData }), // Send full user data
+  });
+
+  const result = await response.json();
+  console.log(result);
+}
+async function initializeUser(userId) {
+  try {
+    const response = await fetch("/api/initializeUser", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ _id: userId }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log("Success:", data.message);
+    } else {
+      console.error("Error:", data.error);
+    }
+  } catch (error) {
+    console.error("Request failed:", error);
+  }
+}
 </script>
 <style scoped>
 .inpt {
