@@ -9,6 +9,7 @@ import { fileURLToPath } from "url";
 import { dirname } from "path";
 import path from "path";
 import { sessionMiddleware } from "./session.js"; // Import session middleware
+import User from "./models/User.js";
 
 // Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
@@ -73,7 +74,7 @@ app.post("/api/login", (req, res) => {
 // Get User Session
 app.get("/api/user", (req, res) => {
   if (req.session.user) {
-    res.json(req.session.user.userData.uid);
+    res.json(req.session.user.userData);
   } else {
     res.status(401).json({ error: "No active session" });
   }
@@ -83,6 +84,39 @@ app.get("/api/user", (req, res) => {
 app.post("/api/logout", (req, res) => {
   req.session.destroy();
   res.json({ message: "Session destroyed" });
+});
+// API endpoint to initialize user document
+app.post("/api/initializeUser", async (req, res) => {
+  try {
+    const { _id } = req.body;
+    if (!_id) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findById(_id);
+    if (existingUser) {
+      return res.status(400).json({ error: "User already exists" });
+    }
+
+    // Create new user document
+    const newUser = new User({
+      _id,
+      notify: { ques: [], diss: [] },
+      following: [],
+      followers: [],
+      solved: 0,
+      stars: 0,
+      profilePic: "",
+      certs: [],
+    });
+
+    await newUser.save();
+    res.status(201).json({ message: "User initialized successfully" });
+  } catch (error) {
+    console.error("Error initializing user:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
 });
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} hello world `)

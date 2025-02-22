@@ -152,6 +152,7 @@ const handleSubmit = async () => {
           //console.log(userData); // Logs only the object
           userData.uid = currUid;
           console.log(userData);
+          initializeUser(currUid);
         });
 
         //loginUser(userData);
@@ -217,6 +218,30 @@ async function loginUser(userData) {
   const result = await response.json();
   console.log(result);
 }
+async function initializeUser(userId) {
+  try {
+    const response = await fetch("/api/initializeUser", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ _id: userId }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log("Success:", data.message);
+    } else {
+      console.error("Error:", data.error);
+    }
+  } catch (error) {
+    console.error("Request failed:", error);
+  }
+}
+
+// Example usage:
+initializeUser("user123");
 </script>
 <style scoped>
 .inpt {

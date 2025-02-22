@@ -2,7 +2,6 @@ import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
   _id: String,
-  areaOfInterest: String,
   notify: {
     ques: [String],
     diss: [String],
