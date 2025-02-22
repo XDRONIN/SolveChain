@@ -199,6 +199,13 @@ const loginWithGoogle = async () => {
 
     if (userSnap.exists()) {
       console.log("Login successful:", user);
+      const currUid = user.uid;
+      const userData = await getUserData(currUid);
+
+      userData.uid = currUid;
+      console.log(userData);
+
+      loginUser(userData);
       router.push("/dashboard"); // Proceed with login (redirect or update UI)
     } else {
       console.log("User not registered. Access denied.");
