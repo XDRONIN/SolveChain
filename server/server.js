@@ -109,6 +109,7 @@ app.post("/api/initializeUser", async (req, res) => {
       stars: 0,
       profilePic: "",
       certs: [],
+      verified: false,
     });
 
     await newUser.save();

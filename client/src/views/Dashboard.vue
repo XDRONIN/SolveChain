@@ -2,6 +2,15 @@
   <div class="min-h-screen bg-black text-white md:pl-45 md:pr-45">
     <!-- Main Layout -->
     <div class="flex flex-col md:flex-row">
+      <div
+        :class="[
+          ' min-w-screen min-h-screen absolute  left-0 z-20  backdrop-blur-[12px] backdrop-saturate-[162%] bg-[rgba(255,255,255,0.1)] flex items-center justify-center ',
+          postDiv ? 'flex' : 'hidden',
+        ]"
+        @click="togglePost"
+      >
+        <ComposePost @click.stop="" />
+      </div>
       <!-- Left Sidebar -->
       <nav
         class="fixed inset-y-0 left-0 w-64 border-r border-gray-800 p-4 bg-black md:static md:block md:h-screen transition-transform transform md:translate-x-0 z-10"
@@ -34,6 +43,7 @@
 
         <!-- Post Button -->
         <div
+          @click="togglePost"
           class="mt-4 w-full flex gap-3 cursor-pointer text-white font-semibold bg-gradient-to-r from-fuchsia-500 to-fuchsia-800 px-7 py-3 rounded-full border border-black hover:scale-105 duration-200 hover:text-white hover:border-gray-800 hover:from-fuchsia-800 hover:to-fuchsia-500"
         >
           <CircleFadingPlus class="h-7 w-7" />Ask a Question
@@ -64,6 +74,7 @@
           </div>
           <User class="h-7 w-7 mr-4" />
         </header>
+
         <Posts />
       </main>
 
@@ -130,6 +141,7 @@
 <script setup>
 import { ref } from "vue";
 import Posts from "../components/Posts.vue";
+import ComposePost from "../components/ComposePost.vue";
 import {
   Home,
   Flame,
@@ -143,7 +155,7 @@ import {
   Users,
   User,
 } from "lucide-vue-next";
-
+const postDiv = ref(false);
 const navItems = ref([
   { name: "Home", icon: Home },
   { name: "Trending", icon: TrendingUp },
@@ -198,6 +210,9 @@ const activeNav = ref("Home");
 const makeActive = (item) => {
   activeNav.value = item;
   // console.log(activeNav);
+};
+const togglePost = () => {
+  postDiv.value = !postDiv.value;
 };
 </script>
 

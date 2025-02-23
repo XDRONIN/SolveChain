@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
   stars: Number,
   profilePic: String, // URL or file path for profile picture
   certs: [String], // Array of URLs or file paths for certifications
+  verified: Boolean,
 });
 
 const User = mongoose.model("User", userSchema, "userData");
