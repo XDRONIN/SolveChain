@@ -10,6 +10,7 @@ import { dirname } from "path";
 import path from "path";
 import { sessionMiddleware } from "./session.js"; // Import session middleware
 import User from "./models/User.js";
+import Notification from "./models/Notification.js";
 
 // Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
@@ -114,6 +115,12 @@ app.post("/api/initializeUser", async (req, res) => {
     });
 
     await newUser.save();
+    //Create new notification collection
+    const newNotification = new Notification({
+      _id,
+      notificationDetails: [],
+    });
+    await newNotification.save();
     res.status(201).json({ message: "User initialized successfully" });
   } catch (error) {
     console.error("Error initializing user:", error);
