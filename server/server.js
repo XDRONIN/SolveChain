@@ -102,7 +102,8 @@ app.post("/api/initializeUser", async (req, res) => {
     // Create new user document
     const newUser = new User({
       _id,
-      notify: { ques: [], diss: [] },
+      notifyQues: [],
+      notifyDiss: [],
       following: [],
       followers: [],
       solved: 0,
