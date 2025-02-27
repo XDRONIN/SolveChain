@@ -1,9 +1,8 @@
 <script setup>
 import { Image, Film, ListPlus, Earth } from "lucide-vue-next";
 const postActions = [
-  { name: "Media", icon: Image },
-  { name: "GIF", icon: Film },
-  { name: "Poll", icon: ListPlus },
+  { name: "Images", icon: Image, filetype: "image/*" },
+  { name: "Videos", icon: Film, filetype: "video/*" },
 ];
 </script>
 <template>
@@ -16,7 +15,9 @@ const postActions = [
           type="text"
           placeholder="What's the problem?!"
           class="w-full bg-transparent p-2 pb-12 text-xl outline-none"
+          id="postBody"
         />
+
         <div
           class="text-fuchsia-500/80 rounded-full max-w-fit px-2 py-1 hover:bg-fuchsia-500/20 hover:cursor-pointer flex"
         >
@@ -25,13 +26,24 @@ const postActions = [
 
         <div class="mt-4 flex items-center justify-between">
           <div class="flex gap-2">
-            <button
+            <div
               v-for="action in postActions"
               :key="action.name"
-              class="rounded-full p-2 hover:bg-fuchsia-500/20"
+              class="relative inline-block"
             >
-              <component :is="action.icon" class="h-5 w-5 text-fuchsia-500" />
-            </button>
+              <input
+                type="file"
+                :id="action.name"
+                class="hidden"
+                :accept="action.filetype"
+              />
+              <label
+                :for="action.name"
+                class="rounded-full p-2 cursor-pointer hover:bg-fuchsia-500/20 flex items-center justify-center"
+              >
+                <component :is="action.icon" class="h-5 w-5 text-fuchsia-500" />
+              </label>
+            </div>
           </div>
           <button
             class="rounded-full bg-gradient-to-r from-fuchsia-500 to-fuchsia-800 px-4 py-2 font-bold hover:from-fuchsia-800 hover:to-fuchsia-500"
