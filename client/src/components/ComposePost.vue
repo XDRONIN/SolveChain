@@ -1,9 +1,10 @@
 <script setup>
 import { ref, onMounted } from "vue";
-import { Image, Earth, FileX } from "lucide-vue-next";
+import { Image, FileX } from "lucide-vue-next";
 
 const uploadedFiles = ref([]);
 const postForm = ref(null);
+const responseOption = ref("Everyone can respond");
 
 const handleFilesSelected = (event) => {
   const files = event.target.files;
@@ -23,6 +24,7 @@ const handleFilesSelected = (event) => {
 const resetForm = () => {
   if (postForm.value) postForm.value.reset(); // Reset form fields
   uploadedFiles.value = []; // Clear previews
+  responseOption.value = "Everyone can respond"; // Reset dropdown
 };
 
 onMounted(() => {
@@ -42,10 +44,31 @@ onMounted(() => {
             class="w-full bg-transparent p-2 pb-12 text-xl outline-none"
           />
 
-          <div
-            class="text-fuchsia-500/80 rounded-full max-w-fit px-2 py-1 hover:bg-fuchsia-500/20 hover:cursor-pointer flex"
-          >
-            <Earth class="mr-2 h-5 w-5" /> Everyone can respond
+          <!-- Dropdown for Response Options -->
+          <div class="relative w-64 mt-2">
+            <select
+              v-model="responseOption"
+              class="w-full bg-transparent border border-fuchsia-500/40 text-fuchsia-500 px-3 py-1 rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
+            >
+              <option
+                class="bg-gray-900 text-white"
+                value="Everyone can respond"
+              >
+                Everyone can respond
+              </option>
+              <option
+                class="bg-gray-900 text-white"
+                value="Only Users I Follow"
+              >
+                Only Users I Follow
+              </option>
+              <option
+                class="bg-gray-900 text-white"
+                value="Only Verified Users"
+              >
+                Only Verified Users
+              </option>
+            </select>
           </div>
 
           <!-- Preview Grid -->

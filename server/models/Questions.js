@@ -4,6 +4,7 @@ const questionSchema = new mongoose.Schema({
   _id: String,
   author: String,
   solved: Boolean,
+  whoCanRespond: String,
   queBody: String,
   tags: [String],
   meta: {
