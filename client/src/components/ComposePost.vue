@@ -3,8 +3,9 @@ import { ref, onMounted } from "vue";
 import { Image, FileX } from "lucide-vue-next";
 
 const uploadedFiles = ref([]);
+const postText = ref(""); // Stores text input
+const responseOption = ref("Everyone");
 const postForm = ref(null);
-const responseOption = ref("Everyone can respond");
 
 const handleFilesSelected = (event) => {
   const files = event.target.files;
@@ -21,10 +22,53 @@ const handleFilesSelected = (event) => {
   }
 };
 
+// Extract hashtags from text input
+const extractTags = (text) => {
+  const regex = /#(\w+)/g;
+  const tags = [...text.matchAll(regex)].map((match) => match[1]);
+  return tags;
+};
+
+const submitPost = async () => {
+  if (!postText.value.trim() && uploadedFiles.value.length === 0) {
+    alert("Post cannot be empty!");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("queBody", postText.value);
+  formData.append("whoCanRespond", responseOption.value);
+  extractTags(postText.value).forEach((tag) => formData.append("tags[]", tag));
+
+  uploadedFiles.value.forEach(({ file }) => {
+    formData.append("media", file);
+  });
+  formData.forEach((value, key) => {
+    console.log(`${key}:`, value);
+  });
+  try {
+    const response = await fetch("/api/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (response.ok) {
+      alert("Post uploaded successfully!");
+      resetForm();
+    } else {
+      alert("Failed to upload post!");
+    }
+  } catch (error) {
+    console.error("Error uploading post:", error);
+    alert("An error occurred while uploading.");
+  }
+};
+
 const resetForm = () => {
-  if (postForm.value) postForm.value.reset(); // Reset form fields
-  uploadedFiles.value = []; // Clear previews
-  responseOption.value = "Everyone can respond"; // Reset dropdown
+  if (postForm.value) postForm.value.reset();
+  postText.value = "";
+  uploadedFiles.value = [];
+  responseOption.value = "Everyone";
 };
 
 onMounted(() => {
@@ -37,8 +81,9 @@ onMounted(() => {
     <div class="flex gap-4">
       <div class="h-10 w-10 rounded-full bg-gray-600"></div>
       <div class="flex-1">
-        <form id="postForm" ref="postForm">
+        <form id="postForm" ref="postForm" @submit.prevent="submitPost">
           <input
+            v-model="postText"
             type="text"
             placeholder="What's the problem?!"
             class="w-full bg-transparent p-2 pb-12 text-xl outline-none"
@@ -48,24 +93,15 @@ onMounted(() => {
           <div class="relative w-64 mt-2">
             <select
               v-model="responseOption"
-              class="w-full bg-transparent border border-fuchsia-500/40 text-fuchsia-500 px-3 py-1 rounded-full cursor-pointer focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
+              class="w-full bg-transparent border border-fuchsia-500/40 text-fuchsia-500 px-3 py-1 rounded cursor-pointer focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
             >
-              <option
-                class="bg-gray-900 text-white"
-                value="Everyone can respond"
-              >
+              <option class="bg-gray-900 text-white" value="Everyone">
                 Everyone can respond
               </option>
-              <option
-                class="bg-gray-900 text-white"
-                value="Only Users I Follow"
-              >
+              <option class="bg-gray-900 text-white" value="Following">
                 Only Users I Follow
               </option>
-              <option
-                class="bg-gray-900 text-white"
-                value="Only Verified Users"
-              >
+              <option class="bg-gray-900 text-white" value="Verified">
                 Only Verified Users
               </option>
             </select>
@@ -86,7 +122,6 @@ onMounted(() => {
                 />
                 <video v-else class="h-20 w-20 object-cover rounded" controls>
                   <source :src="file.previewUrl" type="video/mp4" />
-                  Your browser does not support the video tag.
                 </video>
               </div>
             </template>
@@ -128,6 +163,7 @@ onMounted(() => {
               </label>
             </div>
             <button
+              type="submit"
               class="rounded-full bg-gradient-to-r from-fuchsia-500 to-fuchsia-800 px-4 py-2 font-bold hover:from-fuchsia-800 hover:to-fuchsia-500"
             >
               Post

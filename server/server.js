@@ -11,6 +11,8 @@ import path from "path";
 import { sessionMiddleware } from "./session.js"; // Import session middleware
 import User from "./models/User.js";
 import Notification from "./models/Notification.js";
+import upload from "./multerConfig.js";
+import Question from "./models/Questions.js";
 
 // Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
@@ -125,6 +127,42 @@ app.post("/api/initializeUser", async (req, res) => {
   } catch (error) {
     console.error("Error initializing user:", error);
     res.status(500).json({ error: "Internal Server Error" });
+  }
+});
+// Upload API (supports multiple files)
+app.post("/api/upload", upload.array("media", 5), async (req, res) => {
+  try {
+    // Extract file data
+    const mediaFiles = req.files
+      ? req.files.map((file) => ({
+          url: file.path,
+          contentType: file.mimetype,
+        }))
+      : [];
+    const tags = Array.isArray(req.body.tags) ? req.body.tags : [req.body.tags];
+
+    // Create new question entry
+    const newQuestion = new Question({
+      _id: new mongoose.Types.ObjectId().toString(),
+      author: req.session.user.userData.uid,
+      solved: false,
+      whoCanRespond: req.body.whoCanRespond,
+      queBody: req.body.queBody,
+      tags: tags || [],
+      media: mediaFiles,
+      meta: {
+        upvotes: 0,
+        downvotes: 0,
+        notify: 0,
+        discussion: 0,
+        share: 0,
+      },
+    });
+
+    await newQuestion.save();
+    res.status(201).json({ message: "Uploaded successfully!", newQuestion });
+  } catch (error) {
+    res.status(500).json({ error: "Upload failed", details: error.message });
   }
 });
 app.listen(PORT, () =>

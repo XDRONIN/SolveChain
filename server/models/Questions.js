@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-
 const questionSchema = new mongoose.Schema({
   _id: String,
   author: String,
@@ -7,6 +6,12 @@ const questionSchema = new mongoose.Schema({
   whoCanRespond: String,
   queBody: String,
   tags: [String],
+  media: [
+    {
+      url: String, // File path stored here
+      contentType: String,
+    },
+  ],
   meta: {
     upvotes: Number,
     downvotes: Number,
