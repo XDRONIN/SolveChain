@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 const questionSchema = new mongoose.Schema({
   _id: String,
   author: String,
+  username: String,
   solved: Boolean,
   whoCanRespond: String,
   queBody: String,

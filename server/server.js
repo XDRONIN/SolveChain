@@ -27,6 +27,8 @@ const PORT = process.env.PORT || 5000;
 app.use(cors({ credentials: true, origin: "http://localhost:5173" }));
 app.use(express.json());
 app.use(sessionMiddleware);
+// Serve static files from the uploads folder
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // Example API route
 app.get("/api", (req, res) => {
@@ -145,6 +147,7 @@ app.post("/api/upload", upload.array("media", 5), async (req, res) => {
     const newQuestion = new Question({
       _id: new mongoose.Types.ObjectId().toString(),
       author: req.session.user.userData.uid,
+      username: req.session.user.userData.username,
       solved: false,
       whoCanRespond: req.body.whoCanRespond,
       queBody: req.body.queBody,
@@ -162,9 +165,51 @@ app.post("/api/upload", upload.array("media", 5), async (req, res) => {
     await newQuestion.save();
     res.status(201).json({ message: "Uploaded successfully!", newQuestion });
   } catch (error) {
+    console.log(error.message);
     res.status(500).json({ error: "Upload failed", details: error.message });
   }
 });
+//get posts
+app.get("/api/getPosts", async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const filter = req.query.filter || "New";
+    const field = req.query.field || "All";
+    const baseURL = "http://localhost:5000";
+
+    let query = {};
+    if (field !== "All") {
+      query.tags = field;
+    }
+
+    let sortOption = {};
+    if (filter === "Popular") sortOption["meta.upvotes"] = -1;
+    else if (filter === "Unsolved") query.solved = false;
+    else if (filter === "Solved") query.solved = true;
+    else sortOption["createdAt"] = -1;
+
+    const posts = await Question.find(query)
+      .sort(sortOption)
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    const formattedPosts = posts.map((post) => ({
+      ...post.toObject(),
+      media: post.media.map((m) => ({
+        url: `${baseURL}/${m.url}`, // Convert relative path to absolute URL
+        contentType: m.contentType,
+      })),
+    }));
+
+    res.json({ posts: formattedPosts });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Failed to fetch posts", details: error.message });
+  }
+});
+
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} hello world `)
 );
