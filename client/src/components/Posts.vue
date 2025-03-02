@@ -56,7 +56,9 @@
                   class="relative cursor-pointer"
                   @click="openModal(post, index)"
                 >
+                  <!-- Dynamic media display based on type -->
                   <img
+                    v-if="getMediaType(media) === 'image'"
                     :src="media.url"
                     class="w-full rounded-lg"
                     :class="{
@@ -65,10 +67,53 @@
                         post.media.length === 2 || post.media.length === 3,
                       'max-h-[200px]': post.media.length >= 4,
                     }"
-                    alt="Post media"
+                    alt="Post image"
                     loading="lazy"
                     style="object-fit: cover"
                   />
+                  <video
+                    v-else-if="getMediaType(media) === 'video'"
+                    class="w-full rounded-lg"
+                    :class="{
+                      'col-span-2 max-h-[300px]': post.media.length === 1,
+                      'max-h-[250px]':
+                        post.media.length === 2 || post.media.length === 3,
+                      'max-h-[200px]': post.media.length >= 4,
+                    }"
+                    :src="media.url"
+                    style="object-fit: cover"
+                    preload="metadata"
+                  >
+                    Your browser does not support the video tag.
+                  </video>
+                  <!-- Play button overlay for videos -->
+                  <div
+                    v-if="getMediaType(media) === 'video'"
+                    class="absolute inset-0 flex items-center justify-center"
+                  >
+                    <div class="bg-black bg-opacity-30 rounded-full p-3">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-8 w-8 text-white"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+                        />
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                  </div>
                   <!-- Show "+X more" overlay -->
                   <div
                     v-if="index === 3 && post.media.length > 4"
@@ -103,7 +148,7 @@
     </article>
   </div>
 
-  <!-- Modal for Image Slideshow -->
+  <!-- Modal for Media Slideshow -->
   <div
     v-if="isModalOpen"
     class="fixed inset-0 bg-black bg-opacity-80 flex justify-center items-center z-50"
@@ -117,12 +162,22 @@
       ‹
     </button>
 
-    <!-- Display Image -->
+    <!-- Display Media based on type -->
     <img
-      v-if="currentMedia"
+      v-if="currentMedia && getMediaType(currentMedia) === 'image'"
       :src="currentMedia.url"
       class="max-w-full max-h-[90vh] rounded-lg"
+      alt="Post image"
     />
+    <video
+      v-else-if="currentMedia && getMediaType(currentMedia) === 'video'"
+      class="max-w-full max-h-[90vh] rounded-lg"
+      controls
+      autoplay
+    >
+      <source :src="currentMedia.url" :type="getVideoType(currentMedia)" />
+      Your browser does not support the video tag.
+    </video>
 
     <!-- Right Arrow -->
     <button
@@ -171,6 +226,60 @@ const fieldOptions = ref([
   "Everyday Skills",
   "All",
 ]);
+
+// Function to determine media type
+const getMediaType = (media) => {
+  if (!media || !media.url) return "unknown";
+
+  // Check if media has an explicit type property
+  if (media.type) {
+    if (media.type.startsWith("image/")) return "image";
+    if (media.type.startsWith("video/")) return "video";
+  }
+
+  // If no explicit type, infer from URL extension
+  const url = media.url.toLowerCase();
+
+  // Image extensions
+  if (
+    url.endsWith(".jpg") ||
+    url.endsWith(".jpeg") ||
+    url.endsWith(".png") ||
+    url.endsWith(".gif") ||
+    url.endsWith(".webp") ||
+    url.endsWith(".svg")
+  ) {
+    return "image";
+  }
+
+  // Video extensions
+  if (
+    url.endsWith(".mp4") ||
+    url.endsWith(".webm") ||
+    url.endsWith(".ogg") ||
+    url.endsWith(".mov") ||
+    url.endsWith(".avi")
+  ) {
+    return "video";
+  }
+
+  // Default to image if unable to determine
+  return "image";
+};
+
+// Function to determine video MIME type
+const getVideoType = (media) => {
+  if (media.type) return media.type;
+
+  const url = media.url.toLowerCase();
+  if (url.endsWith(".mp4")) return "video/mp4";
+  if (url.endsWith(".webm")) return "video/webm";
+  if (url.endsWith(".ogg")) return "video/ogg";
+  if (url.endsWith(".mov")) return "video/quicktime";
+  if (url.endsWith(".avi")) return "video/x-msvideo";
+
+  return "video/mp4"; // Default to mp4
+};
 
 const fetchPosts = async (reset = false) => {
   if (reset) {
