@@ -77,7 +77,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="border rounded-4xl border-fuchsia-500/40 p-4 md:w-130">
+  <div class="border rounded-4xl border-fuchsia-900 p-4 md:w-130">
     <div class="flex gap-4">
       <div class="h-10 w-10 rounded-full bg-gray-600"></div>
       <div class="flex-1">
@@ -93,7 +93,7 @@ onMounted(() => {
           <div class="relative w-64 mt-2">
             <select
               v-model="responseOption"
-              class="w-full bg-transparent border border-fuchsia-500/40 text-fuchsia-500 px-3 py-1 rounded cursor-pointer focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
+              class="w-full bg-transparent border border-fuchsia-900 text-fuchsia-500 px-3 py-1 rounded cursor-pointer focus:outline-none focus:ring-2 focus:ring-fuchsia-500"
             >
               <option class="bg-gray-900 text-white" value="Everyone">
                 Everyone can respond

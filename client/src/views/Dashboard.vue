@@ -1,19 +1,20 @@
 <template>
-  <div class="min-h-screen bg-black text-white md:pl-45 md:pr-45">
+  <div class="min-h-screen bg-black text-white p-4">
     <!-- Main Layout -->
-    <div class="flex flex-col md:flex-row">
+    <div class="flex flex-col md:flex-row h-screen max-w-screen-2xl mx-auto">
       <div
         :class="[
-          ' min-w-screen min-h-screen absolute  left-0 z-20  backdrop-blur-[12px] backdrop-saturate-[162%] bg-[rgba(255,255,255,0.1)] flex items-center justify-center ',
+          'min-w-screen min-h-screen absolute left-0 z-20 backdrop-blur-[12px] backdrop-saturate-[162%] bg-black/50 flex items-center justify-center',
           postDiv ? 'flex' : 'hidden',
         ]"
         @click="togglePost"
       >
         <ComposePost @click.stop="" />
       </div>
-      <!-- Left Sidebar -->
+
+      <!-- Left Sidebar - Fixed with spacing -->
       <nav
-        class="fixed inset-y-0 left-0 w-64 border-r border-gray-800 p-4 bg-black md:static md:block md:h-screen transition-transform transform md:translate-x-0 z-10"
+        class="fixed inset-y-0 left-0 ml-4 mt-4 mb-4 w-64 rounded-xl border-r border-gray-800 p-4 bg-black md:relative md:h-screen overflow-y-auto scrollbar-hide transition-transform transform md:translate-x-0 z-10 flex-shrink-0"
         :class="{
           '-translate-x-full': !isSidebarOpen,
           'translate-x-0': isSidebarOpen,
@@ -50,11 +51,13 @@
         </div>
       </nav>
 
-      <!-- Main Content -->
-      <main class="flex-1 flex flex-col bg-black md:max-w-336">
-        <!-- Header -->
+      <!-- Main Content - Scrollable -->
+      <main
+        class="flex-1 flex flex-col bg-black md:max-w-336 scrollbar-hide overflow-y-auto h-screen mx-4"
+      >
+        <!-- Header - Sticky -->
         <header
-          class="top-0 border-b border-gray-800 bg-black/80 p-4 flex justify-between items-center"
+          class="sticky top-0 border-b border-gray-800 bg-black/80 p-4 flex justify-between items-center z-10 rounded-t-xl"
         >
           <button class="md:hidden text-white" @click="toggleSidebar">☰</button>
 
@@ -75,12 +78,15 @@
           <User class="h-7 w-7 mr-4" />
         </header>
 
-        <Posts />
+        <!-- Scrollable Content -->
+        <div class="flex-1 overflow-y-auto scrollbar-hide">
+          <Posts />
+        </div>
       </main>
 
-      <!-- Right Sidebar -->
+      <!-- Right Sidebar - Fixed with spacing -->
       <aside
-        class="hidden md:block relative right-0 top-0 h-screen w-80 border-l border-gray-800 p-4 bg-black"
+        class="hidden md:block md:relative w-80 border-l border-gray-800 p-4 bg-black h-screen overflow-y-auto scrollbar-hide flex-shrink-0 mr-4 mt-4 mb-4 rounded-xl"
       >
         <!-- Premium Card -->
         <div
@@ -162,7 +168,6 @@ const navItems = ref([
   { name: "Notifications", icon: Bell },
   { name: "Discussions", icon: Users },
   { name: "My Questions", icon: CircleHelp },
-
   { name: "My Solutions", icon: CircleCheckBig },
 ]);
 
@@ -217,5 +222,24 @@ const togglePost = () => {
 </script>
 
 <style>
-/* Add any custom styles here */
+.h-screen {
+  height: 100vh;
+  height: 100dvh; /* For mobile browsers with dynamic viewports */
+}
+
+/* Hide scrollbars but keep functionality */
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}
+
+/* Ensure content doesn't overflow on small screens */
+@media (max-width: 768px) {
+  .md\:relative {
+    position: absolute;
+  }
+}
 </style>
