@@ -92,9 +92,11 @@ const handleSubmit = async () => {
       //console.log(userData); // Logs only the object
       userData.uid = uid;
       console.log(userData);
-      initializeUser(uid);
-      loginUser(userData);
-      router.push("/dashboard");
+      initializeUser(uid).then(() => {
+        loginUser(userData).then(() => {
+          router.push("/dashboard");
+        });
+      });
     });
   } catch (error) {
     console.log(error);

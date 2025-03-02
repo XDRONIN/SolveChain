@@ -24,3 +24,4 @@ dist-ssr
 *.sw?
 .env
 solvechain-69cea-firebase-adminsdk-fbsvc-11cb21f958.json
+uploads/
