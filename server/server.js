@@ -154,11 +154,11 @@ app.post("/api/upload", upload.array("media", 5), async (req, res) => {
       tags: tags || [],
       media: mediaFiles,
       meta: {
-        upvotes: 0,
-        downvotes: 0,
-        notify: 0,
-        discussion: 0,
-        share: 0,
+        upvotes: { users: "", val: 0 },
+        downvotes: { users: "", val: 0 },
+        notify: { users: "", val: 0 },
+        discussion: { users: "", val: 0 },
+        share: { users: "", val: 0 },
       },
     });
 
@@ -184,7 +184,7 @@ app.get("/api/getPosts", async (req, res) => {
     }
 
     let sortOption = {};
-    if (filter === "Popular") sortOption["meta.upvotes"] = -1;
+    if (filter === "Popular") sortOption["meta.upvotes.val"] = -1;
     else if (filter === "Unsolved") query.solved = false;
     else if (filter === "Solved") query.solved = true;
     else sortOption["createdAt"] = -1;
@@ -207,6 +207,59 @@ app.get("/api/getPosts", async (req, res) => {
     res
       .status(500)
       .json({ error: "Failed to fetch posts", details: error.message });
+  }
+});
+app.post("/api/updateMeta", async (req, res) => {
+  try {
+    const { whichMeta, qid } = req.body;
+
+    if (!whichMeta || !qid) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const question = await Question.findById(qid);
+    if (!question) {
+      return res.status(404).json({ error: "Question not found" });
+    }
+
+    if (!question.meta[whichMeta]) {
+      return res.status(400).json({ error: "Invalid meta field" });
+    }
+
+    const userIndex = question.meta[whichMeta].users.indexOf(
+      req.session.user.userData.uid
+    );
+
+    if (userIndex === -1) {
+      // User hasn't interacted: Add them and increment val
+      await Question.findByIdAndUpdate(
+        qid,
+        {
+          $addToSet: {
+            [`meta.${whichMeta}.users`]: req.session.user.userData.uid,
+          }, // Ensure user is added
+          $inc: { [`meta.${whichMeta}.val`]: 1 }, // Increment val
+        },
+        { new: true }
+      );
+
+      return res.json({ message: `User added & ${whichMeta} incremented` });
+    } else {
+      // User has interacted: Remove them and decrement val
+      await Question.findByIdAndUpdate(
+        qid,
+        {
+          $pull: { [`meta.${whichMeta}.users`]: req.session.user.userData.uid }, // Remove user
+          $inc: { [`meta.${whichMeta}.val`]: -1 }, // Decrement val
+        },
+        { new: true }
+      );
+
+      return res.json({ message: `User removed & ${whichMeta} decremented` });
+    }
+  } catch (error) {
+    console.error("Error updating meta:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 

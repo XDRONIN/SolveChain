@@ -127,20 +127,26 @@
           </div>
 
           <div class="mt-4 flex justify-between text-gray-500">
-            <button class="hover:text-green-500 flex items-center">
-              <ArrowBigUp class="h-7 w-7" /> {{ post.meta.upvotes }}
+            <button
+              class="hover:text-green-500 flex items-center"
+              @click="updateMeta('upvotes', post._id)"
+            >
+              <ArrowBigUp class="h-7 w-7" /> {{ post.meta.upvotes.val }}
             </button>
-            <button class="hover:text-red-500 flex items-center">
-              <ArrowBigDown class="h-7 w-7" /> {{ post.meta.downvotes }}
+            <button
+              class="hover:text-red-500 flex items-center"
+              @click="updateMeta('downvotes', post._id)"
+            >
+              <ArrowBigDown class="h-7 w-7" /> {{ post.meta.downvotes.val }}
             </button>
             <button class="hover:text-yellow-500 flex items-center">
-              <BellPlus class="h-5 w-5" /> {{ post.meta.notify }}
+              <BellPlus class="h-5 w-5" /> {{ post.meta.notify.val }}
             </button>
             <button class="hover:text-fuchsia-500 flex items-center">
-              <Users class="h-5 w-5" /> {{ post.meta.discussion }}
+              <Users class="h-5 w-5" /> {{ post.meta.discussion.val }}
             </button>
             <button class="hover:text-blue-500 flex items-center">
-              <Send class="h-5 w-5" /> {{ post.meta.share }}
+              <Send class="h-5 w-5" /> {{ post.meta.share.val }}
             </button>
           </div>
         </div>
@@ -369,5 +375,25 @@ const nextImage = () => {
     currentImageIndex.value < activePost.value.media.length - 1
       ? currentImageIndex.value + 1
       : 0;
+};
+const updateMeta = async (whichMeta, qid) => {
+  try {
+    const response = await fetch("/api/updateMeta", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ whichMeta, qid }),
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      console.log(data.message); // Success message
+    } else {
+      console.error("Error:", data.error);
+    }
+  } catch (error) {
+    console.error("Fetch error:", error);
+  }
 };
 </script>
