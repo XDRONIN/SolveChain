@@ -212,6 +212,7 @@ app.get("/api/getPosts", async (req, res) => {
 app.post("/api/updateMeta", async (req, res) => {
   try {
     const { whichMeta, qid } = req.body;
+    const userId = req.session.user.userData.uid;
 
     if (!whichMeta || !qid) {
       return res.status(400).json({ error: "Missing required fields" });
@@ -226,9 +227,7 @@ app.post("/api/updateMeta", async (req, res) => {
       return res.status(400).json({ error: "Invalid meta field" });
     }
 
-    const userIndex = question.meta[whichMeta].users.indexOf(
-      req.session.user.userData.uid
-    );
+    const userIndex = question.meta[whichMeta].users.indexOf(userId);
 
     if (userIndex === -1) {
       // User hasn't interacted: Add them and increment val
@@ -236,12 +235,29 @@ app.post("/api/updateMeta", async (req, res) => {
         qid,
         {
           $addToSet: {
-            [`meta.${whichMeta}.users`]: req.session.user.userData.uid,
+            [`meta.${whichMeta}.users`]: userId,
           }, // Ensure user is added
           $inc: { [`meta.${whichMeta}.val`]: 1 }, // Increment val
         },
         { new: true }
       );
+
+      // If whichMeta is 'notify', add qid to user's notifyQues
+      if (whichMeta === "notify") {
+        await User.findByIdAndUpdate(
+          userId,
+          {
+            $addToSet: {
+              notifyQues: {
+                quesId: qid,
+                lastViewed: new Date(),
+                notify: false,
+              },
+            },
+          },
+          { new: true }
+        );
+      }
 
       return res.json({ message: `User added & ${whichMeta} incremented` });
     } else {
@@ -249,11 +265,22 @@ app.post("/api/updateMeta", async (req, res) => {
       await Question.findByIdAndUpdate(
         qid,
         {
-          $pull: { [`meta.${whichMeta}.users`]: req.session.user.userData.uid }, // Remove user
+          $pull: { [`meta.${whichMeta}.users`]: userId }, // Remove user
           $inc: { [`meta.${whichMeta}.val`]: -1 }, // Decrement val
         },
         { new: true }
       );
+
+      // If whichMeta is 'notify', remove qid from user's notifyQues
+      if (whichMeta === "notify") {
+        await User.findByIdAndUpdate(
+          userId,
+          {
+            $pull: { notifyQues: { quesId: qid } },
+          },
+          { new: true }
+        );
+      }
 
       return res.json({ message: `User removed & ${whichMeta} decremented` });
     }

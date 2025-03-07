@@ -139,7 +139,10 @@
             >
               <ArrowBigDown class="h-7 w-7" /> {{ post.meta.downvotes.val }}
             </button>
-            <button class="hover:text-yellow-500 flex items-center">
+            <button
+              class="hover:text-yellow-500 flex items-center"
+              @click="updateMeta('notify', post._id)"
+            >
               <BellPlus class="h-5 w-5" /> {{ post.meta.notify.val }}
             </button>
             <button class="hover:text-fuchsia-500 flex items-center">
