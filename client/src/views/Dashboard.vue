@@ -80,7 +80,8 @@
 
         <!-- Scrollable Content -->
         <div class="flex-1 overflow-y-auto scrollbar-hide">
-          <Posts />
+          <Posts v-if="activeNav == 'Home'" />
+          <Discussions v-if="activeNav == 'Discussions'" />
         </div>
       </main>
 
@@ -148,6 +149,7 @@
 import { ref } from "vue";
 import Posts from "../components/Posts.vue";
 import ComposePost from "../components/ComposePost.vue";
+import Discussions from "../components/Discussions.vue";
 import {
   Home,
   Flame,

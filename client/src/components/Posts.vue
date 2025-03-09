@@ -23,6 +23,13 @@
       </option>
     </select>
   </div>
+  <div
+    v-if="disc"
+    class="bg-black/90 min-h-full fixed flex z-20 inset-0 justify-center align-middle p-5"
+    @click="showDisc"
+  >
+    <Discussion :qid="currentQid" @click.stop="" />
+  </div>
 
   <!-- Feed -->
   <div class="divide-y divide-gray-800 p-4 flex flex-col gap-2">
@@ -145,7 +152,10 @@
             >
               <BellPlus class="h-5 w-5" /> {{ post.meta.notify.val }}
             </button>
-            <button class="hover:text-fuchsia-500 flex items-center">
+            <button
+              class="hover:text-fuchsia-500 flex items-center"
+              @click="setQid(post._id)"
+            >
               <Users class="h-5 w-5" /> {{ post.meta.discussion.val }}
             </button>
             <button class="hover:text-blue-500 flex items-center">
@@ -218,13 +228,13 @@ import {
   Send,
   Users,
 } from "lucide-vue-next";
-
+import Discussion from "./Discussion.vue";
 const posts = ref([]);
 const page = ref(1);
 const hasMore = ref(true);
 const selectedFilter = ref("New");
 const selectedField = ref("All");
-
+const disc = ref(false);
 const filterOptions = ref(["New", "Popular", "Unsolved", "Solved"]);
 const fieldOptions = ref([
   "Tech",
@@ -235,6 +245,7 @@ const fieldOptions = ref([
   "Everyday Skills",
   "All",
 ]);
+const currentQid = ref("");
 
 // Function to determine media type
 const getMediaType = (media) => {
@@ -398,5 +409,14 @@ const updateMeta = async (whichMeta, qid) => {
   } catch (error) {
     console.error("Fetch error:", error);
   }
+};
+const showDisc = () => {
+  disc.value = !disc.value;
+};
+const setQid = (qid) => {
+  showDisc();
+  currentQid.value = qid;
+
+  //console.log(currentQid);
 };
 </script>
