@@ -412,9 +412,10 @@ const updateMeta = async (whichMeta, qid) => {
 };
 const showDisc = () => {
   disc.value = !disc.value;
+  currentQid.value = "";
 };
 const setQid = (qid) => {
-  showDisc();
+  disc.value = !disc.value;
   currentQid.value = qid;
 
   //console.log(currentQid);
