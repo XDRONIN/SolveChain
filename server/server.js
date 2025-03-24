@@ -14,6 +14,7 @@ import Notification from "./models/Notification.js";
 import upload from "./multerConfig.js";
 import Question from "./models/Questions.js";
 import Discussion from "./models/Discussion.js";
+import { error } from "console";
 
 // Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
@@ -379,7 +380,9 @@ app.post("/api/sendMessage", async (req, res) => {
     if (!discussion) {
       return res.status(404).json({ error: "Discussion not found" });
     }
-
+    if (!discussion.users.includes(req.session.user.userData.uid)) {
+      return res.status(690).json({ error: "User not joined " });
+    }
     // Add new message
     discussion.messages.push({
       username,

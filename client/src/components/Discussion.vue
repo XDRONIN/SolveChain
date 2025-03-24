@@ -2,7 +2,7 @@
   <div class="bg-gray-900 w-230 rounded-2xl">
     <button
       class="mt-4 w-40 flex cursor-pointer p-3 text-center align-middle justify-center relative left-185 text-white font-semibold bg-gradient-to-r from-fuchsia-500 to-fuchsia-800 rounded-full border border-black hover:scale-105 duration-200 hover:text-white hover:border-gray-800 hover:from-fuchsia-800 hover:to-fuchsia-500"
-      @click="joinDiscussion(currentQid)"
+      @click="joinDiscussion(props.qid)"
     >
       Join Discussion
     </button>
@@ -161,7 +161,7 @@ const joinDiscussion = async (qid) => {
     const data = await response.json();
     if (response.ok) {
       console.log(data.message); // Success message
-      fetchMessages(currentQid); // Refresh messages after joining
+      fetchMessages(qid); // Refresh messages after joining
     } else {
       console.error("Error:", data.error);
     }
@@ -198,6 +198,7 @@ const sendMessage = async () => {
   } catch (err) {
     console.error("Failed to send message:", err);
     error.value = err.message;
+    alert("Join The Discussion to send messages");
   }
 };
 
