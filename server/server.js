@@ -317,6 +317,9 @@ app.post("/api/joinDiscussion", async (req, res) => {
     if (!discussion.users.includes(userId)) {
       discussion.users.push(userId);
       await discussion.save();
+      const cuser = await User.findById(userId);
+      cuser.notifyDiss.push({ dissId: qid, lastViewed: new Date() });
+      await cuser.save();
     }
 
     res.status(200).json({ message: "Joined discussion", discussion });
@@ -401,6 +404,24 @@ app.post("/api/sendMessage", async (req, res) => {
   } catch (error) {
     console.error("Error sending message:", error);
     return res.status(500).json({ error: "Failed to send message" });
+  }
+});
+app.get("/api/getDiscussion", async (req, res) => {
+  try {
+    if (!req.session || !req.session.user || !req.session.user.userData) {
+      return res.status(401).json({ error: "Unauthorized: No session found" });
+    }
+
+    const user = await User.findById(req.session.user.userData.uid);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const discs = user.notifyDiss?.map((d) => d.dissId) || [];
+    res.json({ Discs: discs });
+  } catch (error) {
+    console.error("Error fetching discussion:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
