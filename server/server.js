@@ -13,6 +13,8 @@ import User from "./models/User.js";
 import Notification from "./models/Notification.js";
 import upload from "./multerConfig.js";
 import Question from "./models/Questions.js";
+import Discussion from "./models/Discussion.js";
+import { error } from "console";
 
 // Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
@@ -287,6 +289,139 @@ app.post("/api/updateMeta", async (req, res) => {
   } catch (error) {
     console.error("Error updating meta:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+app.post("/api/joinDiscussion", async (req, res) => {
+  try {
+    const { qid } = req.body;
+
+    const userId = req.session.user.userData.uid;
+
+    let discussion = await Discussion.findById(qid);
+
+    if (!discussion) {
+      // Create a new discussion document
+      discussion = new Discussion({
+        _id: qid,
+        users: [userId],
+        messages: [],
+      });
+
+      await discussion.save();
+      return res
+        .status(201)
+        .json({ message: "Discussion created", discussion });
+    }
+
+    // If discussion exists, add user to the users array if not already present
+    if (!discussion.users.includes(userId)) {
+      discussion.users.push(userId);
+      await discussion.save();
+      const cuser = await User.findById(userId);
+      cuser.notifyDiss.push({ dissId: qid, lastViewed: new Date() });
+      await cuser.save();
+    }
+
+    res.status(200).json({ message: "Joined discussion", discussion });
+  } catch (error) {
+    console.error("Error joining discussion:", error);
+    res.status(500).json({ message: "Server error", error });
+  }
+});
+// Fetch messages route
+app.get("/api/fetchMessages", async (req, res) => {
+  const { qid } = req.query;
+
+  if (!qid) {
+    return res.status(400).json({ error: "Discussion ID is required" });
+  }
+
+  try {
+    let discussion = await Discussion.findById(qid);
+
+    if (!discussion) {
+      // Create a new discussion document
+      discussion = new Discussion({
+        _id: qid,
+        users: [],
+        messages: [],
+      });
+
+      await discussion.save();
+    }
+    // Sort messages by time
+    const sortedMessages = discussion.messages.sort(
+      (a, b) => new Date(a.time) - new Date(b.time)
+    );
+
+    return res.status(200).json({
+      messages: sortedMessages,
+      users: discussion.users,
+    });
+  } catch (error) {
+    console.error("Error fetching discussion messages:", error);
+    return res.status(500).json({ error: "Failed to fetch messages" });
+  }
+});
+
+// Send message route
+app.post("/api/sendMessage", async (req, res) => {
+  const { qid, message } = req.body;
+
+  // Get user from session/auth (adjust as needed for your auth system)
+  const username = req.session.user.userData.username || "Anonymous";
+
+  if (!qid || !message) {
+    return res
+      .status(400)
+      .json({ error: "Discussion ID and message are required" });
+  }
+
+  try {
+    const discussion = await Discussion.findById(qid);
+
+    if (!discussion) {
+      return res.status(404).json({ error: "Discussion not found" });
+    }
+    if (!discussion.users.includes(req.session.user.userData.uid)) {
+      return res.status(690).json({ error: "User not joined " });
+    }
+    // Add new message
+    discussion.messages.push({
+      username,
+      msg: message,
+      time: new Date(),
+      solved: false,
+      media: [],
+    });
+
+    await discussion.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Message sent successfully",
+    });
+  } catch (error) {
+    console.error("Error sending message:", error);
+    return res.status(500).json({ error: "Failed to send message" });
+  }
+});
+app.get("/api/getDiscussion", async (req, res) => {
+  try {
+    if (!req.session || !req.session.user || !req.session.user.userData) {
+      return res.status(401).json({ error: "Unauthorized: No session found" });
+    }
+
+    const user = await User.findById(req.session.user.userData.uid);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const discs = user.notifyDiss?.map((d) => d.dissId) || [];
+    res.json({ Discs: discs });
+  } catch (error) {
+    console.error("Error fetching discussion:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
