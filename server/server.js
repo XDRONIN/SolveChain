@@ -297,6 +297,52 @@ app.post("/api/updateMeta", async (req, res) => {
 // Fetch messages route
 
 // Send message route
+app.get("/api/fetchUid", async (req, res) => {
+  const uid = req.session.user.userData.uid;
+  const usrName = req.session.user.userData.username;
+  res.json({ userId: uid, username: usrName });
+});
+// Upload API - supports multiple files (max 5)
+app.post("/api/uploadMedia", upload.array("media", 5), async (req, res) => {
+  try {
+    // Get the user ID from the request (adjust according to your auth system)
+    const userId =
+      req.session.user.userData.uid || req.body.userId || "anonymous";
+
+    // Check if files were uploaded
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "No files uploaded",
+      });
+    }
+
+    // Extract file data
+    const mediaFiles = req.files.map((file) => ({
+      url: `/uploads/${file.filename}`, // URL relative to your server
+      contentType: file.mimetype,
+    }));
+
+    // You can add additional processing here, like:
+    // - Image resizing
+    // - Virus scanning
+    // - Updating database records
+
+    // Return success with file information
+    return res.status(200).json({
+      success: true,
+      message: `${mediaFiles.length} file(s) uploaded successfully`,
+      mediaFiles: mediaFiles,
+    });
+  } catch (error) {
+    console.error("File upload error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error uploading files",
+      error: error.message,
+    });
+  }
+});
 
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} hello world `)
