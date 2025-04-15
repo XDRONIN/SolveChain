@@ -343,6 +343,29 @@ app.post("/api/uploadMedia", upload.array("media", 5), async (req, res) => {
     });
   }
 });
+app.post("/api/addAuthor", async (req, res) => {
+  try {
+    const { qid } = req.body;
+
+    if (!qid)
+      return res.status(400).json({ error: "Question ID (qid) is required" });
+
+    const question = await Question.findById(qid).select(
+      "author username queBody"
+    );
+
+    if (!question) return res.status(404).json({ error: "Question not found" });
+
+    res.json({
+      author: question.author,
+      username: question.username,
+      queBody: question.queBody,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+});
 
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} hello world `)

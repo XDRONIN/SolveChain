@@ -26,7 +26,10 @@
             <div>{{ message.msg }}</div>
 
             <!-- Media files display -->
-            <div v-if="message.media && message.media.length > 0" class="mt-2">
+            <div
+              v-if="message.media && message.media.length > 0"
+              class="mt-2 grid grid-cols-2 gap-1"
+            >
               <div
                 v-for="(file, fileIndex) in message.media"
                 :key="fileIndex"
@@ -188,7 +191,7 @@ const selectedFiles = ref([]);
 const isUploading = ref(false);
 const baseUrl = "http://localhost:5000"; // Get the current base URL of the application
 let unsubscribe = null;
-
+let queDetails = ref({});
 // Format timestamp to readable time
 function formatTimestamp(timestamp) {
   if (!timestamp) return "";
@@ -414,12 +417,13 @@ async function initDiscussion() {
 
   try {
     const docSnap = await getDoc(discussionRef);
+    console.log(queDetails.value.author);
 
     // Create a new document if it doesn't exist
     if (!docSnap.exists()) {
       await setDoc(discussionRef, {
         _id: props.qid,
-        users: [],
+        users: [queDetails.value.author],
         messages: [],
       });
       console.log("Created new discussion document");
@@ -437,7 +441,7 @@ async function initDiscussion() {
         const data = doc.data();
 
         // For debugging
-        console.log("Received updated document:", data);
+        //console.log("Received updated document:", data);
 
         messages.value = data.messages || [];
 
@@ -469,7 +473,7 @@ async function fetchUserInfo() {
     if (response.ok) {
       uid.value = data.userId;
       username.value = data.username || `User-${uid.value.substring(0, 5)}`;
-      console.log("User ID:", uid.value);
+      //console.log("User ID:", uid.value);
 
       // Initialize discussion after getting UID
       await initDiscussion();
@@ -480,14 +484,36 @@ async function fetchUserInfo() {
     console.error("Request failed:", error);
   }
 }
+async function fetchAuthorByQid(qid) {
+  try {
+    const response = await fetch("/api/addAuthor", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ qid }),
+    });
+
+    if (!response.ok) throw new Error("Failed to fetch author");
+
+    const data = await response.json();
+    //console.log("Author info:", data);
+    return data; // { author, username, queBody }
+  } catch (error) {
+    console.error("Error fetching author:", error);
+    return null;
+  }
+}
 
 // Watch for changes in messages to scroll to bottom
 watch(messages, () => {
   scrollToBottom();
 });
 
-onMounted(() => {
-  fetchUserInfo();
+onMounted(async () => {
+  queDetails.value = await fetchAuthorByQid(props.qid);
+
+  await fetchUserInfo();
 });
 
 // Clean up listener when component is unmounted
