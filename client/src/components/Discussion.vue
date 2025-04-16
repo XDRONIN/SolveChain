@@ -1,12 +1,16 @@
 <template>
   <div class="bg-gray-900 w-230 rounded-2xl">
+    <!-- Question heading -->
+    <div v-if="queDetails.queBody" class="p-4 border-b border-gray-700">
+      <h2 class="text-xl font-semibold text-white">{{ queDetails.queBody }}</h2>
+    </div>
+
     <button
       @click="joinDiscussion"
       class="mt-4 w-40 flex cursor-pointer p-3 text-center align-middle justify-center relative left-185 text-white font-semibold bg-gradient-to-r from-fuchsia-500 to-fuchsia-800 rounded-full border border-black hover:scale-105 duration-200 hover:text-white hover:border-gray-800 hover:from-fuchsia-800 hover:to-fuchsia-500"
     >
       {{ isUserMember ? "Joined" : "Join Discussion" }}
     </button>
-
     <div class="p-4 h-174 overflow-y-auto" ref="messagesContainer">
       <div v-if="messages.length === 0" class="text-gray-400 text-center mt-20">
         No messages yet. Start the conversation!
@@ -15,14 +19,24 @@
       <div v-else class="space-y-4">
         <div v-for="(message, index) in messages" :key="index" class="message">
           <div
-            :class="
+            :class="[
               message.username === username
                 ? 'ml-auto bg-gray-800 text-white'
-                : 'bg-gray-700 text-gray-200'
-            "
-            class="max-w-3/4 p-3 rounded-lg"
+                : isAuthorMessage(message)
+                ? 'bg-blue-900 text-white'
+                : 'bg-gray-700 text-gray-200',
+              message.solved ? 'border-2 border-green-500' : '',
+            ]"
+            class="max-w-3/4 p-3 rounded-lg relative"
           >
-            <div class="font-semibold">{{ message.username }}</div>
+            <div class="font-semibold flex items-center">
+              {{ message.username }}
+              <span
+                v-if="isAuthorMessage(message)"
+                class="ml-2 text-xs bg-fuchsia-700 px-2 py-1 rounded"
+                >Author</span
+              >
+            </div>
             <div>{{ message.msg }}</div>
 
             <!-- Media files display -->
@@ -88,6 +102,23 @@
             <div class="text-xs opacity-70">
               {{ formatTimestamp(message.time) }}
             </div>
+
+            <!-- Mark as solution button for author -->
+            <button
+              v-if="isAuthor && !message.solved && !hasSolvedMessage"
+              @click="markAsSolved(index)"
+              class="absolute top-2 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded hover:bg-green-500"
+            >
+              Mark as Solution
+            </button>
+
+            <!-- Solution badge -->
+            <div
+              v-if="message.solved"
+              class="absolute top-2 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded"
+            >
+              Solution ✓
+            </div>
           </div>
         </div>
       </div>
@@ -123,7 +154,7 @@
         </div>
       </div>
 
-      <div class="flex">
+      <div class="flex relative -top-15">
         <input
           v-model="newMessage"
           @keyup.enter="sendMessageHandler"
@@ -176,7 +207,7 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { db } from "../fireInit";
-import { ref, onMounted, nextTick, watch, onUnmounted } from "vue";
+import { ref, onMounted, nextTick, watch, onUnmounted, computed } from "vue";
 
 const props = defineProps({ qid: String });
 const uid = ref(null);
@@ -192,6 +223,47 @@ const isUploading = ref(false);
 const baseUrl = "http://localhost:5000"; // Get the current base URL of the application
 let unsubscribe = null;
 let queDetails = ref({});
+
+// Check if current user is the author
+const isAuthor = computed(() => {
+  if (!uid.value || !queDetails.value || !queDetails.value.author) return false;
+  return uid.value === queDetails.value.author;
+});
+
+// Check if any message is already marked as solved
+const hasSolvedMessage = computed(() => {
+  return messages.value.some((message) => message.solved);
+});
+
+// Check if a message is from the author
+function isAuthorMessage(message) {
+  if (!queDetails.value || !queDetails.value.username) return false;
+  return message.username === queDetails.value.username;
+}
+
+// Mark a message as solved
+async function markAsSolved(index) {
+  if (!isAuthor.value || !discussionDoc.value) return;
+
+  try {
+    // Create a copy of the messages array with the specific message marked as solved
+    const updatedMessages = [...messages.value];
+    updatedMessages[index] = {
+      ...updatedMessages[index],
+      solved: true,
+    };
+
+    // Update the document with the new messages array
+    await updateDoc(discussionDoc.value, {
+      messages: updatedMessages,
+    });
+
+    console.log("Message marked as solved:", index);
+  } catch (error) {
+    console.error("Error marking message as solved:", error);
+  }
+}
+
 // Format timestamp to readable time
 function formatTimestamp(timestamp) {
   if (!timestamp) return "";
@@ -484,6 +556,7 @@ async function fetchUserInfo() {
     console.error("Request failed:", error);
   }
 }
+
 async function fetchAuthorByQid(qid) {
   try {
     const response = await fetch("/api/addAuthor", {
@@ -512,7 +585,6 @@ watch(messages, () => {
 
 onMounted(async () => {
   queDetails.value = await fetchAuthorByQid(props.qid);
-
   await fetchUserInfo();
 });
 
