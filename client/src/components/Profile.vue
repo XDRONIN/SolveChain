@@ -32,7 +32,7 @@ onMounted(async () => {
         ...user.value,
         ...userData,
       };
-      console.log(user.value.profilePic);
+      console.log(user.certs);
     } else {
       message.value = "Failed to load user data";
     }

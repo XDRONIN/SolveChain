@@ -84,9 +84,13 @@ app.get("/api/user", async (req, res) => {
     const ppic = await User.findById(req.session.user.userData.uid).select(
       "profilePic"
     ); // only get profilePic field
+    const cert = await User.findById(req.session.user.userData.uid).select(
+      "certs"
+    );
     const combinedData = {
       ...req.session.user.userData,
-      profilePic: ppic.profilePic, // or any field name you want
+      profilePic: ppic.profilePic,
+      certs: cert.certs, // or any field name you want
     };
 
     res.json(combinedData);
