@@ -1,5 +1,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
+import { db } from "../fireInit";
+import { doc, updateDoc } from "firebase/firestore";
 
 const user = ref({
   firstName: "",
@@ -32,7 +34,7 @@ onMounted(async () => {
         ...user.value,
         ...userData,
       };
-      console.log(user.certs);
+      //console.log(user.certs);
     } else {
       message.value = "Failed to load user data";
     }
@@ -108,34 +110,22 @@ const handleCertUpload = async (event) => {
 };
 
 // Handle user data update
-const updateUserInfo = async () => {
-  isLoading.value = true;
-  message.value = "";
-
+const updateUserDetails = async () => {
   try {
-    const response = await fetch("/api/user/ppic", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        firstName: user.value.firstName,
-        lastName: user.value.lastName,
-        username: user.value.username,
-        email: user.value.email,
-        areaOfInterest: user.value.areaOfInterest,
-        fieldOfExpertise: user.value.fieldOfExpertise,
-      }),
+    const userRef = doc(db, "users", user.value.uid);
+
+    await updateDoc(userRef, {
+      firstName: user.value.firstName,
+      lastName: user.value.lastName,
+      username: user.value.username,
+      email: user.value.email,
+      areaOfInterest: user.value.areaOfInterest,
+      fieldOfExpertise: user.value.fieldOfExpertise,
     });
 
-    if (response.ok) {
-      message.value = "User information updated successfully";
-    } else {
-      message.value = "Failed to update user information";
-    }
+    message.value = "User details updated successfully";
   } catch (error) {
-    message.value = "Error updating user information";
-    console.error(error);
+    (message.value = "Error updating user details:"), error;
   } finally {
     isLoading.value = false;
   }
@@ -330,7 +320,8 @@ const deleteCert = async (index) => {
           <input
             type="text"
             v-model="user.username"
-            class="w-full p-2 bg-gray-800 rounded-md border border-gray-700 focus:outline-none focus:border-fuchsia-500"
+            class="w-full p-2 bg-gray-800 rounded-md border border-gray-700 text-gray-400 focus:outline-none focus:border-fuchsia-500"
+            readonly
           />
         </div>
         <div>
@@ -338,7 +329,8 @@ const deleteCert = async (index) => {
           <input
             type="email"
             v-model="user.email"
-            class="w-full p-2 bg-gray-800 rounded-md border border-gray-700 focus:outline-none focus:border-fuchsia-500"
+            class="w-full p-2 bg-gray-800 rounded-md border border-gray-700 text-gray-400 focus:outline-none focus:border-fuchsia-500"
+            readonly
           />
         </div>
         <div>
@@ -359,7 +351,7 @@ const deleteCert = async (index) => {
         </div>
       </div>
       <button
-        @click="updateUserInfo"
+        @click="updateUserDetails"
         class="mt-4 bg-fuchsia-600 hover:bg-fuchsia-500 text-white py-2 px-4 rounded-md transition-colors disabled:opacity-50"
         :disabled="isLoading"
       >
