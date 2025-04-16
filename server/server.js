@@ -1,6 +1,6 @@
 // server.js
 import admin from "firebase-admin";
-import { readFileSync } from "fs";
+import { readFileSync, existsSync, mkdirSync, unlinkSync } from "fs";
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -79,9 +79,17 @@ app.post("/api/login", (req, res) => {
 });
 
 // Get User Session
-app.get("/api/user", (req, res) => {
+app.get("/api/user", async (req, res) => {
   if (req.session.user) {
-    res.json(req.session.user.userData);
+    const ppic = await User.findById(req.session.user.userData.uid).select(
+      "profilePic"
+    ); // only get profilePic field
+    const combinedData = {
+      ...req.session.user.userData,
+      profilePic: ppic.profilePic, // or any field name you want
+    };
+
+    res.json(combinedData);
   } else {
     res.status(401).json({ error: "No active session" });
   }
@@ -386,16 +394,114 @@ app.post("/api/setSolved", async (req, res) => {
         .json({ success: false, message: "Question not found" });
     }
 
-    return res
-      .status(200)
-      .json({
-        success: true,
-        message: "Question marked as solved",
-        question: result,
-      });
+    return res.status(200).json({
+      success: true,
+      message: "Question marked as solved",
+      question: result,
+    });
   } catch (error) {
     console.error("Error updating question:", error);
     return res.status(500).json({ success: false, message: "Server error" });
+  }
+});
+// Upload profile picture
+app.post(
+  "/api/user/profile-pic",
+  upload.single("profilePic"),
+  async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      // In a real app, you'd get the user ID from authentication
+      const userId = req.session.user.userData.uid;
+
+      const profilePicUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+
+      const user = await User.findByIdAndUpdate(
+        userId,
+        { $set: { profilePic: profilePicUrl } },
+        { new: true }
+      );
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      res.json({
+        message: "Profile picture uploaded successfully",
+        profilePic: profilePicUrl,
+      });
+    } catch (error) {
+      console.error("Error uploading profile picture:", error);
+      res.status(500).json({ message: "Server error" });
+    }
+  }
+);
+// Upload certification
+app.post("/api/user/cert", upload.single("cert"), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: "No file uploaded" });
+    }
+
+    // In a real app, you'd get the user ID from authentication
+    const userId = req.session.user.userData.uid;
+
+    const certUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $push: { certs: certUrl } },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    res.json({ message: "Certification uploaded successfully", certUrl });
+  } catch (error) {
+    console.error("Error uploading certification:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Delete certification
+app.delete("/api/user/cert", async (req, res) => {
+  try {
+    const { certUrl } = req.body;
+    if (!certUrl) {
+      return res.status(400).json({ message: "Certification URL is required" });
+    }
+
+    // In a real app, you'd get the user ID from authentication
+    const userId = req.session.user.userData.uid;
+
+    // Remove the URL from the user's certs array
+    const user = await User.findByIdAndUpdate(
+      userId,
+      { $pull: { certs: certUrl } },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Extract the filename from the URL and delete the file
+    const filename = certUrl.split("/").pop();
+    const filePath = path.join("uploads", filename);
+
+    if (existsSync(filePath)) {
+      unlinkSync(filePath);
+    }
+
+    res.json({ message: "Certification deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting certification:", error);
+    res.status(500).json({ message: "Server error" });
   }
 });
 

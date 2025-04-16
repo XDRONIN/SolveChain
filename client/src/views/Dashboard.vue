@@ -75,13 +75,14 @@
               Connect Wallet
             </button>
           </div>
-          <User class="h-7 w-7 mr-4" />
+          <User class="h-7 w-7 mr-4" @click="makeActive('Profile')" />
         </header>
 
         <!-- Scrollable Content -->
         <div class="flex-1 overflow-y-auto scrollbar-hide">
           <Posts v-if="activeNav == 'Home'" />
           <Discussions v-if="activeNav == 'Discussions'" />
+          <Profile v-if="activeNav == 'Profile'" />
         </div>
       </main>
 
@@ -163,6 +164,7 @@ import {
   Users,
   User,
 } from "lucide-vue-next";
+import Profile from "../components/Profile.vue";
 const postDiv = ref(false);
 const navItems = ref([
   { name: "Home", icon: Home },
