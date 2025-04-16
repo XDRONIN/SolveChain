@@ -259,6 +259,7 @@ async function markAsSolved(index) {
     });
 
     console.log("Message marked as solved:", index);
+    markQuestionAsSolved(props.qid);
   } catch (error) {
     console.error("Error marking message as solved:", error);
   }
@@ -594,4 +595,25 @@ onUnmounted(() => {
     unsubscribe();
   }
 });
+async function markQuestionAsSolved(qid) {
+  try {
+    const response = await fetch("/api/setSolved", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ qid }),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to update question");
+    }
+
+    return data;
+  } catch (err) {
+    console.error("Error setting question as solved:", err.message);
+    return { success: false, message: err.message };
+  }
+}
 </script>

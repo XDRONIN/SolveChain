@@ -366,6 +366,38 @@ app.post("/api/addAuthor", async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 });
+app.post("/api/setSolved", async (req, res) => {
+  const { qid } = req.body;
+
+  if (!qid) {
+    return res.status(400).json({ success: false, message: "qid is required" });
+  }
+
+  try {
+    const result = await Question.findByIdAndUpdate(
+      qid,
+      { $set: { solved: true } },
+      { new: true }
+    );
+
+    if (!result) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Question not found" });
+    }
+
+    return res
+      .status(200)
+      .json({
+        success: true,
+        message: "Question marked as solved",
+        question: result,
+      });
+  } catch (error) {
+    console.error("Error updating question:", error);
+    return res.status(500).json({ success: false, message: "Server error" });
+  }
+});
 
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} hello world `)

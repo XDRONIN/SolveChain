@@ -124,7 +124,7 @@
                   <!-- Show "+X more" overlay -->
                   <div
                     v-if="index === 3 && post.media.length > 4"
-                    class="absolute inset-0 bg-black bg-opacity-50 flex justify-center items-center text-white text-lg font-bold"
+                    class="absolute inset-0 bg-black/50 flex justify-center items-center text-white text-lg font-bold"
                   >
                     +{{ post.media.length - 4 }}
                   </div>
