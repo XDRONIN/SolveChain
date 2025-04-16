@@ -75,7 +75,18 @@
               Connect Wallet
             </button>
           </div>
-          <User class="h-7 w-7 mr-4" @click="makeActive('Profile')" />
+          <User
+            v-if="!user.profilePic"
+            class="h-7 w-7 mr-4"
+            @click="makeActive('Profile')"
+          />
+          <img
+            v-if="user.profilePic"
+            :src="user.profilePic"
+            alt=""
+            class="h-12 w-12 mr-4"
+            @click="makeActive('Profile')"
+          />
         </header>
 
         <!-- Scrollable Content -->
@@ -147,7 +158,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import Posts from "../components/Posts.vue";
 import ComposePost from "../components/ComposePost.vue";
 import Discussions from "../components/Discussions.vue";
@@ -176,7 +187,9 @@ const navItems = ref([
 ]);
 
 const noQuestions = ref("2,00,000");
-
+const user = ref({
+  profilePic: "",
+});
 const TopSolvers = ref([
   {
     username: "xyz",
@@ -223,6 +236,23 @@ const makeActive = (item) => {
 const togglePost = () => {
   postDiv.value = !postDiv.value;
 };
+onMounted(async () => {
+  try {
+    const response = await fetch("/api/user");
+    if (response.ok) {
+      const userData = await response.json();
+      user.value = {
+        ...userData,
+      };
+      //console.log(user.value.profilePic);
+    } else {
+      message.value = "Failed to load user data";
+    }
+  } catch (error) {
+    message.value = "Error fetching user data";
+    console.error(error);
+  }
+});
 </script>
 
 <style>
