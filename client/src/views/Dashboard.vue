@@ -25,7 +25,10 @@
           <img src="../assets/logo2.png" alt="" class="w-40" />
           <button class="md:hidden text-white" @click="toggleSidebar">✖</button>
         </div>
-
+        <div
+          v-if="notify"
+          class="bg-red-500 rounded-full w-[12px] h-[12px] absolute top-42 left-11"
+        ></div>
         <!-- Navigation Items -->
         <div class="space-y-4 mt-10">
           <button
@@ -165,7 +168,6 @@ import Discussions from "../components/Discussions.vue";
 import {
   Home,
   Flame,
-  TrendingUp,
   Coins,
   Bell,
   CircleCheckBig,
@@ -179,13 +181,13 @@ import Profile from "../components/Profile.vue";
 const postDiv = ref(false);
 const navItems = ref([
   { name: "Home", icon: Home },
-  { name: "Trending", icon: TrendingUp },
+  //{ name: "Trending", icon: TrendingUp },
   { name: "Notifications", icon: Bell },
   { name: "Discussions", icon: Users },
   { name: "My Questions", icon: CircleHelp },
   { name: "My Solutions", icon: CircleCheckBig },
 ]);
-
+const notify = ref(false);
 const noQuestions = ref("2,00,000");
 const user = ref({
   profilePic: "",
@@ -231,6 +233,7 @@ const trends = ref([
 const activeNav = ref("Home");
 const makeActive = (item) => {
   activeNav.value = item;
+  item == "Notifications" ? (notify.value = false) : "";
   // console.log(activeNav);
 };
 const togglePost = () => {
@@ -252,7 +255,24 @@ onMounted(async () => {
     message.value = "Error fetching user data";
     console.error(error);
   }
+  await checkForSolvedQuestions();
 });
+async function checkForSolvedQuestions() {
+  try {
+    const response = await fetch("/api/checkForSolve");
+    const data = await response.json();
+    if (data.success) {
+      // notify is true if a new solved question exists
+      notify.value = true;
+      console.log("You have a newly solved question!");
+    } else {
+      notify.value = false;
+    }
+  } catch (error) {
+    console.error("Error checking for solved questions:", error);
+    return false;
+  }
+}
 </script>
 
 <style>

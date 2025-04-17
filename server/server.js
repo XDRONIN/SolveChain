@@ -508,7 +508,39 @@ app.delete("/api/user/cert", async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 });
+app.get("/api/checkForSolve", async (req, res) => {
+  try {
+    const uid = req.session.user.userData.uid; // get uid from query param or use req.user if you have auth
 
+    if (!uid) {
+      return res.status(400).json({ success: false, message: "UID required" });
+    }
+
+    const user = await User.findById(uid);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    // Filter notifyQues with notify = false
+    const notifyItems = user.notifyQues.filter((item) => item.notify === false);
+
+    // Check each related question for solved = true
+    for (const item of notifyItems) {
+      const question = await Question.findById(item.quesId);
+      if (question && question.solved === true) {
+        return res.json({ success: true });
+      }
+    }
+
+    // If no matching solved questions found
+    return res.json({ success: false });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+});
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} hello world `)
 );
