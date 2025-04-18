@@ -755,6 +755,49 @@ app.put("/api/updateLastViewed", async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
+app.get("/api/getUserQuestions", async (req, res) => {
+  try {
+    // Get user ID from session
+    const userId = req.session.user.userData.uid;
+
+    if (!userId) {
+      return res
+        .status(401)
+        .json({ success: false, message: "User not authenticated" });
+    }
+
+    // Keep the original parameter handling
+    //const page = parseInt(req.query.page) || 1;
+    //const limit = parseInt(req.query.limit) || 20;
+    //const filter = req.query.filter || "New";
+    //const field = req.query.field || "All";
+    const baseURL = "http://localhost:5000";
+
+    // Create query to find only the user's questions
+    let query = { author: userId };
+
+    // Add the field filter - same as in getPosts
+
+    // Get questions with pagination
+    const userQuestions = await Question.find(query);
+
+    // Format the results just like getPosts
+    const formattedQuestions = userQuestions.map((question) => ({
+      ...question.toObject(),
+      media: question.media.map((m) => ({
+        url: `${baseURL}/${m.url}`, // Convert relative path to absolute URL
+        contentType: m.contentType,
+      })),
+    }));
+
+    // Return in the same format as getPosts
+    res.json({ posts: formattedQuestions });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Failed to fetch questions", details: error.message });
+  }
+});
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} hello world `)
 );
