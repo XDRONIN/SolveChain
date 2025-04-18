@@ -473,11 +473,28 @@ async function joinDiscussion() {
       users: arrayUnion(uid.value),
     });
     isUserMember.value = true;
+    await addDiss(props.qid);
   } catch (error) {
     console.error("Error joining discussion:", error);
   }
 }
+async function addDiss(qid) {
+  try {
+    const response = await fetch("/api/addDissToUser", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ qid }),
+    });
+    console.log(qid);
 
+    const data = await response.json();
+    if (response.ok) {
+      console.log("Discussion Added");
+    }
+  } catch (error) {}
+}
 // Initialize or get discussion document
 async function initDiscussion() {
   if (!props.qid) {

@@ -258,7 +258,9 @@ onMounted(async () => {
     console.error(error);
   }
   await checkForSolvedQuestions();
+  // Call the function every 60 seconds
 });
+setInterval(checkForSolvedQuestions, 60000);
 async function checkForSolvedQuestions() {
   try {
     const response = await fetch("/api/checkForSolve");
@@ -269,6 +271,7 @@ async function checkForSolvedQuestions() {
       console.log("You have a newly solved question!");
     } else {
       notify.value = false;
+      //console.log("Checked for Notifications ");
     }
   } catch (error) {
     console.error("Error checking for solved questions:", error);

@@ -647,6 +647,29 @@ app.get("/api/getNotifications", async (req, res) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 });
+app.post("/api/addDissToUser", async (req, res) => {
+  try {
+    const userId = req.session.user.userData.uid;
+    const { qid } = req.body;
+
+    const user = await User.findById(userId);
+    const alreadyExists = user.notifyDiss.some((d) => d.dissId === qid);
+
+    if (!alreadyExists) {
+      user.notifyDiss.push({ dissId: qid, lastViewed: new Date() });
+      await user.save();
+    }
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Added Discussion to user" });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Something went wrong" });
+  }
+});
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} hello world `)
 );
