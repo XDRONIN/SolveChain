@@ -611,6 +611,7 @@ onUnmounted(() => {
   if (unsubscribe) {
     unsubscribe();
   }
+  updateLastViewed(props.qid);
 });
 async function markQuestionAsSolved(qid) {
   try {
@@ -633,4 +634,24 @@ async function markQuestionAsSolved(qid) {
     return { success: false, message: err.message };
   }
 }
+const updateLastViewed = async (dissId) => {
+  try {
+    const response = await fetch(`/api/updateLastViewed`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ dissId }),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Error ${response.status}: ${response.statusText}`);
+    }
+
+    await response.json();
+  } catch (error) {
+    console.error("Failed to update lastViewed timestamp:", error);
+    throw error;
+  }
+};
 </script>

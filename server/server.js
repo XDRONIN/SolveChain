@@ -670,6 +670,91 @@ app.post("/api/addDissToUser", async (req, res) => {
       .json({ success: false, message: "Something went wrong" });
   }
 });
+// Endpoint to fetch questions related to user's notifyDiss
+app.get("/api/dissNotifications", async (req, res) => {
+  try {
+    const userId = req.session.user.userData.uid;
+
+    // Find user and populate notification data
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Extract all dissIds from notifyDiss array
+    const dissIds = user.notifyDiss.map((item) => item.dissId);
+
+    // Fetch all questions that match these dissIds
+    const questions = await Question.find({ _id: { $in: dissIds } });
+
+    // Create response with question bodies
+    const notifications = questions.map((question) => {
+      // Find the associated notification data
+      const notificationData = user.notifyDiss.find(
+        (item) => item.dissId === question._id.toString()
+      );
+
+      return {
+        questionId: question._id,
+        queBody: question.queBody,
+        author: question.author,
+        username: question.username,
+        solved: question.solved,
+        lastViewed: notificationData ? notificationData.lastViewed : null,
+      };
+    });
+
+    res.status(200).json({ notifications });
+  } catch (error) {
+    console.error("Error fetching notification questions:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
+app.put("/api/updateLastViewed", async (req, res) => {
+  try {
+    const userId = req.session.user.userData.uid;
+    const { dissId } = req.body;
+
+    // Validate required parameters
+    if (!dissId) {
+      return res.status(400).json({ message: "dissId is required" });
+    }
+
+    // Find the user
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check if the dissId exists in the user's notifyDiss array
+    const notificationIndex = user.notifyDiss.findIndex(
+      (item) => item.dissId === dissId
+    );
+
+    if (notificationIndex === -1) {
+      return res
+        .status(404)
+        .json({ message: "Notification not found for this user" });
+    }
+
+    // Update the lastViewed timestamp
+    user.notifyDiss[notificationIndex].lastViewed = new Date();
+
+    // Save the updated user document
+    await user.save();
+
+    res.status(200).json({
+      message: "Last viewed timestamp updated successfully",
+      dissId,
+      lastViewed: user.notifyDiss[notificationIndex].lastViewed,
+    });
+  } catch (error) {
+    console.error("Error updating lastViewed timestamp:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+});
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} hello world `)
 );
