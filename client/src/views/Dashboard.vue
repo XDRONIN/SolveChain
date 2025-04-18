@@ -97,6 +97,7 @@
           <Posts v-if="activeNav == 'Home'" />
           <Discussions v-if="activeNav == 'Discussions'" />
           <Profile v-if="activeNav == 'Profile'" />
+          <Notification v-if="activeNav == 'Notifications'" />
         </div>
       </main>
 
@@ -165,6 +166,7 @@ import { ref, onMounted } from "vue";
 import Posts from "../components/Posts.vue";
 import ComposePost from "../components/ComposePost.vue";
 import Discussions from "../components/Discussions.vue";
+import Notification from "../components/Notification.vue";
 import {
   Home,
   Flame,

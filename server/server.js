@@ -541,6 +541,112 @@ app.get("/api/checkForSolve", async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
+app.post("/api/checkSolvedNotify", async (req, res) => {
+  try {
+    const uid = req.session.user.userData.uid;
+    if (!uid) {
+      return res.status(400).json({ success: false, message: "UID required" });
+    }
+
+    const user = await User.findById(uid);
+    if (!user) {
+      return res
+        .status(404)
+        .json({ success: false, message: "User not found" });
+    }
+
+    const notifyItems = user.notifyQues.filter((item) => item.notify === false);
+    const notificationsToAdd = [];
+
+    for (const item of notifyItems) {
+      const question = await Question.findById(item.quesId);
+      if (question && question.solved) {
+        item.notify = true;
+
+        notificationsToAdd.push({
+          typeOfNot: "question",
+          source: item.quesId,
+          msg: `This question was solved: "${question.queBody}"`,
+          createdAt: new Date(),
+        });
+      }
+    }
+
+    // Save user only if something was updated
+    if (notificationsToAdd.length > 0) {
+      await user.save();
+
+      const notificationDoc = await Notification.findById(uid);
+
+      if (notificationDoc) {
+        notificationDoc.notificationDetails.push(...notificationsToAdd);
+        await notificationDoc.save();
+      } else {
+        await Notification.create({
+          _id: uid,
+          notificationDetails: notificationsToAdd,
+          lastView: new Date(),
+        });
+      }
+    }
+
+    return res
+      .status(200)
+      .json({ success: true, message: "Notifications updated." });
+  } catch (err) {
+    console.error(err);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+});
+app.post("/api/updateSeen", async (req, res) => {
+  try {
+    const uid = req.session.user.userData.uid;
+    if (!uid)
+      return res
+        .status(400)
+        .json({ success: false, message: "User ID required" });
+
+    const notificationDoc = await Notification.findById(uid);
+    if (!notificationDoc) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Notification document not found" });
+    }
+
+    notificationDoc.lastView = new Date();
+    await notificationDoc.save();
+
+    return res
+      .status(200)
+      .json({ success: true, message: "lastView updated." });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
+app.get("/api/getNotifications", async (req, res) => {
+  try {
+    const uid = req.session.user.userData.uid;
+    if (!uid)
+      return res
+        .status(400)
+        .json({ success: false, message: "User ID required" });
+
+    const notifications = await Notification.findById(uid);
+    if (!notifications) {
+      return res
+        .status(404)
+        .json({ success: false, message: "No notifications found" });
+    }
+
+    return res.status(200).json({ success: true, data: notifications });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+});
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} hello world `)
 );
