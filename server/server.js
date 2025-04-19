@@ -137,6 +137,7 @@ app.post("/api/initializeUser", async (req, res) => {
     const newNotification = new Notification({
       _id,
       notificationDetails: [],
+      lastView: new Date(),
     });
     await newNotification.save();
     res.status(201).json({ message: "User initialized successfully" });
@@ -711,7 +712,7 @@ app.get("/api/dissNotifications", async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
-app.put("/api/updateLastViewed", async (req, res) => {
+app.post("/api/updateLastViewed", async (req, res) => {
   try {
     const userId = req.session.user.userData.uid;
     const { dissId } = req.body;
@@ -796,6 +797,44 @@ app.get("/api/getUserQuestions", async (req, res) => {
     res
       .status(500)
       .json({ error: "Failed to fetch questions", details: error.message });
+  }
+});
+app.post("/api/markDissSolved", async (req, res) => {
+  const { quid, uid } = req.body; // Changed qid to quid
+
+  try {
+    // Find the user first
+    const user = await User.findById(uid);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Find the notifyDiss item by dissId
+    const dissItem = user.notifyDiss.find((item) => item.dissId === quid); // Changed qid to quid
+
+    if (!dissItem) {
+      return res.status(404).json({ error: "dissId not found in notifyDiss" });
+    }
+
+    // If it's already solved, don't increment count
+    if (dissItem.solved === true) {
+      return res.json({ message: "Already solved. No update made." });
+    }
+
+    // Either solved is missing or false → set to true & increment
+    const updateResult = await User.updateOne(
+      { _id: uid, "notifyDiss.dissId": quid }, // Changed qid to quid
+      {
+        $set: { "notifyDiss.$.solved": true },
+        $inc: { solved: 1 },
+      }
+    );
+
+    res.json({ message: "Solved set to true and count incremented" });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 });
 app.listen(PORT, () =>

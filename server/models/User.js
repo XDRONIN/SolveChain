@@ -13,6 +13,7 @@ const userSchema = new mongoose.Schema({
     {
       dissId: String,
       lastViewed: Date,
+      solved: Boolean,
     },
   ],
   following: [String],

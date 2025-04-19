@@ -199,12 +199,15 @@ import { Send, Paperclip } from "lucide-vue-next";
 import {
   collection,
   doc,
+  query,
+  where,
   setDoc,
   getDoc,
   updateDoc,
   arrayUnion,
   onSnapshot,
   Timestamp,
+  getDocs,
 } from "firebase/firestore";
 import { db } from "../fireInit";
 import { ref, onMounted, nextTick, watch, onUnmounted, computed } from "vue";
@@ -252,6 +255,8 @@ async function markAsSolved(index) {
       ...updatedMessages[index],
       solved: true,
     };
+    markDissAsSolved(props, updatedMessages, index);
+    //console.log(updatedMessages[index].username);
 
     // Update the document with the new messages array
     await updateDoc(discussionDoc.value, {
@@ -264,7 +269,42 @@ async function markAsSolved(index) {
     console.error("Error marking message as solved:", error);
   }
 }
+async function markDissAsSolved(props, updatedmessages, index) {
+  //console.log(props.qid, updatedmessages.)
+  const uid = await getUserIdByUsername(updatedmessages[index].username);
+  const response = await fetch("/api/markDissSolved", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      quid: props.qid,
+      uid: uid,
+    }),
+  });
 
+  const data = await response.json();
+  if (response.ok) {
+    console.log("Successfully updated:", data.message);
+  } else {
+    console.error("Error:", data.error);
+  }
+}
+// Function to get _id (document ID) by username
+async function getUserIdByUsername(username) {
+  const usersRef = collection(db, "users"); // assuming your collection is named "users"
+  const q = query(usersRef, where("username", "==", username));
+
+  const querySnapshot = await getDocs(q);
+
+  if (querySnapshot.empty) {
+    console.log("No matching documents.");
+    return null;
+  }
+
+  // Assuming usernames are unique, return the first matching document ID
+  return querySnapshot.docs[0].id;
+}
 // Format timestamp to readable time
 function formatTimestamp(timestamp) {
   if (!timestamp) return "";
@@ -634,10 +674,11 @@ async function markQuestionAsSolved(qid) {
     return { success: false, message: err.message };
   }
 }
-const updateLastViewed = async (dissId) => {
+const updateLastViewed = async (Id) => {
   try {
-    const response = await fetch(`/api/updateLastViewed`, {
-      method: "PUT",
+    const dissId = Id;
+    const response = await fetch("/api/updateLastViewed", {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
