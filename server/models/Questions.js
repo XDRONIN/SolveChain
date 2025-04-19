@@ -14,11 +14,14 @@ const questionSchema = new mongoose.Schema({
     },
   ],
   meta: {
-    upvotes: Number,
-    downvotes: Number,
-    notify: Number,
-    discussion: Number,
-    share: Number,
+    upvotes: {
+      users: [String],
+      val: Number,
+    },
+    downvotes: { users: [String], val: Number },
+    notify: { users: [String], val: Number },
+    discussion: { users: [String], val: Number },
+    share: { users: [String], val: Number },
   },
   createdAt: { type: Date, default: Date.now },
 });

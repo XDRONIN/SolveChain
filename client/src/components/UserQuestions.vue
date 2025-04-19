@@ -1,28 +1,4 @@
 <template>
-  <div class="flex">
-    <select
-      name="filter"
-      id="filter"
-      v-model="selectedFilter"
-      @change="fetchPosts(true)"
-      class="md:w-fit sm:w-2 rounded-full border-none outline-none backdrop-blur-[18px] backdrop-saturate-[174%] bg-[rgba(27,27,27,0.5)] border border-[rgba(255,255,255,0.125)] pl-2 py-2 text-gray-200 m-2 ml-4"
-    >
-      <option v-for="option in filterOptions" :key="option" :value="option">
-        {{ option }}
-      </option>
-    </select>
-    <select
-      name="fieldFilter"
-      id="fieldFilter"
-      v-model="selectedField"
-      @change="fetchPosts(true)"
-      class="md:w-fit sm:w-2 rounded-full border-none outline-none backdrop-blur-[18px] backdrop-saturate-[174%] bg-[rgba(27,27,27,0.5)] border border-[rgba(255,255,255,0.125)] pl-2 py-2 text-gray-200 m-2"
-    >
-      <option v-for="option in fieldOptions" :key="option" :value="option">
-        {{ option }}
-      </option>
-    </select>
-  </div>
   <div
     v-if="disc"
     class="bg-black/90 min-h-full fixed flex z-20 inset-0 justify-center align-middle p-5"
@@ -308,14 +284,13 @@ const fetchPosts = async (reset = false) => {
   }
 
   try {
-    const response = await fetch(
-      `/api/getPosts?page=${page.value}&limit=20&filter=${selectedFilter.value}&field=${selectedField.value}`
-    );
+    const response = await fetch(`/api/getUserQuestions`);
     const data = await response.json();
 
     if (response.ok) {
       if (reset) {
         posts.value = data.posts;
+        //console.log(data.posts);
       } else {
         posts.value = [...posts.value, ...data.posts];
       }
