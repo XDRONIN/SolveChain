@@ -99,6 +99,7 @@
           <Profile v-if="activeNav == 'Profile'" />
           <Notification v-if="activeNav == 'Notifications'" />
           <UserQuestions v-if="activeNav == 'My Questions'" />
+          <MySolutions v-if="activeNav == 'My Solutions'" />
         </div>
       </main>
 
@@ -169,6 +170,7 @@ import ComposePost from "../components/ComposePost.vue";
 import Discussions from "../components/Discussions.vue";
 import Notification from "../components/Notification.vue";
 import UserQuestions from "../components/UserQuestions.vue";
+import MySolutions from "../components/MySolutions.vue";
 import {
   Home,
   Flame,
