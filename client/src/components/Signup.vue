@@ -96,6 +96,7 @@ const form = ref({
   password: "",
   areaOfInterest: "",
   fieldOfExpertise: "",
+  role: "user",
 });
 
 const fields = ref([
@@ -137,6 +138,7 @@ const handleSubmit = async () => {
       username: form.value.username,
       areaOfInterest: form.value.areaOfInterest,
       fieldOfExpertise: form.value.fieldOfExpertise,
+      role: form.value.role,
       createdAt: new Date(),
     });
 
