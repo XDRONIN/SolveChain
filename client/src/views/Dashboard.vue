@@ -1,4 +1,5 @@
 <template>
+  <WalletConnect v-if="showWallet" />
   <div class="min-h-screen bg-black text-white p-4">
     <!-- Main Layout -->
     <div class="flex flex-col md:flex-row h-screen max-w-screen-2xl mx-auto">
@@ -73,6 +74,7 @@
           </div>
           <div class="flex mr-2">
             <button
+              @click="toggleWallet()"
               class="text-center mr-4 ml-3 flex cursor-pointer text-fuchsia-700 md:font-semibold text-sm bg-transparent md:px-1 md:py-2 rounded-full border-2 border-fuchsia-700 hover:scale-105 duration-200 hover:text-white hover: to-fuchsia-800 hover:from-fuchsia-800 hover:to-fuchsia-200 before:rounded-full before:bg-gradient-to-r before:from-fuchsia-400 before:to-fuchsia-800 before:blur-md before:opacity-50 before:z-[-1]"
             >
               Connect Wallet
@@ -171,6 +173,7 @@ import Discussions from "../components/Discussions.vue";
 import Notification from "../components/Notification.vue";
 import UserQuestions from "../components/UserQuestions.vue";
 import MySolutions from "../components/MySolutions.vue";
+import WalletConnect from "../components/WalletConnect.vue";
 import {
   Home,
   Flame,
@@ -198,6 +201,10 @@ const noQuestions = ref("2,00,000");
 const user = ref({
   profilePic: "",
 });
+const showWallet = ref(false);
+const toggleWallet = () => {
+  showWallet.value = !showWallet.value;
+};
 const TopSolvers = ref([
   {
     username: "xyz",

@@ -15,6 +15,7 @@ import upload from "./multerConfig.js";
 import Question from "./models/Questions.js";
 import Discussion from "./models/Discussion.js";
 import { error } from "console";
+import Web3Service from "./services/web3Service.js";
 
 // Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
@@ -879,6 +880,87 @@ app.get("/api/solved-diss-posts", async (req, res) => {
   } catch (error) {
     console.error("Error fetching solved diss posts:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+app.post("/api/reward", async (req, res) => {
+  try {
+    const { userAddress, amount, solutionId } = req.body;
+
+    // Validate inputs
+    if (!userAddress || !amount || !solutionId) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields: userAddress, amount, or solutionId",
+      });
+    }
+
+    // Only admins or solution owners can reward
+    if (!req.user.isAdmin && req.user.id !== req.solution.createdBy) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to reward users",
+      });
+    }
+
+    // Process the reward
+    const result = await web3Service.rewardUser(userAddress, amount);
+
+    if (result.success) {
+      // Update your database to record this reward
+      // For example:
+      // await RewardModel.create({
+      //   solutionId,
+      //   userAddress,
+      //   rewardAmount: amount,
+      //   transactionHash: result.transactionHash,
+      //   createdBy: req.user.id
+      // });
+
+      return res.status(200).json({
+        success: true,
+        message: "User rewarded successfully",
+        data: result,
+      });
+    } else {
+      return res.status(500).json({
+        success: false,
+        message: "Failed to reward user",
+        error: result.error,
+      });
+    }
+  } catch (error) {
+    console.error("Error in reward endpoint:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+});
+app.get("/balance/:address", async (req, res) => {
+  try {
+    const { address } = req.params;
+    const result = await web3Service.getTokenBalance(address);
+
+    if (result.success) {
+      return res.status(200).json({
+        success: true,
+        balance: result.balance,
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Failed to get balance",
+        error: result.error,
+      });
+    }
+  } catch (error) {
+    console.error("Error getting balance:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
   }
 });
 app.listen(PORT, () =>
