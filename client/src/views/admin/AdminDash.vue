@@ -1,7 +1,11 @@
 <script setup>
 import Analitics from "../../components/admin/Analitics.vue";
 import VRequests from "../../components/admin/VRequests.vue";
+import Reports from "../../components/admin/Reports.vue";
+import BanUser from "../../components/admin/BanUser.vue";
+import RewardUser from "../../components/admin/RewardUser.vue";
 import { ref } from "vue";
+import { Ban } from "lucide-vue-next";
 
 const menuOpen = ref(false);
 const Nav = ref("Dashboard");
@@ -108,5 +112,8 @@ const handleMenuAction = (action) => {
     <!-- Make sure the case matches -->
     <Analitics v-if="Nav === 'Dashboard'" />
     <VRequests v-if="Nav === 'verification'" />
+    <Reports v-if="Nav === 'review'" />
+    <BanUser v-if="Nav === 'ban'" />
+    <RewardUser v-if="Nav === 'reward'" />
   </div>
 </template>

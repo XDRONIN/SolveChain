@@ -255,8 +255,12 @@ export default {
   max-width: 500px;
   margin: 20px auto;
   padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 16px;
+  background: rgba(30, 30, 30, 0.219); /* semi-transparent for glass effect */
+  backdrop-filter: blur(10px);
+  box-shadow: 0 4px 20px rgba(255, 0, 255, 0.11);
+  color: #e0e0e0;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .connect-btn,
@@ -264,36 +268,60 @@ export default {
 .refresh-btn,
 .reward-btn,
 .transfer-btn {
-  padding: 8px 16px;
-  border-radius: 4px;
+  padding: 10px 18px;
+  border-radius: 8px;
   border: none;
   cursor: pointer;
   font-weight: bold;
   margin: 5px;
+  transition: all 0.3s ease;
+  background: rgba(50, 50, 50, 0.7);
+  color: #fff;
 }
 
 .connect-btn {
-  background-color: #4caf50;
-  color: white;
+  background-color: #e100ff;
+  color: #fff;
+}
+
+.connect-btn:hover {
+  background-color: #e100ff;
+  box-shadow: 0 0 12px #e100ff;
 }
 
 .disconnect-btn {
-  background-color: #f44336;
-  color: white;
+  background-color: #770071;
+  color: #fff;
+}
+
+.disconnect-btn:hover {
+  background-color: #770071;
+  box-shadow: 0 0 12px #f36dff77;
 }
 
 .refresh-btn,
 .reward-btn,
 .transfer-btn {
-  background-color: #2196f3;
-  color: white;
+  background-color: #333;
+  border: 1px solid #e100ff;
+  color: #ffb3f3;
+}
+
+.refresh-btn:hover,
+.reward-btn:hover,
+.transfer-btn:hover {
+  background-color: #222;
+  box-shadow: 0 0 10px #e100ff;
 }
 
 .input-field {
   padding: 8px;
   margin: 5px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background-color: rgba(40, 40, 40, 0.8);
+  color: #e0e0e0;
+  backdrop-filter: blur(6px);
 }
 
 .input-group {
@@ -306,18 +334,23 @@ export default {
 
 .notification {
   margin-top: 20px;
-  padding: 10px;
-  border-radius: 4px;
+  padding: 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  background: rgba(20, 20, 20, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .success {
-  background-color: #dff0d8;
-  color: #3c763d;
+  background-color: rgba(30, 0, 30, 0.4);
+  color: #ff00dd;
+  border: 1px solid #e100ff;
 }
 
 .error {
-  background-color: #f2dede;
-  color: #a94442;
+  background-color: rgba(60, 0, 30, 0.5);
+  color: #ff4d88;
+  border: 1px solid #ff4d88;
 }
 
 .address-section,
@@ -326,12 +359,13 @@ export default {
   justify-content: space-between;
   align-items: center;
   margin: 10px 0;
+  color: #ccc;
 }
 
 .admin-section,
 .transfer-section {
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #444;
 }
 </style>
