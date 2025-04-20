@@ -963,6 +963,71 @@ app.get("/balance/:address", async (req, res) => {
     });
   }
 });
+app.get("/api/analytics/questions", async (req, res) => {
+  try {
+    // Get total questions count
+    const totalCount = await Question.countDocuments();
+
+    // Get solved questions count
+    const solvedCount = await Question.countDocuments({ solved: true });
+
+    // Get questions by tag
+    const tagAggregation = await Question.aggregate([
+      { $unwind: "$tags" },
+      { $group: { _id: "$tags", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $project: { tag: "$_id", count: 1, _id: 0 } },
+    ]);
+
+    // Get question trend for the last 7 days
+    const today = new Date();
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const trendData = await Question.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: sevenDaysAgo },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+          },
+          new: { $sum: 1 },
+          solved: { $sum: { $cond: ["$solved", 1, 0] } },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+      {
+        $project: {
+          date: "$_id",
+          new: 1,
+          solved: 1,
+          _id: 0,
+        },
+      },
+    ]);
+
+    res.json({
+      totalCount,
+      solvedCount,
+      byTag: tagAggregation,
+      trend: trendData,
+    });
+  } catch (error) {
+    console.error("Error fetching question analytics:", error);
+    res
+      .status(500)
+      .json({
+        message: "Failed to fetch question analytics",
+        error: error.message,
+      });
+  }
+});
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} hello world `)
 );
