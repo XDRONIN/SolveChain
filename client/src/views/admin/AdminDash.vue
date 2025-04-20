@@ -177,6 +177,29 @@ const fetchData = async () => {
     loading.value = false;
   }
 };
+const menuOpen = ref(false);
+
+const toggleMenu = () => {
+  menuOpen.value = !menuOpen.value;
+};
+
+const handleMenuAction = (action) => {
+  menuOpen.value = false;
+  switch (action) {
+    case "verification":
+      console.log("Go to Verification Requests");
+      break;
+    case "review":
+      console.log("Go to Review Reports");
+      break;
+    case "ban":
+      console.log("Open Ban User Dialog");
+      break;
+    case "reward":
+      console.log("Open Reward User Dialog");
+      break;
+  }
+};
 
 // Initialize dashboard
 onMounted(() => {
@@ -189,9 +212,70 @@ onMounted(() => {
     <div
       class="backdrop-blur-md backdrop-saturate-150 bg-black/50 rounded-xl p-6 shadow-xl border border-gray-800"
     >
-      <h1 class="text-3xl font-bold mb-6 text-fuchsia-400">
-        Analytics Dashboard
-      </h1>
+      <h1 class="text-3xl font-bold mb-6 text-fuchsia-400">Admin Dashboard</h1>
+      <div class="relative flex justify-end -mt-12 mb-7">
+        <div class="relative inline-block text-left">
+          <button
+            @click="toggleMenu"
+            class="p-2 rounded-md text-gray-300 hover:bg-gray-800 focus:outline-none"
+          >
+            <svg
+              class="w-10 h-10"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+
+          <!-- Dropdown -->
+          <div
+            v-if="menuOpen"
+            class="absolute right-0 mt-2 w-52 rounded-xl shadow-xl bg-gray-900 border border-gray-700 z-50"
+          >
+            <ul class="py-2 text-sm text-gray-300">
+              <li>
+                <button
+                  @click="handleMenuAction('verification')"
+                  class="w-full text-left px-4 py-2 hover:bg-gray-800"
+                >
+                  Verification Requests
+                </button>
+              </li>
+              <li>
+                <button
+                  @click="handleMenuAction('review')"
+                  class="w-full text-left px-4 py-2 hover:bg-gray-800"
+                >
+                  Review Reports
+                </button>
+              </li>
+              <li>
+                <button
+                  @click="handleMenuAction('ban')"
+                  class="w-full text-left px-4 py-2 hover:bg-gray-800"
+                >
+                  Ban User
+                </button>
+              </li>
+              <li>
+                <button
+                  @click="handleMenuAction('reward')"
+                  class="w-full text-left px-4 py-2 hover:bg-gray-800"
+                >
+                  Reward User
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
 
       <!-- Loading and Error States -->
       <div v-if="loading" class="flex items-center justify-center h-64">
