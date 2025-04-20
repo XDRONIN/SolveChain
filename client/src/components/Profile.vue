@@ -135,20 +135,24 @@ const updateUserDetails = async () => {
 const requestVerification = async () => {
   isLoading.value = true;
   message.value = "";
-
   try {
-    const response = await fetch("/api/user/request-verification", {
+    const response = await fetch("/api/request-verification", {
       method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
     });
 
+    const data = await response.json();
+
     if (response.ok) {
-      message.value = "Verification request submitted successfully";
+      console.log("✅ Verification request successful:", data.message);
+      // You can show a toast or update UI here
     } else {
-      message.value = "Failed to submit verification request";
+      console.warn("⚠️ Verification request failed:", data.message);
     }
   } catch (error) {
-    message.value = "Error submitting verification request";
-    console.error(error);
+    console.error("❌ Error sending verification request:", error);
   } finally {
     isLoading.value = false;
   }

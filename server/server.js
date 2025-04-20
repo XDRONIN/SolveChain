@@ -16,6 +16,7 @@ import Question from "./models/Questions.js";
 import Discussion from "./models/Discussion.js";
 import { error } from "console";
 import Web3Service from "./services/web3Service.js";
+import Verification from "./models/Verification.js";
 
 // Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
@@ -1020,12 +1021,41 @@ app.get("/api/analytics/questions", async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching question analytics:", error);
+    res.status(500).json({
+      message: "Failed to fetch question analytics",
+      error: error.message,
+    });
+  }
+});
+app.post("/api/request-verification", async (req, res) => {
+  try {
+    const userData = req.session.user.userData;
+
+    if (!userData || !userData.uid || !userData.username) {
+      return res.status(400).json({ message: "User data missing in session." });
+    }
+
+    const existingRequest = await Verification.findOne({ uid: userData.uid });
+    if (existingRequest) {
+      return res
+        .status(409)
+        .json({ message: "Verification request already exists." });
+    }
+
+    const newRequest = new Verification({
+      uid: userData.uid,
+      username: userData.username,
+      createdAt: new Date(),
+    });
+
+    await newRequest.save();
+
     res
-      .status(500)
-      .json({
-        message: "Failed to fetch question analytics",
-        error: error.message,
-      });
+      .status(201)
+      .json({ message: "Verification request submitted successfully." });
+  } catch (err) {
+    console.error("Error processing verification request:", err);
+    res.status(500).json({ message: "Internal server error." });
   }
 });
 app.listen(PORT, () =>
