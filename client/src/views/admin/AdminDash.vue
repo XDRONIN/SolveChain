@@ -1,5 +1,6 @@
 <script setup>
 import Analitics from "../../components/admin/Analitics.vue";
+import VRequests from "../../components/admin/VRequests.vue";
 import { ref } from "vue";
 
 const menuOpen = ref(false);
@@ -103,7 +104,9 @@ const handleMenuAction = (action) => {
       </div>
     </div>
   </div>
-
-  <!-- Make sure the case matches -->
-  <Analitics v-if="Nav === 'Dashboard'" />
+  <div class="bg-black min-h-screen">
+    <!-- Make sure the case matches -->
+    <Analitics v-if="Nav === 'Dashboard'" />
+    <VRequests v-if="Nav === 'verification'" />
+  </div>
 </template>

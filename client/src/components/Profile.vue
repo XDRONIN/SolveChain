@@ -146,10 +146,10 @@ const requestVerification = async () => {
     const data = await response.json();
 
     if (response.ok) {
-      console.log("✅ Verification request successful:", data.message);
+      message.value = "Verification Request Send";
       // You can show a toast or update UI here
     } else {
-      console.warn("⚠️ Verification request failed:", data.message);
+      message.value = ("⚠️ Verification request failed:", data.message);
     }
   } catch (error) {
     console.error("❌ Error sending verification request:", error);

@@ -1046,6 +1046,7 @@ app.post("/api/request-verification", async (req, res) => {
       uid: userData.uid,
       username: userData.username,
       createdAt: new Date(),
+      verified: false,
     });
 
     await newRequest.save();
@@ -1056,6 +1057,78 @@ app.post("/api/request-verification", async (req, res) => {
   } catch (err) {
     console.error("Error processing verification request:", err);
     res.status(500).json({ message: "Internal server error." });
+  }
+});
+/// Get all unverified verification requests
+app.get("/api/getVrequests", async (req, res) => {
+  try {
+    // Fetch only unverified requests
+    const verifications = await Verification.find({ verified: false })
+      .sort({ createdAt: -1 })
+      .limit(50);
+
+    // Extract uids
+    const uids = verifications.map((verification) => verification.uid);
+
+    // Fetch corresponding profile data from Users collection
+    const users = await User.find(
+      { _id: { $in: uids } },
+      "_id profilePic certs followers solved"
+    );
+
+    // Create a map of uid to user details
+    const uidToData = {};
+    users.forEach((user) => {
+      uidToData[user._id] = {
+        profilePic: user.profilePic || null,
+        certs: user.certs || [],
+        followers: user.followers || [],
+        solved: user.solved || 0,
+      };
+    });
+
+    // Prepare result array
+    const result = uids.map((uid) => ({
+      uid,
+      profilepic: uidToData[uid]?.profilePic || null,
+      certs: uidToData[uid]?.certs || [],
+      followers: uidToData[uid]?.followers || [],
+      solved: uidToData[uid]?.solved || 0,
+    }));
+
+    return res.status(200).json({
+      users: result,
+      count: result.length,
+    });
+  } catch (error) {
+    console.error("Error fetching verification requests:", error);
+    return res
+      .status(500)
+      .json({ error: "Failed to fetch verification requests" });
+  }
+});
+// Reject verification request
+app.post("/api/rejectVerification", async (req, res) => {
+  const { uid } = req.body;
+
+  if (!uid) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
+  try {
+    // Delete the verification request
+    const result = await Verification.deleteOne({ uid, verified: false });
+
+    if (result.deletedCount === 0) {
+      return res
+        .status(404)
+        .json({ error: "Verification request not found or already verified" });
+    }
+
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    console.error("Error rejecting verification:", error);
+    return res.status(500).json({ error: "Failed to reject verification" });
   }
 });
 app.listen(PORT, () =>
