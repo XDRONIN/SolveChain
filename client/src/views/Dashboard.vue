@@ -1,5 +1,4 @@
 <template>
-  <WalletConnect v-if="showWallet" />
   <div class="min-h-screen bg-black text-white p-4">
     <!-- Main Layout -->
     <div class="flex flex-col md:flex-row h-screen max-w-screen-2xl mx-auto">
@@ -73,12 +72,12 @@
             />
           </div>
           <div class="flex mr-2">
-            <button
+            <!-- <button
               @click="toggleWallet()"
               class="text-center mr-4 ml-3 flex cursor-pointer text-fuchsia-700 md:font-semibold text-sm bg-transparent md:px-1 md:py-2 rounded-full border-2 border-fuchsia-700 hover:scale-105 duration-200 hover:text-white hover: to-fuchsia-800 hover:from-fuchsia-800 hover:to-fuchsia-200 before:rounded-full before:bg-gradient-to-r before:from-fuchsia-400 before:to-fuchsia-800 before:blur-md before:opacity-50 before:z-[-1]"
             >
               Connect Wallet
-            </button>
+            </button> -->
           </div>
           <User
             v-if="!user.profilePic"
@@ -107,8 +106,9 @@
 
       <!-- Right Sidebar - Fixed with spacing -->
       <aside
-        class="hidden md:block md:relative w-80 border-l border-gray-800 p-4 bg-black h-screen overflow-y-auto scrollbar-hide flex-shrink-0 mr-4 mt-4 mb-4 rounded-xl"
+        class="hidden md:block md:relative w-90 border-l border-gray-800 p-4 bg-black h-screen overflow-y-auto scrollbar-hide flex-shrink-0 mr-4 mt-4 mb-4 rounded-xl"
       >
+        <WalletConnect />
         <!-- Premium Card -->
         <div
           class="mt-4 rounded-xl backdrop-blur-[18px] backdrop-saturate-[174%] bg-[rgba(27,27,27,0.5)] border border-[rgba(255,255,255,0.125)] p-3 pr-6 flex flex-col pt-4"
@@ -131,22 +131,7 @@
         </div>
 
         <!-- What's happening -->
-        <div
-          class="mt-4 rounded-xl backdrop-blur-[18px] backdrop-saturate-[174%] bg-[rgba(27,27,27,0.5)] border border-[rgba(255,255,255,0.125)] p-4"
-        >
-          <h2 class="text-xl font-bold">Hot now</h2>
-          <Flame class="w-7 h-7 relative -top-8 left-21" />
 
-          <div class="space-y-4">
-            <div v-for="trend in trends" :key="trend.id">
-              <div class="text-sm text-gray-500">{{ trend.field }}</div>
-              <div class="font-bold">{{ trend.tag }}</div>
-              <div class="text-sm text-gray-500">
-                {{ trend.questions }} Questions
-              </div>
-            </div>
-          </div>
-        </div>
         <div
           class="mt-4 rounded-xl backdrop-blur-[18px] backdrop-saturate-[174%] bg-[rgba(27,27,27,0.5)] border border-[rgba(255,255,255,0.125)] p-4 pr-6 flex flex-col mb-0"
         >
@@ -201,10 +186,10 @@ const noQuestions = ref("2,00,000");
 const user = ref({
   profilePic: "",
 });
-const showWallet = ref(false);
-const toggleWallet = () => {
-  showWallet.value = !showWallet.value;
-};
+// const showWallet = ref(false);
+// const toggleWallet = () => {
+//   showWallet.value = !showWallet.value;
+// };
 const TopSolvers = ref([
   {
     username: "xyz",
