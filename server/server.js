@@ -1131,6 +1131,95 @@ app.post("/api/rejectVerification", async (req, res) => {
     return res.status(500).json({ error: "Failed to reject verification" });
   }
 });
+app.post("/api/getUsersData", async (req, res) => {
+  const { uids } = req.body;
+
+  if (!uids || !Array.isArray(uids) || uids.length === 0) {
+    return res.status(400).json({ error: "Valid user IDs are required" });
+  }
+
+  try {
+    // Find users by their _id which should match the uids
+    const mongoUsers = await User.find({ _id: { $in: uids } })
+      .select("_id profilePic") // Select only the fields we need
+      .lean(); // Convert to plain JavaScript objects
+
+    // Map the _id to uid for consistency with your frontend expectations
+    const formattedUsers = mongoUsers.map((user) => ({
+      uid: user._id,
+      profilePic: user.profilePic || "",
+    }));
+
+    return res.status(200).json({ users: formattedUsers });
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    return res.status(500).json({ error: "Failed to fetch user data" });
+  }
+});
+
+app.get("/api/searchPosts", async (req, res) => {
+  const { query } = req.query;
+
+  if (!query || query.length < 2) {
+    return res.status(400).json({ error: "Search query too short" });
+  }
+
+  try {
+    // Based on your schema, adjust the search fields
+    const posts = await Question.find({
+      $or: [
+        { queBody: { $regex: query, $options: "i" } }, // Changed from content to queBody based on schema
+        { tags: { $in: [new RegExp(query, "i")] } },
+      ],
+    })
+      .limit(5)
+      .select("_id queBody tags createdAt author username") // Updated field names
+      .lean();
+
+    // Format to match what the frontend expects
+    const formattedPosts = posts.map((post) => ({
+      _id: post._id,
+      title: post.queBody.substring(0, 50), // Create a title from queBody since there's no title field
+      content: post.queBody,
+      tags: post.tags,
+      createdAt: post.createdAt,
+      authorId: post.author,
+      username: post.username,
+    }));
+
+    return res.status(200).json({ posts: formattedPosts });
+  } catch (error) {
+    console.error("Error searching posts:", error);
+    return res.status(500).json({ error: "Failed to search posts" });
+  }
+});
+app.post("/api/getSearchQuestions", async (req, res) => {
+  try {
+    const { qid } = req.body;
+    const baseURL = "http://localhost:5000";
+
+    const question = await Question.findById(qid);
+
+    if (!question) {
+      return res.status(404).json({ error: "Question not found" });
+    }
+
+    const formattedQuestion = {
+      ...question.toObject(),
+      media: question.media.map((m) => ({
+        url: `${baseURL}/${m.url}`,
+        contentType: m.contentType,
+      })),
+    };
+
+    res.json({ posts: [formattedQuestion] });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Failed to fetch questions", details: error.message });
+  }
+});
+
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} hello world `)
 );

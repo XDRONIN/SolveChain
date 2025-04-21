@@ -1,28 +1,4 @@
 <template>
-  <div class="flex">
-    <select
-      name="filter"
-      id="filter"
-      v-model="selectedFilter"
-      @change="fetchPosts(true)"
-      class="md:w-fit sm:w-2 rounded-full border-none outline-none backdrop-blur-[18px] backdrop-saturate-[174%] bg-[rgba(27,27,27,0.5)] border border-[rgba(255,255,255,0.125)] pl-2 py-2 text-gray-200 m-2 ml-4"
-    >
-      <option v-for="option in filterOptions" :key="option" :value="option">
-        {{ option }}
-      </option>
-    </select>
-    <select
-      name="fieldFilter"
-      id="fieldFilter"
-      v-model="selectedField"
-      @change="fetchPosts(true)"
-      class="md:w-fit sm:w-2 rounded-full border-none outline-none backdrop-blur-[18px] backdrop-saturate-[174%] bg-[rgba(27,27,27,0.5)] border border-[rgba(255,255,255,0.125)] pl-2 py-2 text-gray-200 m-2"
-    >
-      <option v-for="option in fieldOptions" :key="option" :value="option">
-        {{ option }}
-      </option>
-    </select>
-  </div>
   <div
     v-if="disc"
     class="bg-black/90 min-h-full fixed flex z-20 inset-0 justify-center align-middle p-5"
@@ -158,6 +134,9 @@
             >
               <Users class="h-5 w-5" /> {{ post.meta.discussion.val }}
             </button>
+            <button class="hover:text-blue-500 flex items-center">
+              <Send class="h-5 w-5" /> {{ post.meta.share.val }}
+            </button>
           </div>
         </div>
       </div>
@@ -226,6 +205,7 @@ import {
   Users,
 } from "lucide-vue-next";
 import Discussion from "./Discussion.vue";
+const props = defineProps({ qid: String });
 const posts = ref([]);
 const page = ref(1);
 const hasMore = ref(true);
@@ -305,14 +285,20 @@ const fetchPosts = async (reset = false) => {
   }
 
   try {
-    const response = await fetch(
-      `/api/getPosts?page=${page.value}&limit=20&filter=${selectedFilter.value}&field=${selectedField.value}`
-    );
+    console.log(props.qid);
+    const response = await fetch("/api/getSearchQuestions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ qid: props.qid }),
+    });
     const data = await response.json();
 
     if (response.ok) {
       if (reset) {
         posts.value = data.posts;
+        //console.log(data.posts);
       } else {
         posts.value = [...posts.value, ...data.posts];
       }
