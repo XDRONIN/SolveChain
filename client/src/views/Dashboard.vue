@@ -89,6 +89,7 @@
                 <div
                   v-for="user in searchResults.users"
                   :key="user._id"
+                  @click="setUserID(user._id)"
                   class="flex items-center gap-3 p-2 hover:bg-[rgba(48,48,48,0.5)] rounded-lg cursor-pointer"
                 >
                   <div class="flex-shrink-0">
@@ -167,6 +168,7 @@
           <UserQuestions v-if="activeNav === 'My Questions'" />
           <MySolutions v-if="activeNav === 'My Solutions'" />
           <SearchPost :qid="searchQid" v-if="activeNav === 'SearchQuestion'" />
+          <ViewProfile :userId="searchUid" v-if="activeNav === 'SearchUser'" />
         </div>
       </main>
 
@@ -225,6 +227,7 @@ import UserQuestions from "../components/UserQuestions.vue";
 import MySolutions from "../components/MySolutions.vue";
 import WalletConnect from "../components/WalletConnect.vue";
 import SearchPost from "../components/SearchPost.vue";
+import ViewProfile from "../components/ViewProfile.vue";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../fireInit";
 import {
@@ -422,6 +425,7 @@ const trends = ref([
 ]);
 const activeNav = ref("Home");
 const searchQid = ref("");
+const searchUid = ref("");
 
 // Improved makeActive function to ensure reactivity
 const makeActive = (item) => {
@@ -431,7 +435,12 @@ const makeActive = (item) => {
   }
   //console.log("Active nav set to:", activeNav.value);
 };
-
+const setUserID = async (uid) => {
+  searchUid.value = uid;
+  activeNav.value = "SearchUser";
+  await nextTick();
+  showResults.value = false;
+};
 // New function to handle post clicks from search results
 const handlePostClick = async (qid) => {
   console.log("Post clicked with ID:", qid);

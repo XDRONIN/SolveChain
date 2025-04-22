@@ -1219,6 +1219,103 @@ app.post("/api/getSearchQuestions", async (req, res) => {
       .json({ error: "Failed to fetch questions", details: error.message });
   }
 });
+// POST user profile - Changed from GET with params to POST with body
+app.post("/api/user", async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    const user = await User.findById(userId).lean();
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({
+      profilePic: user.profilePic || "",
+      certs: user.certs || [],
+      solved: user.solved || 0,
+      stars: user.stars || 0,
+      verified: user.verified || false,
+      followers: user.followers || [],
+      following: user.following || [],
+    });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// POST follow user - Updated to use request body
+app.post("/api/user/follow", async (req, res) => {
+  try {
+    const { targetUserId } = req.body;
+
+    if (!targetUserId) {
+      return res.status(400).json({ error: "Target user ID is required" });
+    }
+
+    // Get current user ID from session
+    const currentUserId = req.session.user?.userData?.uid;
+
+    if (!currentUserId) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+
+    if (currentUserId === targetUserId) {
+      return res.status(400).json({ error: "Cannot follow yourself" });
+    }
+
+    const targetUser = await User.findById(targetUserId);
+    const currentUser = await User.findById(currentUserId);
+
+    if (!targetUser || !currentUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (!targetUser.followers.includes(currentUserId)) {
+      targetUser.followers.push(currentUserId);
+      await targetUser.save();
+    }
+
+    if (!currentUser.following.includes(targetUserId)) {
+      currentUser.following.push(targetUserId);
+      await currentUser.save();
+    }
+
+    res.json({ message: "Followed successfully" });
+  } catch (error) {
+    console.error("Error following user:", error);
+    res.status(500).json({ error: "Failed to follow user" });
+  }
+});
+
+// POST add star - Updated to use request body
+app.post("/api/user/star", async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    user.stars = (user.stars || 0) + 1;
+    await user.save();
+
+    res.json({ message: "Star added" });
+  } catch (error) {
+    console.error("Error adding star:", error);
+    res.status(500).json({ error: "Failed to add star" });
+  }
+});
 
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} hello world `)
