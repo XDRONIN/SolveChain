@@ -377,7 +377,7 @@ const deleteCert = async (index) => {
           />
         </div>
         <div>
-          <label class="block text-gray-400 mb-1">Field of Expertise</label>
+          <label class="block text-gray-400 mb-1">Wallet Address</label>
           <input
             type="text"
             v-model="user.walletId"

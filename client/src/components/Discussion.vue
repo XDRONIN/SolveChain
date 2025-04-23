@@ -5,12 +5,30 @@
       <h2 class="text-xl font-semibold text-white">{{ queDetails.queBody }}</h2>
     </div>
 
-    <button
-      @click="joinDiscussion"
-      class="mt-4 w-40 flex cursor-pointer p-3 text-center align-middle justify-center relative left-185 text-white font-semibold bg-gradient-to-r from-fuchsia-500 to-fuchsia-800 rounded-full border border-black hover:scale-105 duration-200 hover:text-white hover:border-gray-800 hover:from-fuchsia-800 hover:to-fuchsia-500"
-    >
-      {{ isUserMember ? "Joined" : "Join Discussion" }}
-    </button>
+    <div class="flex space-x-4 mt-4 relative left-185">
+      <button
+        @click="joinDiscussion"
+        class="w-40 flex cursor-pointer p-3 text-center align-middle justify-center text-white font-semibold bg-gradient-to-r from-fuchsia-500 to-fuchsia-800 rounded-full border border-black hover:scale-105 duration-200 hover:text-white hover:border-gray-800 hover:from-fuchsia-800 hover:to-fuchsia-500"
+      >
+        {{ isUserMember ? "Joined" : "Join Discussion" }}
+      </button>
+
+      <!-- Request Reward button - only visible to author when question is solved -->
+      <button
+        v-if="isAuthor && hasSolvedMessage && !rewardRequested"
+        @click="requestReward"
+        class="w-40 fixed left-265 flex cursor-pointer p-3 text-center align-middle justify-center text-white font-semibold bg-gradient-to-r from-green-500 to-green-800 rounded-full border border-black hover:scale-105 duration-200 hover:text-white hover:border-gray-800 hover:from-green-800 hover:to-green-500"
+      >
+        Request Reward
+      </button>
+      <div
+        v-if="isAuthor && rewardRequested"
+        class="fixed left-265 p-2 text-sm text-green-400 font-medium"
+      >
+        Reward requested!
+      </div>
+    </div>
+
     <div class="p-4 h-174 overflow-y-auto" ref="messagesContainer">
       <div v-if="messages.length === 0" class="text-gray-400 text-center mt-20">
         No messages yet. Start the conversation!
@@ -250,6 +268,7 @@ const discussionDoc = ref(null);
 const fileInput = ref(null);
 const selectedFiles = ref([]);
 const isUploading = ref(false);
+const rewardRequested = ref(false); // Track if reward has been requested
 const baseUrl = "http://localhost:5000"; // Get the current base URL of the application
 let unsubscribe = null;
 let queDetails = ref({});
@@ -268,6 +287,46 @@ const isAuthor = computed(() => {
 const hasSolvedMessage = computed(() => {
   return messages.value.some((message) => message.solved);
 });
+
+// Find the solved message username
+const getSolvedMessageUsername = () => {
+  const solvedMessage = messages.value.find((message) => message.solved);
+  return solvedMessage ? solvedMessage.username : null;
+};
+
+// Request reward function
+async function requestReward() {
+  try {
+    const solvedUsername = getSolvedMessageUsername();
+
+    if (!solvedUsername) {
+      console.error("No solved message found");
+      return;
+    }
+
+    const response = await fetch("/api/requestReward", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        qid: props.qid,
+        username: solvedUsername,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log("Reward requested successfully:", data);
+      rewardRequested.value = true;
+    } else {
+      console.error("Error requesting reward:", data.error);
+    }
+  } catch (error) {
+    console.error("Error requesting reward:", error);
+  }
+}
 
 // Check if a message is from the author
 function isAuthorMessage(message) {
@@ -696,7 +755,30 @@ watch(messages, () => {
 onMounted(async () => {
   queDetails.value = await fetchAuthorByQid(props.qid);
   await fetchUserInfo();
+
+  // Check if reward has already been requested for this question
+  checkRewardStatus();
 });
+
+// Check if a reward has already been requested for this question
+async function checkRewardStatus() {
+  try {
+    const response = await fetch(`/api/checkRewardStatus?qid=${props.qid}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.exists) {
+      rewardRequested.value = true;
+    }
+  } catch (error) {
+    console.error("Error checking reward status:", error);
+  }
+}
 
 // Clean up listener when component is unmounted
 onUnmounted(() => {

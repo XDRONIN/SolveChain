@@ -13,11 +13,11 @@ import User from "./models/User.js";
 import Notification from "./models/Notification.js";
 import upload from "./multerConfig.js";
 import Question from "./models/Questions.js";
-
-import { error } from "console";
-import Web3Service from "./services/web3Service.js";
+import Reward from "./models/Reward.js";
 import Report from "./models/Report.js";
 import Verification from "./models/Verification.js";
+import { error } from "console";
+import Web3Service from "./services/web3Service.js";
 
 // Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
@@ -1421,6 +1421,78 @@ app.post("/api/toggle-account-status", async (req, res) => {
     return res.status(500).json({
       success: false,
       message: error.message,
+    });
+  }
+});
+
+// Request a reward
+app.post("/api/requestReward", async (req, res) => {
+  try {
+    const { qid, username } = req.body;
+
+    // Validate input
+    if (!qid || !username) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Missing required fields" });
+    }
+
+    // Check if reward already exists for this question
+    const existingReward = await Reward.findOne({ qid });
+    if (existingReward) {
+      return res.status(400).json({
+        success: false,
+        error: "A reward has already been requested for this question",
+      });
+    }
+
+    // Create new reward document
+    const newReward = new Reward({
+      qid,
+      username,
+      createdAt: new Date(),
+      status: "pending",
+    });
+
+    // Save to database
+    await newReward.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "Reward requested successfully",
+    });
+  } catch (error) {
+    console.error("Error requesting reward:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Server error while requesting reward",
+    });
+  }
+});
+
+// Check if a reward has been requested for a question
+app.get("/api/checkRewardStatus", async (req, res) => {
+  try {
+    const { qid } = req.query;
+
+    if (!qid) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Question ID is required" });
+    }
+
+    const reward = await Reward.findOne({ qid });
+
+    return res.status(200).json({
+      success: true,
+      exists: Boolean(reward),
+      reward: reward || null,
+    });
+  } catch (error) {
+    console.error("Error checking reward status:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Server error while checking reward status",
     });
   }
 });
