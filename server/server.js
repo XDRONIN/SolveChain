@@ -1496,6 +1496,19 @@ app.get("/api/checkRewardStatus", async (req, res) => {
     });
   }
 });
+app.get("/api/getRewardRequests", async (req, res) => {
+  try {
+    // Connect to MongoDB if not already connected
+
+    // Fetch reward requests, sorted by creation date (newest first)
+    const rewards = await Reward.find({}).sort({ createdAt: -1 }).limit(50); // Limiting to 50 results for performance
+
+    return res.status(200).json(rewards);
+  } catch (error) {
+    console.error("Error fetching reward requests:", error);
+    return res.status(500).json({ error: "Failed to fetch reward requests" });
+  }
+});
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} hello world `)
 );
