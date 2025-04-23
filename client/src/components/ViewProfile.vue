@@ -9,6 +9,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  dId: {
+    type: String,
+    required: false,
+  },
 });
 
 const user = ref({
@@ -32,6 +36,9 @@ const user = ref({
 
 const message = ref("");
 const isLoading = ref(true);
+const showReportModal = ref(false);
+const reportReason = ref("");
+const isSubmittingReport = ref(false);
 
 const loadUserData = async () => {
   if (!props.userId) {
@@ -114,9 +121,11 @@ const loadUserData = async () => {
     isLoading.value = false;
   }
 };
+
 const copyText = () => {
   navigator.clipboard.writeText(user.value.walletId);
 };
+
 const followUser = async () => {
   try {
     const response = await fetch(`/api/user/follow`, {
@@ -170,6 +179,54 @@ const addStar = async () => {
   } catch (error) {
     message.value = "Error adding star";
     console.error(error);
+  }
+};
+
+// New function to toggle the report modal
+const toggleReportModal = () => {
+  showReportModal.value = !showReportModal.value;
+  if (!showReportModal.value) {
+    reportReason.value = ""; // Clear input when closing
+  }
+};
+
+// New function to submit a report
+const submitReport = async () => {
+  if (!reportReason.value.trim()) {
+    message.value = "Please provide a reason for the report";
+    return;
+  }
+
+  isSubmittingReport.value = true;
+
+  try {
+    const response = await fetch(`/api/reportUser`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        user: props.userId,
+        reason: reportReason.value,
+        dId: props.dId || null,
+      }),
+      credentials: "include",
+    });
+
+    if (response.ok) {
+      message.value = "User reported successfully";
+      toggleReportModal(); // Close the modal
+    } else {
+      const errorData = await response
+        .json()
+        .catch(() => ({ error: "Unknown error" }));
+      message.value = errorData.error || "Failed to report user";
+    }
+  } catch (error) {
+    message.value = "Error reporting user";
+    console.error(error);
+  } finally {
+    isSubmittingReport.value = false;
   }
 };
 
@@ -418,6 +475,49 @@ watch(
         >
           Add Star
         </button>
+        <button
+          @click="toggleReportModal"
+          class="bg-red-600 hover:bg-red-500 text-white py-2 px-4 rounded-md transition-colors"
+        >
+          Report User
+        </button>
+      </div>
+
+      <!-- Report Modal -->
+      <div
+        v-if="showReportModal"
+        class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50"
+      >
+        <div class="bg-gray-800 rounded-lg p-6 w-full max-w-lg">
+          <h3 class="text-xl font-semibold mb-4 text-fuchsia-300">
+            Report User
+          </h3>
+          <p class="text-gray-300 mb-4">
+            Please provide a reason for reporting this user:
+          </p>
+          <textarea
+            v-model="reportReason"
+            class="w-full bg-gray-700 text-white rounded-md p-3 mb-4 min-h-32"
+            placeholder="Describe why you're reporting this user..."
+            required
+          ></textarea>
+          <div class="flex justify-end gap-3">
+            <button
+              @click="toggleReportModal"
+              class="bg-gray-600 hover:bg-gray-500 text-white py-2 px-4 rounded-md transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              @click="submitReport"
+              class="bg-red-600 hover:bg-red-500 text-white py-2 px-4 rounded-md transition-colors"
+              :disabled="isSubmittingReport || !reportReason.trim()"
+            >
+              <span v-if="isSubmittingReport">Submitting...</span>
+              <span v-else>Submit Report</span>
+            </button>
+          </div>
+        </div>
       </div>
     </template>
   </div>

@@ -13,9 +13,10 @@ import User from "./models/User.js";
 import Notification from "./models/Notification.js";
 import upload from "./multerConfig.js";
 import Question from "./models/Questions.js";
-import Discussion from "./models/Discussion.js";
+
 import { error } from "console";
 import Web3Service from "./services/web3Service.js";
+import Report from "./models/Report.js";
 import Verification from "./models/Verification.js";
 
 // Get the directory name of the current module
@@ -1349,6 +1350,38 @@ app.post("/api/user/star", async (req, res) => {
   } catch (error) {
     console.error("Error adding star:", error);
     res.status(500).json({ error: "Failed to add star" });
+  }
+});
+app.post("/api/reportUser", async (req, res) => {
+  try {
+    // Get the report data from the request body
+    const { user, reason, dId } = req.body;
+
+    // Validate the required fields
+    if (!user || !reason) {
+      return res.status(400).json({ error: "User ID and reason are required" });
+    }
+
+    // Get the sender ID from the session/auth (assuming you have authentication middleware)
+    const sender = req.session.user.userData.username;
+
+    // Create a new report document
+    const newReport = new Report({
+      sender,
+      user,
+      reason,
+      dId: dId || null,
+      createdAt: new Date(),
+    });
+
+    // Save the report to the database
+    await newReport.save();
+
+    // Return success response
+    res.status(201).json({ message: "User reported successfully" });
+  } catch (error) {
+    console.error("Error reporting user:", error);
+    res.status(500).json({ error: "Failed to report user" });
   }
 });
 
