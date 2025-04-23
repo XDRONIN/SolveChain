@@ -194,7 +194,7 @@ onMounted(() => {
           <div v-for="(cert, index) in request.certs" :key="index">
             <button
               @click="viewCert(cert)"
-              class="text-xs w-full px-3 py-1 border border-fuchsia-400 text-fuchsia-300 hover:bg-fuchsia-600/10 rounded-md transition-all text-left"
+              class="text-xs w-full px-3 py-1 text-fuchsia-300 hover:bg-fuchsia-600/10 rounded-md transition-all text-left"
             >
               View Certificate {{ index + 1 }}
             </button>

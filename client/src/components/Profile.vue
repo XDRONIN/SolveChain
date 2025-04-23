@@ -2,6 +2,7 @@
 import { ref, onMounted } from "vue";
 import { db } from "../fireInit";
 import { doc, updateDoc } from "firebase/firestore";
+import Web3Service from "../services/web3Service";
 
 const user = ref({
   firstName: "",
@@ -10,6 +11,7 @@ const user = ref({
   email: "",
   areaOfInterest: "",
   fieldOfExpertise: "",
+  walletId: "",
   profilePic: "",
   certs: [],
   solved: 0,
@@ -121,6 +123,7 @@ const updateUserDetails = async () => {
       email: user.value.email,
       areaOfInterest: user.value.areaOfInterest,
       fieldOfExpertise: user.value.fieldOfExpertise,
+      walletId: user.value.walletId,
     });
 
     message.value = "User details updated successfully";
@@ -130,7 +133,27 @@ const updateUserDetails = async () => {
     isLoading.value = false;
   }
 };
+const isConnecting = ref(false);
+const isConnected = ref(false);
+const connectWallet = async () => {
+  try {
+    isConnecting.value = true;
 
+    const result = await Web3Service.connectWallet();
+
+    if (result.success) {
+      user.value.walletId = result.address;
+      isConnected.value = true;
+      console.log("Wallet connected:", result.address);
+    } else {
+      console.error("Failed to connect wallet:", result.error);
+    }
+  } catch (error) {
+    console.error("Error connecting wallet:", error);
+  } finally {
+    isConnecting.value = false;
+  }
+};
 // Request verification
 const requestVerification = async () => {
   isLoading.value = true;
@@ -353,6 +376,22 @@ const deleteCert = async (index) => {
             class="w-full p-2 bg-gray-800 rounded-md border border-gray-700 focus:outline-none focus:border-fuchsia-500"
           />
         </div>
+        <div>
+          <label class="block text-gray-400 mb-1">Field of Expertise</label>
+          <input
+            type="text"
+            v-model="user.walletId"
+            class="w-full p-2 bg-gray-800 rounded-md border border-gray-700 focus:outline-none focus:border-fuchsia-500"
+          />
+          <button
+            type="button"
+            @click="connectWallet"
+            :disabled="isConnecting"
+            class="bg-fuchsia-900 text-white py-2 px-4 mt-2 rounded-lg"
+          >
+            {{ isConnected ? "Connected" : "Connect" }}
+          </button>
+        </div>
       </div>
       <button
         @click="updateUserDetails"
@@ -440,7 +479,7 @@ const deleteCert = async (index) => {
     </div>
 
     <!-- Verification Request -->
-    <div class="bg-gray-800 p-4 rounded-lg">
+    <div class="bg-gray-800 p-4 rounded-lg" v-if="user.verified == false">
       <div class="flex flex-col md:flex-row items-center justify-between">
         <div>
           <h3 class="font-semibold mb-1">Account Verification</h3>

@@ -91,8 +91,8 @@ app.get("/api/user", async (req, res) => {
     );
     const combinedData = {
       ...req.session.user.userData,
-      profilePic: ppic.profilePic,
-      certs: cert.certs, // or any field name you want
+      profilePic: ppic.profilePic || "",
+      certs: cert.certs || "", // or any field name you want
     };
 
     res.json(combinedData);
@@ -1131,6 +1131,41 @@ app.post("/api/rejectVerification", async (req, res) => {
     return res.status(500).json({ error: "Failed to reject verification" });
   }
 });
+app.post("/api/approveVerification", async (req, res) => {
+  const { uid } = req.body;
+
+  if (!uid) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
+  try {
+    // Update user's verified status
+    const updatedUser = await User.findByIdAndUpdate(
+      uid,
+      { verified: true },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Delete the verification request
+    const result = await Verification.deleteOne({ uid, verified: false });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({
+        error: "Verification request not found or already verified",
+      });
+    }
+
+    return res.status(200).json({ success: true, user: updatedUser });
+  } catch (error) {
+    console.error("Error approving verification:", error);
+    return res.status(500).json({ error: "Failed to approve verification" });
+  }
+});
+
 app.post("/api/getUsersData", async (req, res) => {
   const { uids } = req.body;
 
