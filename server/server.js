@@ -1384,7 +1384,20 @@ app.post("/api/reportUser", async (req, res) => {
     res.status(500).json({ error: "Failed to report user" });
   }
 });
+app.get("/api/getAllReports", async (req, res) => {
+  try {
+    // Fetch all reports from MongoDB using the Report model
+    const reports = await Report.find()
+      .sort({ createdAt: -1 }) // Sort by newest first
+      .exec();
 
+    // Return the reports data to the frontend
+    res.status(200).json({ reports });
+  } catch (error) {
+    console.error("Error retrieving reports:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} hello world `)
 );

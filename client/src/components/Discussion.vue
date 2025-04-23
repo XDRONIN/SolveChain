@@ -214,7 +214,7 @@
         >
           X
         </button>
-        <ViewProfile :userId="selectedUserId" />
+        <ViewProfile :userId="selectedUserId" :dId="props.qid" />
       </div>
     </div>
   </div>
