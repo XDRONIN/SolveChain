@@ -29,13 +29,21 @@
             ]"
             class="max-w-3/4 p-3 rounded-lg relative"
           >
-            <div class="font-semibold flex items-center">
-              {{ message.username }}
-              <span
-                v-if="isAuthorMessage(message)"
-                class="ml-2 text-xs bg-fuchsia-700 px-2 py-1 rounded"
-                >Author</span
+            <div class="font-semibold flex items-center justify-between">
+              <div class="flex items-center">
+                {{ message.username }}
+                <span
+                  v-if="isAuthorMessage(message)"
+                  class="ml-2 text-xs bg-fuchsia-700 px-2 py-1 rounded"
+                  >Author</span
+                >
+              </div>
+              <button
+                @click="viewProfile(message.username)"
+                class="text-xs bg-blue-700 hover:bg-blue-600 px-2 py-1 rounded ml-2"
               >
+                View Profile
+              </button>
             </div>
             <div>{{ message.msg }}</div>
 
@@ -115,7 +123,7 @@
             <!-- Solution badge -->
             <div
               v-if="message.solved"
-              class="absolute top-2 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded"
+              class="absolute top-3 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded mr-25"
             >
               Solution ✓
             </div>
@@ -191,11 +199,30 @@
         </button>
       </div>
     </div>
+
+    <!-- View Profile Modal -->
+    <div
+      v-if="showProfile"
+      class="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50"
+    >
+      <div
+        class="relative bg-transparent rounded-lg p-4 max-w-fit w-full max-h-screen overflow-y-auto overflow-x-hidden"
+      >
+        <button
+          @click="closeProfile"
+          class="absolute top-2 right-2 text-gray-400 hover:text-white text-xl font-bold"
+        >
+          X
+        </button>
+        <ViewProfile :userId="selectedUserId" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { Send, Paperclip } from "lucide-vue-next";
+import ViewProfile from "./ViewProfile.vue";
 import {
   collection,
   doc,
@@ -227,6 +254,10 @@ const baseUrl = "http://localhost:5000"; // Get the current base URL of the appl
 let unsubscribe = null;
 let queDetails = ref({});
 
+// Profile viewing state
+const showProfile = ref(false);
+const selectedUserId = ref(null);
+
 // Check if current user is the author
 const isAuthor = computed(() => {
   if (!uid.value || !queDetails.value || !queDetails.value.author) return false;
@@ -242,6 +273,27 @@ const hasSolvedMessage = computed(() => {
 function isAuthorMessage(message) {
   if (!queDetails.value || !queDetails.value.username) return false;
   return message.username === queDetails.value.username;
+}
+
+// View profile function
+async function viewProfile(messageUsername) {
+  try {
+    const userId = await getUserIdByUsername(messageUsername);
+    if (userId) {
+      selectedUserId.value = userId;
+      showProfile.value = true;
+    } else {
+      console.error("User not found");
+    }
+  } catch (error) {
+    console.error("Error viewing profile:", error);
+  }
+}
+
+// Close profile modal
+function closeProfile() {
+  showProfile.value = false;
+  selectedUserId.value = null;
 }
 
 // Mark a message as solved
