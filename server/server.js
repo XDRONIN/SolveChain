@@ -1398,6 +1398,32 @@ app.get("/api/getAllReports", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+app.post("/api/toggle-account-status", async (req, res) => {
+  const { userId, disabled } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({
+      success: false,
+      message: "User ID is required",
+    });
+  }
+
+  try {
+    // Update user in Firebase Authentication
+    await admin.auth().updateUser(userId, { disabled });
+
+    return res.status(200).json({
+      success: true,
+      message: `User account successfully ${disabled ? "disabled" : "enabled"}`,
+    });
+  } catch (error) {
+    console.error("Error updating user account status:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} hello world `)
 );
