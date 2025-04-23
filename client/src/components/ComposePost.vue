@@ -98,8 +98,8 @@ onMounted(() => {
               <option class="bg-gray-900 text-white" value="Everyone">
                 Everyone can respond
               </option>
-              <option class="bg-gray-900 text-white" value="Following">
-                Only Users I Follow
+              <option class="bg-gray-900 text-white" value="Followers">
+                Only My Followers
               </option>
               <option class="bg-gray-900 text-white" value="Verified">
                 Only Verified Users

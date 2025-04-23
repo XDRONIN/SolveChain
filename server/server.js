@@ -1509,6 +1509,54 @@ app.get("/api/getRewardRequests", async (req, res) => {
     return res.status(500).json({ error: "Failed to fetch reward requests" });
   }
 });
+// Add this route to your server.js file
+app.post("/api/checkUserJoin", async (req, res) => {
+  try {
+    const { uid, qid, authorId } = req.body;
+
+    // First, get the question details
+    const question = await Question.findById(qid);
+    if (!question) {
+      return res
+        .status(404)
+        .json({ canJoin: false, message: "Question not found" });
+    }
+
+    const whoCanRespond = question.whoCanRespond;
+
+    // Check permissions based on whoCanRespond setting
+    if (whoCanRespond === "Everyone") {
+      return res.json({ canJoin: true });
+    } else if (whoCanRespond === "Verified") {
+      // Check if user is verified
+      const user = await User.findById(uid);
+      if (!user) {
+        return res
+          .status(404)
+          .json({ canJoin: false, message: "User not found" });
+      }
+
+      return res.json({ canJoin: user.verified === true });
+    } else if (whoCanRespond === "Followers") {
+      // Check if user is a follower of the author
+      const author = await User.findById(authorId);
+      if (!author) {
+        return res
+          .status(404)
+          .json({ canJoin: false, message: "Author not found" });
+      }
+
+      const isFollower = author.followers.includes(uid);
+      return res.json({ canJoin: isFollower });
+    }
+
+    // Default to false for any other settings
+    return res.json({ canJoin: false });
+  } catch (error) {
+    console.error("Error checking user join permissions:", error);
+    res.status(500).json({ canJoin: false, message: "Server error" });
+  }
+});
 app.listen(PORT, () =>
   console.log(`Server running on port ${PORT} hello world `)
 );

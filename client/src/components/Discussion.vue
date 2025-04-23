@@ -616,15 +616,42 @@ async function sendMessageHandler() {
 }
 
 // Join discussion function
+
+// Updated joinDiscussion function with permission check
 async function joinDiscussion() {
   if (!uid.value) return;
 
   try {
-    await updateDoc(discussionDoc.value, {
-      users: arrayUnion(uid.value),
+    // Get the author ID
+    const authorId = queDetails.value.author;
+
+    // Check if user can join the discussion
+    const response = await fetch("/api/checkUserJoin", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        uid: uid.value,
+        qid: props.qid,
+        authorId: authorId,
+      }),
     });
-    isUserMember.value = true;
-    await addDiss(props.qid);
+    console.log(uid.value, props.qid, queDetails.value.author);
+    const result = await response.json();
+
+    if (result.canJoin) {
+      // User has permission, add them to the discussion
+      await updateDoc(discussionDoc.value, {
+        users: arrayUnion(uid.value),
+      });
+      isUserMember.value = true;
+      await addDiss(props.qid);
+    } else {
+      // User doesn't have permission
+      console.log("You don't have permission to join this discussion");
+      // Optionally show a notification to the user
+    }
   } catch (error) {
     console.error("Error joining discussion:", error);
   }
