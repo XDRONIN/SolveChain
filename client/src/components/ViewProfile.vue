@@ -2,6 +2,7 @@
 import { ref, onMounted, watch } from "vue";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../fireInit";
+import { Copy } from "lucide-vue-next";
 
 const props = defineProps({
   userId: {
@@ -17,6 +18,7 @@ const user = ref({
   email: "",
   areaOfInterest: "",
   fieldOfExpertise: "",
+  walletId: "",
   profilePic: "",
   certs: [],
   solved: 0,
@@ -112,7 +114,9 @@ const loadUserData = async () => {
     isLoading.value = false;
   }
 };
-
+const copyText = () => {
+  navigator.clipboard.writeText(user.value.walletId);
+};
 const followUser = async () => {
   try {
     const response = await fetch(`/api/user/follow`, {
@@ -325,6 +329,13 @@ watch(
             <label class="block text-gray-400 mb-1">Field of Expertise</label>
             <p class="text-gray-300">
               {{ user.fieldOfExpertise || "Not specified" }}
+            </p>
+          </div>
+          <div>
+            <label class="block text-gray-400 mb-1">Wallet ID</label>
+            <p class="text-gray-300">
+              {{ user.walletId || "Not specified" }}
+              <Copy class="h-5 w-5" @click="copyText()" />
             </p>
           </div>
         </div>
