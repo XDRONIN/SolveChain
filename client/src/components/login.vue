@@ -232,7 +232,11 @@ const handleClick = async () => {
     console.log(userData);
 
     loginUser(userData);
-    router.push("/dashboard"); // Redirect user after login
+    if (userData.role == "admin") {
+      router.push("/adminDashboard");
+    } else {
+      router.push("/dashboard");
+    } // Redirect user after login
   } catch (error) {
     alert("Wrong Credentialls");
   }

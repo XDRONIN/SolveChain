@@ -21,7 +21,6 @@ const questionSchema = new mongoose.Schema({
     downvotes: { users: [String], val: Number },
     notify: { users: [String], val: Number },
     discussion: { users: [String], val: Number },
-    share: { users: [String], val: Number },
   },
   createdAt: { type: Date, default: Date.now },
 });

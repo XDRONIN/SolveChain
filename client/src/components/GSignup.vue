@@ -34,6 +34,14 @@
         >
           Sign Up
         </button>
+        <button
+          type="button"
+          @click="connectWallet"
+          :disabled="isConnecting"
+          class="bg-[#9a46a0] text-white py-2 px-4 rounded-lg"
+        >
+          Connect wallet
+        </button>
       </div>
     </form>
   </div>
@@ -44,6 +52,8 @@ import { ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { auth, db } from "../fireInit";
 import { doc, setDoc, getDoc } from "firebase/firestore";
+import web3Service from "../services/web3Service"; // Correct import as default export
+
 const route = useRoute();
 const router = useRouter();
 const { uid, firstName, lastName, email } = route.query;
@@ -55,10 +65,35 @@ const form = ref({
   username: "",
   areaOfInterest: "",
   fieldOfExpertise: "",
+  role: "user",
+  walletId: "",
 });
+const isConnecting = ref(false);
+const isConnected = ref(false);
+
+const connectWallet = async () => {
+  try {
+    isConnecting.value = true;
+
+    const result = await web3Service.connectWallet();
+
+    if (result.success) {
+      form.value.walletId = result.address; // Fixed: use form.value instead of user.value
+      isConnected.value = true;
+      console.log("Wallet connected:", result.address);
+    } else {
+      console.error("Failed to connect wallet:", result.error);
+    }
+  } catch (error) {
+    console.error("Error connecting wallet:", error);
+  } finally {
+    isConnecting.value = false;
+  }
+};
 
 const fields = ref([
   { id: "username", label: "Username", type: "text" },
+  { id: "walletId", label: "Wallet Id", type: "text" },
   {
     id: "areaOfInterest",
     label: "Area of Interest",
@@ -75,6 +110,7 @@ const fields = ref([
   },
   { id: "fieldOfExpertise", label: "Field Of Expertise", type: "text" },
 ]);
+
 const handleSubmit = async () => {
   try {
     await setDoc(doc(db, "users", uid), {
@@ -84,12 +120,12 @@ const handleSubmit = async () => {
       username: form.value.username,
       areaOfInterest: form.value.areaOfInterest,
       fieldOfExpertise: form.value.fieldOfExpertise,
+      role: form.value.role,
+      walletId: form.value.walletId,
       createdAt: new Date(),
     });
 
-    //alert("User registered successfully!");
     getUserData(uid).then((userData) => {
-      //console.log(userData); // Logs only the object
       userData.uid = uid;
       console.log(userData);
       initializeUser(uid).then(() => {
@@ -102,13 +138,14 @@ const handleSubmit = async () => {
     console.log(error);
   }
 };
+
 async function getUserData(uid) {
   try {
     const userRef = doc(db, "users", uid);
     const userSnap = await getDoc(userRef);
 
     if (userSnap.exists()) {
-      return userSnap.data(); // Returns the user's document data
+      return userSnap.data();
     } else {
       console.log("No such user document found!");
       return null;
@@ -118,18 +155,20 @@ async function getUserData(uid) {
     return null;
   }
 }
+
 async function loginUser(userData) {
   const response = await fetch("/api/login", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ userData }), // Send full user data
+    body: JSON.stringify({ userData }),
   });
 
   const result = await response.json();
   console.log(result);
 }
+
 async function initializeUser(userId) {
   try {
     const response = await fetch("/api/initializeUser", {
@@ -152,6 +191,7 @@ async function initializeUser(userId) {
   }
 }
 </script>
+
 <style scoped>
 .inpt {
   width: 100%;

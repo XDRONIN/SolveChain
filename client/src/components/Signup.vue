@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-3xl bg-gray-900 text-white rounded-2xl mt-8 ml-11">
+  <div class="max-w-3xl bg-gray-900 text-white rounded-2xl mt-8 -ml-9">
     <h2 class="text-3xl font-bold text-center mb-8 mt-20">Sign Up</h2>
     <form @submit.prevent="handleSubmit" class="grid grid-cols-2 gap-6">
       <div v-for="(field, index) in fields" :key="index" class="flex flex-col">
@@ -9,7 +9,11 @@
           >{{ field.label }}</label
         >
         <input
-          v-if="field.type !== 'select' && field.type !== 'file'"
+          v-if="
+            field.type !== 'select' &&
+            field.type !== 'file' &&
+            field.type !== 'wallet'
+          "
           :type="field.type"
           :id="field.id"
           v-model="form[field.id]"
@@ -26,6 +30,24 @@
             {{ option }}
           </option>
         </select>
+        <div v-if="field.type === 'wallet'" class="flex gap-2">
+          <input
+            :id="field.id"
+            v-model="form[field.id]"
+            type="text"
+            readonly
+            :placeholder="walletPlaceholder"
+            class="inpt flex-grow"
+          />
+          <button
+            type="button"
+            @click="connectWallet"
+            :disabled="isConnecting"
+            class="bg-[#9a46a0] text-white py-2 px-4 rounded-lg"
+          >
+            {{ isConnected ? "Connected" : "Connect" }}
+          </button>
+        </div>
       </div>
       <div class="col-span-2 flex flex-col gap-4 mt-4">
         <button
@@ -35,6 +57,7 @@
           Sign Up
         </button>
         <button
+          type="button"
           @click="signUpWithGoogle"
           class="w-full flex items-center justify-center gap-3 bg-white text-black py-3 rounded-lg text-lg font-semibold"
         >
@@ -73,7 +96,7 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import router from "../router";
 import { auth, db } from "../fireInit";
 import {
@@ -82,7 +105,12 @@ import {
 } from "firebase/auth";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import Web3Service from "../services/web3Service"; // Adjust path as needed
+
 const provider = new GoogleAuthProvider();
+const isConnecting = ref(false);
+const isConnected = ref(false);
+const walletPlaceholder = ref("Connect your wallet");
 
 const toLogin = () => {
   router.push({ path: "/signUp", query: { type: "login" } });
@@ -96,6 +124,8 @@ const form = ref({
   password: "",
   areaOfInterest: "",
   fieldOfExpertise: "",
+  role: "user",
+  walletId: "",
 });
 
 const fields = ref([
@@ -119,7 +149,31 @@ const fields = ref([
     ],
   },
   { id: "fieldOfExpertise", label: "Field Of Expertise", type: "text" },
+  { id: "walletId", label: "Wallet Address", type: "wallet" },
 ]);
+
+const connectWallet = async () => {
+  try {
+    isConnecting.value = true;
+    walletPlaceholder.value = "Connecting...";
+
+    const result = await Web3Service.connectWallet();
+
+    if (result.success) {
+      form.value.walletId = result.address;
+      isConnected.value = true;
+      console.log("Wallet connected:", result.address);
+    } else {
+      console.error("Failed to connect wallet:", result.error);
+      walletPlaceholder.value = "Connection failed. Try again.";
+    }
+  } catch (error) {
+    console.error("Error connecting wallet:", error);
+    walletPlaceholder.value = "Connection error. Try again.";
+  } finally {
+    isConnecting.value = false;
+  }
+};
 
 const handleSubmit = async () => {
   try {
@@ -137,6 +191,8 @@ const handleSubmit = async () => {
       username: form.value.username,
       areaOfInterest: form.value.areaOfInterest,
       fieldOfExpertise: form.value.fieldOfExpertise,
+      role: form.value.role,
+      walletId: form.value.walletId, // Save wallet address to Firestore
       createdAt: new Date(),
     });
 
@@ -191,6 +247,7 @@ const signUpWithGoogle = () => {
       console.error("Google Sign-In Error:", error);
     });
 };
+
 async function getUserData(uid) {
   try {
     const userRef = doc(db, "users", uid);
@@ -207,6 +264,7 @@ async function getUserData(uid) {
     return null;
   }
 }
+
 async function loginUser(userData) {
   const response = await fetch("/api/login", {
     method: "POST",
@@ -219,6 +277,7 @@ async function loginUser(userData) {
   const result = await response.json();
   console.log(result);
 }
+
 async function initializeUser(userId) {
   try {
     const response = await fetch("/api/initializeUser", {
@@ -240,7 +299,21 @@ async function initializeUser(userId) {
     console.error("Request failed:", error);
   }
 }
+
+// Check for cached wallet connection on component mount
+onMounted(() => {
+  if (Web3Service.signer) {
+    Web3Service.signer
+      .getAddress()
+      .then((address) => {
+        form.value.walletId = address;
+        isConnected.value = true;
+      })
+      .catch(console.error);
+  }
+});
 </script>
+
 <style scoped>
 .inpt {
   width: 100%;

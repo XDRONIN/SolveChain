@@ -5,12 +5,30 @@
       <h2 class="text-xl font-semibold text-white">{{ queDetails.queBody }}</h2>
     </div>
 
-    <button
-      @click="joinDiscussion"
-      class="mt-4 w-40 flex cursor-pointer p-3 text-center align-middle justify-center relative left-185 text-white font-semibold bg-gradient-to-r from-fuchsia-500 to-fuchsia-800 rounded-full border border-black hover:scale-105 duration-200 hover:text-white hover:border-gray-800 hover:from-fuchsia-800 hover:to-fuchsia-500"
-    >
-      {{ isUserMember ? "Joined" : "Join Discussion" }}
-    </button>
+    <div class="flex space-x-4 mt-4 relative left-185">
+      <button
+        @click="joinDiscussion"
+        class="w-40 flex cursor-pointer p-3 text-center align-middle justify-center text-white font-semibold bg-gradient-to-r from-fuchsia-500 to-fuchsia-800 rounded-full border border-black hover:scale-105 duration-200 hover:text-white hover:border-gray-800 hover:from-fuchsia-800 hover:to-fuchsia-500"
+      >
+        {{ isUserMember ? "Joined" : "Join Discussion" }}
+      </button>
+
+      <!-- Request Reward button - only visible to author when question is solved -->
+      <button
+        v-if="isAuthor && hasSolvedMessage && !rewardRequested"
+        @click="requestReward"
+        class="w-40 fixed left-265 flex cursor-pointer p-3 text-center align-middle justify-center text-white font-semibold bg-gradient-to-r from-green-500 to-green-800 rounded-full border border-black hover:scale-105 duration-200 hover:text-white hover:border-gray-800 hover:from-green-800 hover:to-green-500"
+      >
+        Request Reward
+      </button>
+      <div
+        v-if="isAuthor && rewardRequested"
+        class="fixed left-265 p-2 text-sm text-green-400 font-medium"
+      >
+        Reward requested!
+      </div>
+    </div>
+
     <div class="p-4 h-174 overflow-y-auto" ref="messagesContainer">
       <div v-if="messages.length === 0" class="text-gray-400 text-center mt-20">
         No messages yet. Start the conversation!
@@ -29,13 +47,21 @@
             ]"
             class="max-w-3/4 p-3 rounded-lg relative"
           >
-            <div class="font-semibold flex items-center">
-              {{ message.username }}
-              <span
-                v-if="isAuthorMessage(message)"
-                class="ml-2 text-xs bg-fuchsia-700 px-2 py-1 rounded"
-                >Author</span
+            <div class="font-semibold flex items-center justify-between">
+              <div class="flex items-center">
+                {{ message.username }}
+                <span
+                  v-if="isAuthorMessage(message)"
+                  class="ml-2 text-xs bg-fuchsia-700 px-2 py-1 rounded"
+                  >Author</span
+                >
+              </div>
+              <button
+                @click="viewProfile(message.username)"
+                class="text-xs bg-blue-700 hover:bg-blue-600 px-2 py-1 rounded ml-2"
               >
+                View Profile
+              </button>
             </div>
             <div>{{ message.msg }}</div>
 
@@ -115,7 +141,7 @@
             <!-- Solution badge -->
             <div
               v-if="message.solved"
-              class="absolute top-2 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded"
+              class="absolute top-3 right-2 bg-green-600 text-white text-xs px-2 py-1 rounded mr-25"
             >
               Solution ✓
             </div>
@@ -191,11 +217,30 @@
         </button>
       </div>
     </div>
+
+    <!-- View Profile Modal -->
+    <div
+      v-if="showProfile"
+      class="fixed inset-0 bg-black/50 bg-opacity-50 flex items-center justify-center z-50"
+    >
+      <div
+        class="relative bg-transparent rounded-lg p-4 max-w-fit w-full max-h-screen overflow-y-auto overflow-x-hidden"
+      >
+        <button
+          @click="closeProfile"
+          class="absolute top-2 right-2 text-gray-400 hover:text-white text-xl font-bold"
+        >
+          X
+        </button>
+        <ViewProfile :userId="selectedUserId" :dId="props.qid" />
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { Send, Paperclip } from "lucide-vue-next";
+import ViewProfile from "./ViewProfile.vue";
 import {
   collection,
   doc,
@@ -223,9 +268,14 @@ const discussionDoc = ref(null);
 const fileInput = ref(null);
 const selectedFiles = ref([]);
 const isUploading = ref(false);
+const rewardRequested = ref(false); // Track if reward has been requested
 const baseUrl = "http://localhost:5000"; // Get the current base URL of the application
 let unsubscribe = null;
 let queDetails = ref({});
+
+// Profile viewing state
+const showProfile = ref(false);
+const selectedUserId = ref(null);
 
 // Check if current user is the author
 const isAuthor = computed(() => {
@@ -238,10 +288,71 @@ const hasSolvedMessage = computed(() => {
   return messages.value.some((message) => message.solved);
 });
 
+// Find the solved message username
+const getSolvedMessageUsername = () => {
+  const solvedMessage = messages.value.find((message) => message.solved);
+  return solvedMessage ? solvedMessage.username : null;
+};
+
+// Request reward function
+async function requestReward() {
+  try {
+    const solvedUsername = getSolvedMessageUsername();
+
+    if (!solvedUsername) {
+      console.error("No solved message found");
+      return;
+    }
+
+    const response = await fetch("/api/requestReward", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        qid: props.qid,
+        username: solvedUsername,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log("Reward requested successfully:", data);
+      rewardRequested.value = true;
+    } else {
+      console.error("Error requesting reward:", data.error);
+    }
+  } catch (error) {
+    console.error("Error requesting reward:", error);
+  }
+}
+
 // Check if a message is from the author
 function isAuthorMessage(message) {
   if (!queDetails.value || !queDetails.value.username) return false;
   return message.username === queDetails.value.username;
+}
+
+// View profile function
+async function viewProfile(messageUsername) {
+  try {
+    const userId = await getUserIdByUsername(messageUsername);
+    if (userId) {
+      selectedUserId.value = userId;
+      showProfile.value = true;
+    } else {
+      console.error("User not found");
+    }
+  } catch (error) {
+    console.error("Error viewing profile:", error);
+  }
+}
+
+// Close profile modal
+function closeProfile() {
+  showProfile.value = false;
+  selectedUserId.value = null;
 }
 
 // Mark a message as solved
@@ -505,15 +616,42 @@ async function sendMessageHandler() {
 }
 
 // Join discussion function
+
+// Updated joinDiscussion function with permission check
 async function joinDiscussion() {
   if (!uid.value) return;
 
   try {
-    await updateDoc(discussionDoc.value, {
-      users: arrayUnion(uid.value),
+    // Get the author ID
+    const authorId = queDetails.value.author;
+
+    // Check if user can join the discussion
+    const response = await fetch("/api/checkUserJoin", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        uid: uid.value,
+        qid: props.qid,
+        authorId: authorId,
+      }),
     });
-    isUserMember.value = true;
-    await addDiss(props.qid);
+    console.log(uid.value, props.qid, queDetails.value.author);
+    const result = await response.json();
+
+    if (result.canJoin) {
+      // User has permission, add them to the discussion
+      await updateDoc(discussionDoc.value, {
+        users: arrayUnion(uid.value),
+      });
+      isUserMember.value = true;
+      await addDiss(props.qid);
+    } else {
+      // User doesn't have permission
+      console.log("You don't have permission to join this discussion");
+      // Optionally show a notification to the user
+    }
   } catch (error) {
     console.error("Error joining discussion:", error);
   }
@@ -644,7 +782,30 @@ watch(messages, () => {
 onMounted(async () => {
   queDetails.value = await fetchAuthorByQid(props.qid);
   await fetchUserInfo();
+
+  // Check if reward has already been requested for this question
+  checkRewardStatus();
 });
+
+// Check if a reward has already been requested for this question
+async function checkRewardStatus() {
+  try {
+    const response = await fetch(`/api/checkRewardStatus?qid=${props.qid}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    const data = await response.json();
+
+    if (response.ok && data.exists) {
+      rewardRequested.value = true;
+    }
+  } catch (error) {
+    console.error("Error checking reward status:", error);
+  }
+}
 
 // Clean up listener when component is unmounted
 onUnmounted(() => {

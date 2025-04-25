@@ -13,8 +13,11 @@ import User from "./models/User.js";
 import Notification from "./models/Notification.js";
 import upload from "./multerConfig.js";
 import Question from "./models/Questions.js";
-import Discussion from "./models/Discussion.js";
+import Reward from "./models/Reward.js";
+import Report from "./models/Report.js";
+import Verification from "./models/Verification.js";
 import { error } from "console";
+import Web3Service from "./services/web3Service.js";
 
 // Get the directory name of the current module
 const __filename = fileURLToPath(import.meta.url);
@@ -89,8 +92,8 @@ app.get("/api/user", async (req, res) => {
     );
     const combinedData = {
       ...req.session.user.userData,
-      profilePic: ppic.profilePic,
-      certs: cert.certs, // or any field name you want
+      profilePic: ppic.profilePic || "",
+      certs: cert.certs || "", // or any field name you want
     };
 
     res.json(combinedData);
@@ -879,6 +882,679 @@ app.get("/api/solved-diss-posts", async (req, res) => {
   } catch (error) {
     console.error("Error fetching solved diss posts:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+});
+app.post("/api/reward", async (req, res) => {
+  try {
+    const { userAddress, amount, solutionId } = req.body;
+
+    // Validate inputs
+    if (!userAddress || !amount || !solutionId) {
+      return res.status(400).json({
+        success: false,
+        message: "Missing required fields: userAddress, amount, or solutionId",
+      });
+    }
+
+    // Only admins or solution owners can reward
+    if (!req.user.isAdmin && req.user.id !== req.solution.createdBy) {
+      return res.status(403).json({
+        success: false,
+        message: "Not authorized to reward users",
+      });
+    }
+
+    // Process the reward
+    const result = await web3Service.rewardUser(userAddress, amount);
+
+    if (result.success) {
+      // Update your database to record this reward
+      // For example:
+      // await RewardModel.create({
+      //   solutionId,
+      //   userAddress,
+      //   rewardAmount: amount,
+      //   transactionHash: result.transactionHash,
+      //   createdBy: req.user.id
+      // });
+
+      return res.status(200).json({
+        success: true,
+        message: "User rewarded successfully",
+        data: result,
+      });
+    } else {
+      return res.status(500).json({
+        success: false,
+        message: "Failed to reward user",
+        error: result.error,
+      });
+    }
+  } catch (error) {
+    console.error("Error in reward endpoint:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+});
+app.get("/balance/:address", async (req, res) => {
+  try {
+    const { address } = req.params;
+    const result = await web3Service.getTokenBalance(address);
+
+    if (result.success) {
+      return res.status(200).json({
+        success: true,
+        balance: result.balance,
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "Failed to get balance",
+        error: result.error,
+      });
+    }
+  } catch (error) {
+    console.error("Error getting balance:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+      error: error.message,
+    });
+  }
+});
+app.get("/api/analytics/questions", async (req, res) => {
+  try {
+    // Get total questions count
+    const totalCount = await Question.countDocuments();
+
+    // Get solved questions count
+    const solvedCount = await Question.countDocuments({ solved: true });
+
+    // Get questions by tag
+    const tagAggregation = await Question.aggregate([
+      { $unwind: "$tags" },
+      { $group: { _id: "$tags", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $project: { tag: "$_id", count: 1, _id: 0 } },
+    ]);
+
+    // Get question trend for the last 7 days
+    const today = new Date();
+    const sevenDaysAgo = new Date(today);
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+
+    const trendData = await Question.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: sevenDaysAgo },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" },
+          },
+          new: { $sum: 1 },
+          solved: { $sum: { $cond: ["$solved", 1, 0] } },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+      {
+        $project: {
+          date: "$_id",
+          new: 1,
+          solved: 1,
+          _id: 0,
+        },
+      },
+    ]);
+
+    res.json({
+      totalCount,
+      solvedCount,
+      byTag: tagAggregation,
+      trend: trendData,
+    });
+  } catch (error) {
+    console.error("Error fetching question analytics:", error);
+    res.status(500).json({
+      message: "Failed to fetch question analytics",
+      error: error.message,
+    });
+  }
+});
+app.post("/api/request-verification", async (req, res) => {
+  try {
+    const userData = req.session.user.userData;
+
+    if (!userData || !userData.uid || !userData.username) {
+      return res.status(400).json({ message: "User data missing in session." });
+    }
+
+    const existingRequest = await Verification.findOne({ uid: userData.uid });
+    if (existingRequest) {
+      return res
+        .status(409)
+        .json({ message: "Verification request already exists." });
+    }
+
+    const newRequest = new Verification({
+      uid: userData.uid,
+      username: userData.username,
+      createdAt: new Date(),
+      verified: false,
+    });
+
+    await newRequest.save();
+
+    res
+      .status(201)
+      .json({ message: "Verification request submitted successfully." });
+  } catch (err) {
+    console.error("Error processing verification request:", err);
+    res.status(500).json({ message: "Internal server error." });
+  }
+});
+/// Get all unverified verification requests
+app.get("/api/getVrequests", async (req, res) => {
+  try {
+    // Fetch only unverified requests
+    const verifications = await Verification.find({ verified: false })
+      .sort({ createdAt: -1 })
+      .limit(50);
+
+    // Extract uids
+    const uids = verifications.map((verification) => verification.uid);
+
+    // Fetch corresponding profile data from Users collection
+    const users = await User.find(
+      { _id: { $in: uids } },
+      "_id profilePic certs followers solved"
+    );
+
+    // Create a map of uid to user details
+    const uidToData = {};
+    users.forEach((user) => {
+      uidToData[user._id] = {
+        profilePic: user.profilePic || null,
+        certs: user.certs || [],
+        followers: user.followers || [],
+        solved: user.solved || 0,
+      };
+    });
+
+    // Prepare result array
+    const result = uids.map((uid) => ({
+      uid,
+      profilepic: uidToData[uid]?.profilePic || null,
+      certs: uidToData[uid]?.certs || [],
+      followers: uidToData[uid]?.followers || [],
+      solved: uidToData[uid]?.solved || 0,
+    }));
+
+    return res.status(200).json({
+      users: result,
+      count: result.length,
+    });
+  } catch (error) {
+    console.error("Error fetching verification requests:", error);
+    return res
+      .status(500)
+      .json({ error: "Failed to fetch verification requests" });
+  }
+});
+// Reject verification request
+app.post("/api/rejectVerification", async (req, res) => {
+  const { uid } = req.body;
+
+  if (!uid) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
+  try {
+    // Delete the verification request
+    const result = await Verification.deleteOne({ uid, verified: false });
+
+    if (result.deletedCount === 0) {
+      return res
+        .status(404)
+        .json({ error: "Verification request not found or already verified" });
+    }
+
+    return res.status(200).json({ success: true });
+  } catch (error) {
+    console.error("Error rejecting verification:", error);
+    return res.status(500).json({ error: "Failed to reject verification" });
+  }
+});
+app.post("/api/approveVerification", async (req, res) => {
+  const { uid } = req.body;
+
+  if (!uid) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
+  try {
+    // Update user's verified status
+    const updatedUser = await User.findByIdAndUpdate(
+      uid,
+      { verified: true },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Delete the verification request
+    const result = await Verification.deleteOne({ uid, verified: false });
+
+    if (result.deletedCount === 0) {
+      return res.status(404).json({
+        error: "Verification request not found or already verified",
+      });
+    }
+
+    return res.status(200).json({ success: true, user: updatedUser });
+  } catch (error) {
+    console.error("Error approving verification:", error);
+    return res.status(500).json({ error: "Failed to approve verification" });
+  }
+});
+
+app.post("/api/getUsersData", async (req, res) => {
+  const { uids } = req.body;
+
+  if (!uids || !Array.isArray(uids) || uids.length === 0) {
+    return res.status(400).json({ error: "Valid user IDs are required" });
+  }
+
+  try {
+    // Find users by their _id which should match the uids
+    const mongoUsers = await User.find({ _id: { $in: uids } })
+      .select("_id profilePic") // Select only the fields we need
+      .lean(); // Convert to plain JavaScript objects
+
+    // Map the _id to uid for consistency with your frontend expectations
+    const formattedUsers = mongoUsers.map((user) => ({
+      uid: user._id,
+      profilePic: user.profilePic || "",
+    }));
+
+    return res.status(200).json({ users: formattedUsers });
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+    return res.status(500).json({ error: "Failed to fetch user data" });
+  }
+});
+
+app.get("/api/searchPosts", async (req, res) => {
+  const { query } = req.query;
+
+  if (!query || query.length < 2) {
+    return res.status(400).json({ error: "Search query too short" });
+  }
+
+  try {
+    // Based on your schema, adjust the search fields
+    const posts = await Question.find({
+      $or: [
+        { queBody: { $regex: query, $options: "i" } }, // Changed from content to queBody based on schema
+        { tags: { $in: [new RegExp(query, "i")] } },
+      ],
+    })
+      .limit(5)
+      .select("_id queBody tags createdAt author username") // Updated field names
+      .lean();
+
+    // Format to match what the frontend expects
+    const formattedPosts = posts.map((post) => ({
+      _id: post._id,
+      title: post.queBody.substring(0, 50), // Create a title from queBody since there's no title field
+      content: post.queBody,
+      tags: post.tags,
+      createdAt: post.createdAt,
+      authorId: post.author,
+      username: post.username,
+    }));
+
+    return res.status(200).json({ posts: formattedPosts });
+  } catch (error) {
+    console.error("Error searching posts:", error);
+    return res.status(500).json({ error: "Failed to search posts" });
+  }
+});
+app.post("/api/getSearchQuestions", async (req, res) => {
+  try {
+    const { qid } = req.body;
+    const baseURL = "http://localhost:5000";
+
+    const question = await Question.findById(qid);
+
+    if (!question) {
+      return res.status(404).json({ error: "Question not found" });
+    }
+
+    const formattedQuestion = {
+      ...question.toObject(),
+      media: question.media.map((m) => ({
+        url: `${baseURL}/${m.url}`,
+        contentType: m.contentType,
+      })),
+    };
+
+    res.json({ posts: [formattedQuestion] });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "Failed to fetch questions", details: error.message });
+  }
+});
+// POST user profile - Changed from GET with params to POST with body
+app.post("/api/user", async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    const user = await User.findById(userId).lean();
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({
+      profilePic: user.profilePic || "",
+      certs: user.certs || [],
+      solved: user.solved || 0,
+      stars: user.stars || 0,
+      verified: user.verified || false,
+      followers: user.followers || [],
+      following: user.following || [],
+    });
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+// POST follow user - Updated to use request body
+app.post("/api/user/follow", async (req, res) => {
+  try {
+    const { targetUserId } = req.body;
+
+    if (!targetUserId) {
+      return res.status(400).json({ error: "Target user ID is required" });
+    }
+
+    // Get current user ID from session
+    const currentUserId = req.session.user?.userData?.uid;
+
+    if (!currentUserId) {
+      return res.status(401).json({ error: "Authentication required" });
+    }
+
+    if (currentUserId === targetUserId) {
+      return res.status(400).json({ error: "Cannot follow yourself" });
+    }
+
+    const targetUser = await User.findById(targetUserId);
+    const currentUser = await User.findById(currentUserId);
+
+    if (!targetUser || !currentUser) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (!targetUser.followers.includes(currentUserId)) {
+      targetUser.followers.push(currentUserId);
+      await targetUser.save();
+    }
+
+    if (!currentUser.following.includes(targetUserId)) {
+      currentUser.following.push(targetUserId);
+      await currentUser.save();
+    }
+
+    res.json({ message: "Followed successfully" });
+  } catch (error) {
+    console.error("Error following user:", error);
+    res.status(500).json({ error: "Failed to follow user" });
+  }
+});
+
+// POST add star - Updated to use request body
+app.post("/api/user/star", async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ error: "User ID is required" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    user.stars = (user.stars || 0) + 1;
+    await user.save();
+
+    res.json({ message: "Star added" });
+  } catch (error) {
+    console.error("Error adding star:", error);
+    res.status(500).json({ error: "Failed to add star" });
+  }
+});
+app.post("/api/reportUser", async (req, res) => {
+  try {
+    // Get the report data from the request body
+    const { user, reason, dId } = req.body;
+
+    // Validate the required fields
+    if (!user || !reason) {
+      return res.status(400).json({ error: "User ID and reason are required" });
+    }
+
+    // Get the sender ID from the session/auth (assuming you have authentication middleware)
+    const sender = req.session.user.userData.username;
+
+    // Create a new report document
+    const newReport = new Report({
+      sender,
+      user,
+      reason,
+      dId: dId || null,
+      createdAt: new Date(),
+    });
+
+    // Save the report to the database
+    await newReport.save();
+
+    // Return success response
+    res.status(201).json({ message: "User reported successfully" });
+  } catch (error) {
+    console.error("Error reporting user:", error);
+    res.status(500).json({ error: "Failed to report user" });
+  }
+});
+app.get("/api/getAllReports", async (req, res) => {
+  try {
+    // Fetch all reports from MongoDB using the Report model
+    const reports = await Report.find()
+      .sort({ createdAt: -1 }) // Sort by newest first
+      .exec();
+
+    // Return the reports data to the frontend
+    res.status(200).json({ reports });
+  } catch (error) {
+    console.error("Error retrieving reports:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+app.post("/api/toggle-account-status", async (req, res) => {
+  const { userId, disabled } = req.body;
+
+  if (!userId) {
+    return res.status(400).json({
+      success: false,
+      message: "User ID is required",
+    });
+  }
+
+  try {
+    // Update user in Firebase Authentication
+    await admin.auth().updateUser(userId, { disabled });
+
+    return res.status(200).json({
+      success: true,
+      message: `User account successfully ${disabled ? "disabled" : "enabled"}`,
+    });
+  } catch (error) {
+    console.error("Error updating user account status:", error);
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+// Request a reward
+app.post("/api/requestReward", async (req, res) => {
+  try {
+    const { qid, username } = req.body;
+
+    // Validate input
+    if (!qid || !username) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Missing required fields" });
+    }
+
+    // Check if reward already exists for this question
+    const existingReward = await Reward.findOne({ qid });
+    if (existingReward) {
+      return res.status(400).json({
+        success: false,
+        error: "A reward has already been requested for this question",
+      });
+    }
+
+    // Create new reward document
+    const newReward = new Reward({
+      qid,
+      username,
+      createdAt: new Date(),
+      status: "pending",
+    });
+
+    // Save to database
+    await newReward.save();
+
+    return res.status(201).json({
+      success: true,
+      message: "Reward requested successfully",
+    });
+  } catch (error) {
+    console.error("Error requesting reward:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Server error while requesting reward",
+    });
+  }
+});
+
+// Check if a reward has been requested for a question
+app.get("/api/checkRewardStatus", async (req, res) => {
+  try {
+    const { qid } = req.query;
+
+    if (!qid) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Question ID is required" });
+    }
+
+    const reward = await Reward.findOne({ qid });
+
+    return res.status(200).json({
+      success: true,
+      exists: Boolean(reward),
+      reward: reward || null,
+    });
+  } catch (error) {
+    console.error("Error checking reward status:", error);
+    return res.status(500).json({
+      success: false,
+      error: "Server error while checking reward status",
+    });
+  }
+});
+app.get("/api/getRewardRequests", async (req, res) => {
+  try {
+    // Connect to MongoDB if not already connected
+
+    // Fetch reward requests, sorted by creation date (newest first)
+    const rewards = await Reward.find({}).sort({ createdAt: -1 }).limit(50); // Limiting to 50 results for performance
+
+    return res.status(200).json(rewards);
+  } catch (error) {
+    console.error("Error fetching reward requests:", error);
+    return res.status(500).json({ error: "Failed to fetch reward requests" });
+  }
+});
+// Add this route to your server.js file
+app.post("/api/checkUserJoin", async (req, res) => {
+  try {
+    const { uid, qid, authorId } = req.body;
+
+    // First, get the question details
+    const question = await Question.findById(qid);
+    if (!question) {
+      return res
+        .status(404)
+        .json({ canJoin: false, message: "Question not found" });
+    }
+
+    const whoCanRespond = question.whoCanRespond;
+
+    // Check permissions based on whoCanRespond setting
+    if (whoCanRespond === "Everyone") {
+      return res.json({ canJoin: true });
+    } else if (whoCanRespond === "Verified") {
+      // Check if user is verified
+      const user = await User.findById(uid);
+      if (!user) {
+        return res
+          .status(404)
+          .json({ canJoin: false, message: "User not found" });
+      }
+
+      return res.json({ canJoin: user.verified === true });
+    } else if (whoCanRespond === "Followers") {
+      // Check if user is a follower of the author
+      const author = await User.findById(authorId);
+      if (!author) {
+        return res
+          .status(404)
+          .json({ canJoin: false, message: "Author not found" });
+      }
+
+      const isFollower = author.followers.includes(uid);
+      return res.json({ canJoin: isFollower });
+    }
+
+    // Default to false for any other settings
+    return res.json({ canJoin: false });
+  } catch (error) {
+    console.error("Error checking user join permissions:", error);
+    res.status(500).json({ canJoin: false, message: "Server error" });
   }
 });
 app.listen(PORT, () =>
